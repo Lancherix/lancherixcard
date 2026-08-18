@@ -71,10 +71,12 @@ export function AccountColumn() {
     LANGUAGE_LABELS[languageCode] ?? languageCode;
 
   const birthDate = [
-    profile.month-profile.date-profile.year
+    profile.month,
+    profile.date,
+    profile.year,
   ]
     .filter(Boolean)
-    .join(" ");
+    .join("-");
 
   return (
     <div className="leaf-fill settings-panel">
