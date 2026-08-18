@@ -16,16 +16,13 @@ function HistoryRow({ tx, categories, formatMoney }) {
         className="ht-icon"
         style={{
           background: (category?.color ?? "#6e6e73") + "22",
-          width: 36,
-          height: 36,
-          borderRadius: 8,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexShrink: 0,
         }}
       >
-        <Icon name={category?.icon ?? "other"} size={16} color={category?.color} />
+        <Icon
+          name={category?.icon ?? "other"}
+          size={16}
+          color={category?.color}
+        />
       </span>
       <span className="ht-info">
         <span className="ht-name">{tx.name}</span>

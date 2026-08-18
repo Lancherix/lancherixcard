@@ -1,53 +1,55 @@
 .ht-panel {
-  gap: 12px;
+  gap: 8px;
 }
 
 .ht-search-row {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .ht-search-input {
   flex: 1;
   min-width: 0;
+  height: 30px;
   border: 1px solid var(--cal-border-strong);
   border-radius: var(--cal-radius-sm);
-  padding: 8px 14px;
-  font-size: 13px;
+  padding: 5px 10px;
+  font-size: 12px;
   font-family: var(--cal-font-body);
   color: var(--cal-text);
   background: var(--cal-bg);
   box-sizing: border-box;
+  outline: none;
 }
 
 .ht-sort-select {
-  border: 1px solid var(--cal-border-strong);
-  border-radius: var(--cal-radius-sm);
-  padding: 8px 10px;
-  font-size: 12px;
-  font-family: var(--cal-font-body);
-  color: var(--cal-text);
-  background: var(--cal-surface);
-  flex-shrink: 0;
+  background-image: linear-gradient(45deg, transparent 50%, var(--cal-muted) 50%),
+    linear-gradient(135deg, var(--cal-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 10px) 12px,
+    calc(100% - 6px) 12px;
+  background-size: 4px 4px, 4px 4px;
+  background-repeat: no-repeat;
 }
 
 .ht-chip-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: wrap;
   flex-shrink: 0;
 }
 
 .ht-chip {
+  height: 26px;
   border: 1px solid var(--cal-border-strong);
   background: var(--cal-surface);
   color: var(--cal-muted);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   border-radius: var(--cal-radius-sm);
-  padding: 5px 12px;
+  padding: 3px 9px;
   cursor: pointer;
 }
 
@@ -61,7 +63,7 @@
   width: 1px;
   align-self: stretch;
   background: var(--cal-border-strong);
-  margin: 0 4px;
+  margin: 0 3px;
 }
 
 .ht-list {
@@ -75,8 +77,8 @@
 .ht-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 4px;
+  gap: 10px;
+  padding: 8px 4px;
   border-bottom: 1px solid var(--cal-border);
 }
 
@@ -101,7 +103,7 @@
 }
 
 .ht-name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--cal-text);
   overflow: hidden;
@@ -110,12 +112,12 @@
 }
 
 .ht-sub {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--cal-muted);
 }
 
 .ht-amount {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--cal-text);
   flex-shrink: 0;
