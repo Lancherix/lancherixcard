@@ -60,6 +60,7 @@ export function getLocalDateString(date = new Date()) {
 }
 
 const initialState = {
+  profile: null,
   transactions: [],
   recurring: [],
   categories: [],
@@ -99,7 +100,8 @@ function reducer(state, action) {
       return { ...state, loading: action.payload };
     case "SET_ERROR":
       return { ...state, error: action.payload, loading: false };
-
+    case "SET_PROFILE":
+      return { ...state, profile: action.payload };
     case "HYDRATE":
       return {
         ...state,
@@ -193,8 +195,13 @@ export function AppProvider({ children }) {
   const refreshState = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
     try {
-      const data = await requestJson(`/state?today=${getLocalDateString()}`);
+      const [data, profile] = await Promise.all([
+        requestJson(`/state?today=${getLocalDateString()}`),
+        requestJson("/me"),
+      ]);
+
       dispatch({ type: "HYDRATE", payload: data });
+      dispatch({ type: "SET_PROFILE", payload: profile });
     } catch (error) {
       dispatch({ type: "SET_ERROR", payload: error.message });
     }
@@ -298,6 +305,7 @@ export function useAppData() {
   const currencyConfig = CURRENCIES[state.currency?.code] ?? CURRENCIES.USD;
 
   return {
+    profile: state.profile,
     transactions: state.transactions,
     recurring: state.recurring,
     categories: categoriesWithSpent,
