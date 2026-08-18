@@ -605,12 +605,6 @@
   color: #aaa;
 }
 
-.form-row input:focus,
-.form-row select:focus {
-  border-color: #1169d3;
-  box-shadow: 0 0 0 3px rgba(17, 105, 211, 0.15);
-}
-
 .dw-field-hint {
   color: #999;
   font-size: 0.75rem;
@@ -659,11 +653,6 @@
 
 .dw-amount-input::placeholder {
   color: #aaa;
-}
-
-.dw-amount-wrap:focus-within {
-  border-color: #1169d3;
-  box-shadow: 0 0 0 3px rgba(17, 105, 211, 0.15);
 }
 
 /* ---------------- Type / status toggle ---------------- */
