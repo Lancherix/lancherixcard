@@ -699,3 +699,12 @@ export function GoalsWidget() {
     </div>
   );
 }
+
+export function Empty() {
+  
+  return (
+    <div className="leaf-fill dw-goals-panel">
+      
+    </div>
+  );
+}

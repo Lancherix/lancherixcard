@@ -9,7 +9,7 @@ import "./App.css";
 
 import { AppProvider, useAppData } from "./context/AppContext";
 import { I18nProvider, useTranslation } from "./context/I18nContext";
-import { TransactionsList, ReportWidget, BudgetProgressRing, GoalsWidget } from "./components/DashboardWidgets";
+import { TransactionsList, ReportWidget, BudgetProgressRing, GoalsWidget, Empty } from "./components/DashboardWidgets";
 import AddTransactionModal from "./components/AddTransactionModal";
 import { MoneyTransactionsColumn, MoneyRecurringColumn } from "./components/MoneyTab";
 import { BudgetOverviewColumn, BudgetCategoriesColumn } from "./components/BudgetTab";
@@ -95,8 +95,8 @@ function Home() {
             direction: "column",
             children: [
               { type: "leaf", content: <BudgetOverviewColumn /> },
-              { type: "leaf", content: <GoalsWidget /> },
-              { type: "leaf", content: <GoalsWidget /> },
+              { type: "leaf", content: <Empty /> },
+              { type: "leaf", content: <Empty /> },
             ],
           },
           { type: "leaf", content: <BudgetCategoriesColumn /> },
