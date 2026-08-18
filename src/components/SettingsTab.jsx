@@ -72,7 +72,7 @@ export function AccountColumn() {
         <span className="settings-avatar">{initials}</span>
         <div className="settings-profile-head-text">
           <span className="settings-profile-name">{profile.fullName}</span>
-          <span className="settings-profile-username">@{profile.username}</span>
+          <span className="settings-profile-username">{profile.username}</span>
         </div>
       </div>
 

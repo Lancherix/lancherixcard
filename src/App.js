@@ -16,7 +16,6 @@ import HistoryTab from "./components/HistoryTab";
 import { ReportsTrendColumn, ReportsBreakdownColumn } from "./components/ReportsTab";
 import SavingsGoalsTab from "./components/SavingsGoalsTab";
 import CurrencyOnboarding from "./components/CurrencyOnboarding";
-import ChangeCurrencyModal from "./components/ChangeCurrencyModal";
 import { AccountColumn, CurrencyColumn } from "./components/SettingsTab";
 
 function Redirecting() {
@@ -134,15 +133,6 @@ function Home() {
       label: t("nav.goals"),
       icon: t("icons.goals"),
       panel: { type: "leaf", content: <SavingsGoalsTab /> },
-    },
-    {
-      key: "currency",
-      label: "Currency",
-      icon: "💱",
-      modal: {
-        title: "Change currency",
-        content: ({ onClose }) => <ChangeCurrencyModal onClose={onClose} />,
-      },
     },
     {
       key: "settings",

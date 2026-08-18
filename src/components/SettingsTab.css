@@ -65,10 +65,7 @@
 .settings-readonly-row {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 8px 10px;
-  background: var(--cal-bg);
-  border-radius: var(--cal-radius-sm);
+  gap: 0.5vh;
 }
 
 .settings-readonly-label {
