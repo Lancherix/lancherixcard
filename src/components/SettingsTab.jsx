@@ -30,15 +30,6 @@ function ModalShell({ title, onClose, children }) {
    Language display assumes I18nContext exposes `locale`; adjust the
    destructured name below if yours differs. */
 
-const MOCK_PROFILE = {
-  fullName: "Alex Morgan",
-  username: "alexmorgan",
-  email: "alex.morgan@example.com",
-  month: "January",
-  date: 15,
-  year: 2000,
-};
-
 const LANGUAGE_LABELS = {
   fr: "Français",
   en: "English",
@@ -47,50 +38,117 @@ const LANGUAGE_LABELS = {
 
 export function AccountColumn() {
   const { t, locale } = useTranslation();
-  const [profile] = useState(MOCK_PROFILE);
+  const { profile } = useAppData();
 
-  const initials = profile.fullName
-    .split(" ")
-    .map((p) => p[0])
+  if (!profile) {
+    return (
+      <div className="leaf-fill settings-panel">
+        <div className="dw-col-header">
+          <h3 className="dw-heading">{t("settings.account")}</h3>
+        </div>
+
+        <div className="settings-loading">
+          {t("common.loading")}
+        </div>
+      </div>
+    );
+  }
+
+  const fullName = [profile.firstName, profile.lastName]
+    .filter(Boolean)
+    .join(" ");
+
+  const initials = [profile.firstName, profile.lastName]
+    .filter(Boolean)
+    .map((name) => name[0])
     .join("")
     .slice(0, 2)
     .toUpperCase();
 
-  const languageLabel = LANGUAGE_LABELS[locale] ?? locale ?? LANGUAGE_LABELS.fr;
+  const languageCode = profile.language?.split("-")[0] ?? locale;
+
+  const languageLabel =
+    LANGUAGE_LABELS[languageCode] ?? languageCode;
+
+  const birthDate = [
+    profile.month,
+    profile.date,
+    profile.year,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div className="leaf-fill settings-panel">
       <div className="dw-col-header">
         <h3 className="dw-heading">{t("settings.account")}</h3>
+
         <button
           className="dw-add-btn dw-add-btn-neutral"
-          onClick={() => window.open(STUDIO_SETTINGS_URL, "_blank", "noopener,noreferrer")}
+          onClick={() =>
+            window.open(
+              STUDIO_SETTINGS_URL,
+              "_blank",
+              "noopener,noreferrer"
+            )
+          }
         >
           {t("common.modify")}
         </button>
       </div>
 
       <div className="settings-profile-head">
-        <span className="settings-avatar">{initials}</span>
+        <span className="settings-avatar">
+          {profile.profilePicture?.url ? (
+            <img
+              src={profile.profilePicture.url}
+              alt=""
+              className="settings-avatar-image"
+            />
+          ) : (
+            initials
+          )}
+        </span>
+
         <div className="settings-profile-head-text">
-          <span className="settings-profile-name">{profile.fullName}</span>
-          <span className="settings-profile-username">{profile.username}</span>
+          <span className="settings-profile-name">
+            {fullName}
+          </span>
+
+          <span className="settings-profile-username">
+            @{profile.username}
+          </span>
         </div>
       </div>
 
       <div className="settings-readonly-list">
         <div className="settings-readonly-row">
-          <span className="settings-readonly-label">{t("settings.email")}</span>
-          <span className="settings-readonly-value">{profile.email}</span>
-        </div>
-        <div className="settings-readonly-row">
-          <span className="settings-readonly-label">{t("settings.language")}</span>
-          <span className="settings-readonly-value">{languageLabel}</span>
-        </div>
-        <div className="settings-readonly-row">
-          <span className="settings-readonly-label">{t("settings.birthDate")}</span>
+          <span className="settings-readonly-label">
+            {t("settings.email")}
+          </span>
+
           <span className="settings-readonly-value">
-            {profile.month} {profile.date}, {profile.year}
+            {profile.email}
+          </span>
+        </div>
+
+        <div className="settings-readonly-row">
+          <span className="settings-readonly-label">
+            {t("settings.language")}
+          </span>
+
+          <span className="settings-readonly-value">
+            {languageLabel}
+          </span>
+        </div>
+
+        <div className="settings-readonly-row">
+          <span className="settings-readonly-label">
+            {t("settings.birthDate")}
+          </span>
+
+          <span className="settings-readonly-value">
+            {birthDate || "—"}
           </span>
         </div>
       </div>
