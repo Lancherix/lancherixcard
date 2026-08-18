@@ -319,26 +319,53 @@ export function MoneyTransactionsColumn() {
   const sorted = [...transactions].sort((a, b) => (a.date < b.date ? 1 : -1));
 
   return (
-    <div className="leaf-fill mt-tx-panel">
-      <div className="mt-col-header">
-        <h3 className="mt-heading">{t("moneyTab.transactions")}</h3>
-        <button className="mt-add-btn mt-add-btn-tx" onClick={() => setModalState({ mode: "add" })}>+ {t("common.add")}</button>
+    <div className="leaf-fill dw-tx-panel">
+      <div className="dw-col-header">
+        <h3 className="dw-heading">{t("moneyTab.transactions")}</h3>
+        <button
+          className="dw-add-btn dw-add-btn-tx"
+          onClick={() => setModalState({ mode: "add" })}
+        >
+          + {t("common.add")}
+        </button>
       </div>
-      <div className="mt-tx-list">
+
+      <div className="dw-tx-list">
         {sorted.length > 0 ? (
           sorted.map((tx) => (
-            <TxRow key={tx.id} tx={tx} categories={categories} formatMoney={formatMoney} onClick={(item) => setModalState({ mode: "edit", item })} />
+            <TxRow
+              key={tx.id}
+              tx={tx}
+              categories={categories}
+              formatMoney={formatMoney}
+              onClick={(item) =>
+                setModalState({ mode: "edit", item })
+              }
+            />
           ))
         ) : (
-          <span className="cal-actions-placeholder">{t("moneyTab.noTransactionsYet")}</span>
+          <span className="cal-actions-placeholder">
+            {t("moneyTab.noTransactionsYet")}
+          </span>
         )}
       </div>
 
       {modalState && (
-        <ModalShell title={modalState.mode === "edit" ? t("moneyTab.editTransaction") : t("moneyTab.addTransaction")} onClose={closeModal}>
+        <ModalShell
+          title={
+            modalState.mode === "edit"
+              ? t("moneyTab.editTransaction")
+              : t("moneyTab.addTransaction")
+          }
+          onClose={closeModal}
+        >
           <TransactionForm
             onClose={closeModal}
-            initialValues={modalState.mode === "edit" ? modalState.item : null}
+            initialValues={
+              modalState.mode === "edit"
+                ? modalState.item
+                : null
+            }
           />
         </ModalShell>
       )}
