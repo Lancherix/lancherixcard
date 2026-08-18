@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAppData } from "../context/AppContext";
 import { getLocalDateString } from "../context/AppContext";
 import { useTranslation } from "../context/I18nContext";
+import { createPortal } from "react-dom";
 import Icon from "./Icon";
 import "./DashboardWidgets.css";
 
@@ -49,23 +50,64 @@ function TypeToggle({ type, onChange }) {
 /* ---------------- Transaction form: dispatches through context ---------------- */
 
 function TransactionForm({ onClose, initialValues }) {
-  const { addTransaction, updateTransaction, deleteTransaction, categories, currencySymbol } = useAppData();
+  const {
+    addTransaction,
+    updateTransaction,
+    deleteTransaction,
+    categories,
+    currencySymbol
+  } = useAppData();
+
   const { t, tCategory } = useTranslation();
+
   const isEditing = Boolean(initialValues);
+
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
-  const [type, setType] = useState(initialValues?.type ?? "expense");
-  const [name, setName] = useState(initialValues?.name ?? "");
-  const [amount, setAmount] = useState(initialValues ? String(initialValues.amount) : "");
-  const [categoryKey, setCategoryKey] = useState(initialValues?.categoryKey ?? categories[0]?.key ?? "other");
-  const [date, setDate] = useState(initialValues?.date ?? getLocalDateString());
+  const [type, setType] = useState(
+    initialValues?.type ?? "expense"
+  );
+
+  const [name, setName] = useState(
+    initialValues?.name ?? ""
+  );
+
+  const [amount, setAmount] = useState(
+    initialValues
+      ? String(initialValues.amount)
+      : ""
+  );
+
+  const [categoryKey, setCategoryKey] = useState(
+    initialValues?.categoryKey ??
+    categories[0]?.key ??
+    "other"
+  );
+
+  const [date, setDate] = useState(
+    initialValues?.date ??
+    getLocalDateString()
+  );
+
+
+  /* ---------------- Validation ---------------- */
 
   const parsedAmount = parseFloat(amount);
-  const isValid = amount.trim() !== "" && !isNaN(parsedAmount) && parsedAmount > 0 && categories.length > 0;
+
+  const isValid =
+    amount.trim() !== "" &&
+    !isNaN(parsedAmount) &&
+    parsedAmount > 0 &&
+    categories.length > 0;
+
+
+  /* ---------------- Submit ---------------- */
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (!isValid) return;
+
     const tx = {
       id: initialValues?.id,
       type,
@@ -74,83 +116,334 @@ function TransactionForm({ onClose, initialValues }) {
       date,
       name: name.trim() || tCategory(categoryKey),
     };
-    if (isEditing) updateTransaction(tx);
-    else addTransaction(tx);
+
+    if (isEditing) {
+      updateTransaction(tx);
+    } else {
+      addTransaction(tx);
+    }
+
     onClose();
   };
 
+
+  /* ---------------- Delete ---------------- */
+
+  const handleDelete = () => {
+    deleteTransaction(initialValues.id);
+    onClose();
+  };
+
+
+  /* =========================================================
+     Delete confirmation
+     ========================================================= */
+
   if (confirmingDelete) {
-    return (
-      <div className="dw-confirm">
-        <p className="dw-confirm-text">{t("transactionModal.deleteConfirm")}</p>
-        <div className="dw-form-actions">
-          <button type="button" className="dw-btn dw-btn-secondary" onClick={() => setConfirmingDelete(false)}>{t("common.cancel")}</button>
-          <button
-            type="button"
-            className="dw-btn dw-btn-danger"
-            onClick={() => {
-              deleteTransaction(initialValues.id);
-              onClose();
-            }}
-          >
-            {t("common.delete")}
-          </button>
+    return createPortal(
+      <div className="dw-overlay">
+
+        <div
+          className="dw-window"
+          onClick={(e) => e.stopPropagation()}
+        >
+
+          {/* Header */}
+
+          <div className="dw-header">
+            <h4>
+              {t("common.delete")}
+            </h4>
+          </div>
+
+
+          {/* Content */}
+
+          <div className="dw-content">
+
+            <div className="dw-confirm">
+
+              <p className="dw-confirm-text">
+                {t("transactionModal.deleteConfirm")}
+              </p>
+
+              <div className="dw-form-actions">
+
+                <button
+                  type="button"
+                  className="dw-btn dw-btn-secondary"
+                  onClick={() => setConfirmingDelete(false)}
+                >
+                  {t("common.cancel")}
+                </button>
+
+                <button
+                  type="button"
+                  className="dw-btn dw-btn-danger"
+                  onClick={handleDelete}
+                >
+                  {t("common.delete")}
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
-      </div>
+
+      </div>,
+
+      document.getElementById("modal-root")
     );
   }
 
-  return (
-    <form className="dw-form" onSubmit={handleSubmit}>
-      <TypeToggle type={type} onChange={setType} />
-      <label className="dw-field">
-        <span className="dw-label">{t("common.name")}</span>
-        <input
-          type="text"
-          placeholder={t("moneyTab.namePlaceholder")}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="dw-input"
-        />
-      </label>
-      <label className="dw-field">
-        <span className="dw-label">{t("common.amount")}</span>
-        <div className="dw-amount-wrap">
-          <span className="dw-currency">{currencySymbol}</span>
-          <input
-            type="number" inputMode="decimal" step="0.01" min="0" placeholder="0.00"
-            value={amount} onChange={(e) => setAmount(e.target.value)} className="dw-amount-input" autoFocus
-          />
+
+  /* =========================================================
+     Main transaction modal
+     ========================================================= */
+
+  return createPortal(
+
+    <div className="dw-overlay">
+
+      <div
+        className="dw-window"
+        onClick={(e) => e.stopPropagation()}
+      >
+
+        {/* -------------------------------------------------
+           Header
+           ------------------------------------------------- */}
+
+        <div className="dw-header">
+
+          <h4>
+            {isEditing
+              ? t("common.editTransaction")
+              : t("common.newTransaction")}
+          </h4>
+
         </div>
-      </label>
-      <label className="dw-field">
-        <span className="dw-label">{t("common.category")}</span>
-        {categories.length > 0 ? (
-          <select value={categoryKey} onChange={(e) => setCategoryKey(e.target.value)} className="dw-select">
-            {categories.map((c) => (
-              <option key={c.id} value={c.key}>{tCategory(c.key)}</option>
-            ))}
-          </select>
-        ) : (
-          <span className="dw-field-hint">Add a category in the Budget tab first</span>
-        )}
-      </label>
-      <label className="dw-field">
-        <span className="dw-label">{t("common.date")}</span>
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="dw-input" />
-      </label>
-      <div className="dw-form-actions">
-        {isEditing && (
-          <button type="button" className="dw-btn dw-btn-danger dw-btn-left" onClick={() => setConfirmingDelete(true)}>
-            {t("common.delete")}
-          </button>
-        )}
-        <button type="button" className="dw-btn dw-btn-secondary" onClick={onClose}>{t("common.cancel")}</button>
-        <button type="submit" className="dw-btn dw-btn-primary" disabled={!isValid}>
-          {isEditing ? t("common.saveChanges") : t("common.save")}
-        </button>
+
+
+        {/* -------------------------------------------------
+           Content
+           ------------------------------------------------- */}
+
+        <div className="dw-content">
+
+          <form
+            className="dw-form"
+            onSubmit={handleSubmit}
+          >
+
+            {/* -------------------------------------------------
+               Type
+               ------------------------------------------------- */}
+
+            <div className="dw-field">
+
+              <span className="dw-label">
+                {t("common.type")}
+              </span>
+
+              <TypeToggle
+                type={type}
+                onChange={setType}
+              />
+
+            </div>
+
+
+            {/* -------------------------------------------------
+               Name
+               ------------------------------------------------- */}
+
+            <label className="dw-field">
+
+              <span className="dw-label">
+
+                {t("common.name")}
+
+                <small>
+                  (optional)
+                </small>
+
+              </span>
+
+              <input
+                type="text"
+                placeholder={t("moneyTab.namePlaceholder")}
+                value={name}
+                onChange={(e) =>
+                  setName(e.target.value)
+                }
+                className="dw-input"
+              />
+
+            </label>
+
+
+            {/* -------------------------------------------------
+               Amount
+               ------------------------------------------------- */}
+
+            <label className="dw-field">
+
+              <span className="dw-label">
+                {t("common.amount")}
+              </span>
+
+              <div className="dw-amount-wrap">
+
+                <span className="dw-currency">
+                  {currencySymbol}
+                </span>
+
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  value={amount}
+                  onChange={(e) =>
+                    setAmount(e.target.value)
+                  }
+                  className="dw-amount-input"
+                  autoFocus
+                />
+
+              </div>
+
+            </label>
+
+
+            {/* -------------------------------------------------
+               Category
+               ------------------------------------------------- */}
+
+            <label className="dw-field">
+
+              <span className="dw-label">
+                {t("common.category")}
+              </span>
+
+              {categories.length > 0 ? (
+
+                <select
+                  value={categoryKey}
+                  onChange={(e) =>
+                    setCategoryKey(e.target.value)
+                  }
+                  className="dw-select"
+                >
+
+                  {categories.map((c) => (
+
+                    <option
+                      key={c.id}
+                      value={c.key}
+                    >
+                      {tCategory(c.key)}
+                    </option>
+
+                  ))}
+
+                </select>
+
+              ) : (
+
+                <span className="dw-field-hint">
+                  Add a category in the Budget tab first
+                </span>
+
+              )}
+
+            </label>
+
+
+            {/* -------------------------------------------------
+               Date
+               ------------------------------------------------- */}
+
+            <label className="dw-field">
+
+              <span className="dw-label">
+                {t("common.date")}
+              </span>
+
+              <input
+                type="date"
+                value={date}
+                onChange={(e) =>
+                  setDate(e.target.value)
+                }
+                className="dw-input"
+              />
+
+            </label>
+
+
+            {/* -------------------------------------------------
+               Footer buttons
+               ------------------------------------------------- */}
+
+            <div className="dw-form-actions">
+
+              {/* Delete button when editing */}
+
+              {isEditing && (
+
+                <button
+                  type="button"
+                  className="dw-btn dw-btn-danger dw-btn-left"
+                  onClick={() =>
+                    setConfirmingDelete(true)
+                  }
+                >
+                  {t("common.delete")}
+                </button>
+
+              )}
+
+
+              {/* Cancel */}
+
+              <button
+                type="button"
+                className="dw-btn dw-btn-secondary"
+                onClick={onClose}
+              >
+                {t("common.cancel")}
+              </button>
+
+
+              {/* Save */}
+
+              <button
+                type="submit"
+                className="dw-btn dw-btn-primary"
+                disabled={!isValid}
+              >
+                {isEditing
+                  ? t("common.saveChanges")
+                  : t("common.save")}
+              </button>
+
+            </div>
+
+          </form>
+
+        </div>
+
       </div>
-    </form>
+
+    </div>,
+
+    document.getElementById("modal-root")
   );
 }
 
