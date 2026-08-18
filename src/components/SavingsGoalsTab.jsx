@@ -355,10 +355,10 @@ export default function SavingsGoalsTab() {
   const visibleGoals = goals.filter((g) => g.status !== "acquired");
 
   return (
-    <div className="leaf-fill sg-panel">
-      <div className="sg-header">
-        <h3 className="sg-heading">{t("savingsGoalsTab.heading")}</h3>
-        <button className="sg-add-btn" onClick={() => setModalState({ mode: "add" })}>{t("savingsGoalsTab.newGoal")}</button>
+    <div className="leaf-fill dw-txl-panel">
+      <div className="dw-col-header">
+        <h3 className="dw-heading">{t("savingsGoalsTab.heading")}</h3>
+        <button className="dw-add-btn" onClick={() => setModalState({ mode: "add" })}>{t("savingsGoalsTab.newGoal")}</button>
       </div>
 
       <div className="sg-grid">
