@@ -1,0 +1,4 @@
+{
+  "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "GENERATE_SOURCEMAP=false CI=false npm run build"
+}
