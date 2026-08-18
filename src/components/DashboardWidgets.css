@@ -39,12 +39,11 @@
   color: var(--cal-text);
 }
 
-/* ---------------- Transactions (left column) ---------------- */
+/* ============================================================
+   Transactions (left column)
+   ============================================================ */
 
-.dw-tx-panel {
-  gap: 1vh;
-}
-
+.dw-tx-panel,
 .dw-txl-panel {
   gap: 1vh;
 }
@@ -122,7 +121,9 @@
   color: #1a7f37;
 }
 
-/* ---------------- Report (row 1) ---------------- */
+/* ============================================================
+   Report (row 1)
+   ============================================================ */
 
 .dw-report-panel {
   gap: 8px;
@@ -259,7 +260,9 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ---------------- Budget (row 2) ---------------- */
+/* ============================================================
+   Budget summary ring (row 2)
+   ============================================================ */
 
 .dw-bpr-panel {
   gap: 8px;
@@ -337,7 +340,9 @@
   color: #d1242f;
 }
 
-/* ---------------- Goals (row 3, NEW) ---------------- */
+/* ============================================================
+   Goals (row 3)
+   ============================================================ */
 
 .dw-goals-panel {
   gap: 10px;
@@ -389,10 +394,6 @@
   justify-content: center;
 }
 
-.dw-goal-ring-icon {
-  font-size: 18px;
-}
-
 .dw-goal-card-name {
   font-size: 12px;
   font-weight: 600;
@@ -418,6 +419,17 @@
 .dw-goal-card-complete {
   color: #1a7f37;
   font-weight: 600;
+}
+
+.dw-goal-card-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #0969da;
+  background: #0969da22;
+  border-radius: 999px;
+  padding: 2px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .dw-goal-contribute-hint {
@@ -448,26 +460,10 @@
   color: var(--cal-text);
 }
 
-.dw-btn-accent {
-  background: var(--cal-accent-soft);
-  color: var(--cal-accent);
-}
-
 .dw-goal-error {
   font-size: 11px;
   color: #d1242f;
   margin-top: -8px;
-}
-
-.dw-goal-card-badge {
-  font-size: 9px;
-  font-weight: 700;
-  color: #0969da;
-  background: #0969da22;
-  border-radius: 999px;
-  padding: 2px 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
 }
 
 .dw-color-grid {
@@ -488,70 +484,261 @@
   border-color: var(--cal-text);
 }
 
-/* ---------------- shared form styles ---------------- */
+/* ============================================================
+   MODAL SYSTEM
+   One shared "New Project"-style modal, used by every dashboard
+   modal. TransactionForm renders raw .new-project-* markup;
+   ModalShell (Budget/Goal) renders .cal-modal-* markup — both
+   are styled together here so they render identically instead
+   of silently drifting apart.
+   ============================================================ */
+
+.new-project-overlay,
+.cal-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.new-project-window,
+.cal-modal {
+  background: rgba(242, 241, 243, 1);
+  color: #1d1d1f;
+  width: 40vw;
+  max-width: 480px;
+  border-radius: 12px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  animation: newProjectIn 0.25s ease-out;
+}
+
+.new-project-header,
+.cal-modal-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 5vh;
+  min-height: 40px;
+  background: linear-gradient(#edebee, #e0dee1);
+  border-bottom: 1px solid #d5d3d6;
+  font-size: 0.9rem;
+}
+
+.new-project-header h4,
+.cal-modal-title {
+  margin: 0;
+  font-weight: 600;
+}
+
+.cal-modal-close {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #86868b;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-modal-close:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #1d1d1f;
+}
+
+.new-project-content,
+.cal-modal-body {
+  padding: 2vh 2vw;
+  font-size: 0.8rem;
+}
+
+.new-project-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5vw;
+  padding: 14px 20px;
+  border-top: 1px solid #e8e7e9;
+  background: rgba(242, 241, 243, 1);
+}
+
+@keyframes newProjectIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ---------------- Form rows / fields (shared by both markups) ---------------- */
+
+.form-row,
+.dw-field {
+  display: grid;
+  grid-template-columns: 7vw 1fr;
+  align-items: center;
+  gap: 1vw;
+  padding: 1.4vh 0;
+  min-height: 6vh;
+  border-bottom: 1px solid #e1e0e3;
+}
+
+.form-row:last-of-type,
+.dw-field:last-of-type {
+  border-bottom: none;
+}
+
+.form-row label,
+.dw-label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.form-row input,
+.form-row select,
+.dw-input,
+.dw-select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.7vh 0.7vw;
+  border-radius: 6px;
+  border: 1px solid #d5d3d6;
+  background: #fff;
+  color: #1d1d1f;
+  font: inherit;
+  outline: none;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-row select,
+.dw-select {
+  cursor: pointer;
+}
+
+.form-row input::placeholder,
+.dw-input::placeholder {
+  color: #aaa;
+}
+
+.dw-field-hint {
+  color: #999;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+/* ---------------- Amount input ---------------- */
+
+.dw-amount-wrap {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #d5d3d6;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dw-currency {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 100%;
+  padding: 0 0.8vw;
+  color: #555;
+  font-size: 0.8rem;
+  border-right: 1px solid #dedcdf;
+  background: #f7f6f8;
+}
+
+.dw-amount-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.7vh 0.7vw;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #1d1d1f;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.dw-amount-input::placeholder {
+  color: #aaa;
+}
+
+/* ---------------- Type / status toggle ---------------- */
+/* Flex-based so it works for 2-way (expense/income) and
+   3-way (goal status) toggles alike. */
 
 .dw-type-toggle {
   display: flex;
-  gap: 8px;
-  background: var(--cal-bg);
-  border-radius: var(--cal-radius-sm);
-  padding: 4px;
+  align-items: stretch;
+  margin: 1vh 0 0.5vh 0;
+  background: #e8e7ea;
+  border: 1px solid #d0cfd2;
+  border-radius: 7px;
+  overflow: hidden;
 }
 
 .dw-type-btn {
   flex: 1;
   border: none;
+  border-radius: 0;
+  padding: 0.9vh 0.6vw;
   background: transparent;
-  border-radius: var(--cal-radius-sm);
-  padding: 8px 0;
-  font-family: var(--cal-font-body);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--cal-muted);
+  color: #555;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
   cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dw-type-btn + .dw-type-btn {
+  border-left: 1px solid #d0cfd2;
 }
 
 .dw-type-btn-active.dw-type-expense {
+  border-radius: 5px;
+  background: #fff;
   color: #d1242f;
-  box-shadow: var(--cal-shadow-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .dw-type-btn-active.dw-type-income {
+  border-radius: 5px;
+  background: #fff;
   color: #1a7f37;
-  box-shadow: var(--cal-shadow-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
-.dw-amount-wrap {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  border: 1px solid var(--cal-border-strong);
-  border-radius: var(--cal-radius);
-  padding: 0 0 0 0.5vw;
-  box-sizing: border-box;
-}
-
-.dw-currency {
-  color: var(--cal-muted);
-  font-size: 15px;
-}
-
-.dw-amount-input {
-  border: none;
-  outline: none;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--cal-text);
-  width: 100%;
-  font-family: var(--cal-font-display);
-  background: transparent;
-}
-
-.dw-field-hint {
-  font-size: 12px;
-  color: var(--cal-muted);
-  font-style: italic;
-}
+/* ---------------- Icon picker ---------------- */
 
 .dw-icon-grid {
   display: flex;
@@ -564,8 +751,7 @@
   height: 34px;
   border-radius: 9px;
   border: 2px solid transparent;
-  background: var(--cal-bg);
-  font-size: 15px;
+  background: #e8e7ea;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -573,578 +759,110 @@
 }
 
 .dw-icon-choice-active {
-  border-color: var(--cal-accent);
+  border-color: #1169d3;
 }
 
-.dw-form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 4px;
-}
+/* ---------------- Buttons ---------------- */
+/* .primary-btn / .secondary-btn: used directly by TransactionForm's
+   markup. .dw-btn-*: used by Budget/Goal forms. Same look, both
+   defined here so neither depends on another page's stylesheet. */
 
-.dw-btn {
-  border: none;
-  border-radius: var(--cal-radius-sm);
-  padding: 9px 18px;
-  font-size: 13px;
-  font-weight: 600;
+.dw-btn,
+.primary-btn,
+.secondary-btn {
+  min-width: 5vw;
+  padding: 0.7vh 0.7vw;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 400;
   cursor: pointer;
-  font-family: var(--cal-font-body);
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
 }
 
-.dw-btn-secondary {
-  background: var(--cal-bg);
-  color: var(--cal-text);
+.dw-btn-secondary,
+.secondary-btn {
+  background: linear-gradient(#faf8fb, #e0dfe3);
+  color: #1d1d1f;
+  border: 1px solid #d5d4d8;
 }
 
-.dw-btn-primary {
-  background: var(--cal-accent);
+.dw-btn-secondary:hover,
+.secondary-btn:hover {
+  background: linear-gradient(#ffffff, #e6e5e9);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.dw-btn-secondary:active,
+.secondary-btn:active {
+  transform: translateY(1px);
+  background: linear-gradient(#e0dfe3, #faf8fb);
+}
+
+.dw-btn-primary,
+.primary-btn {
+  background: linear-gradient(#428cef, #1169d3);
   color: #fff;
+  border: 1px solid #1164c9;
 }
 
-.dw-btn-primary:disabled {
-  opacity: 0.4;
+.dw-btn-primary:hover:not(:disabled),
+.primary-btn:hover:not(:disabled) {
+  background: linear-gradient(#5a9bff, #1b74e4);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset, 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.dw-btn-primary:active:not(:disabled),
+.primary-btn:active:not(:disabled) {
+  transform: translateY(1px);
+  background: linear-gradient(#1169d3, #428cef);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) inset;
+}
+
+.dw-btn-primary:disabled,
+.primary-btn:disabled {
+  opacity: 0.45;
   cursor: default;
 }
 
-.dw-btn-danger {
+.dw-btn-danger,
+.transaction-delete-btn {
   background: transparent;
   color: #d1242f;
+  border: 1px solid transparent;
+}
+
+.dw-btn-danger:hover,
+.transaction-delete-btn:hover {
+  background: #fce8e9;
+  border-color: #e8b9bd;
+}
+
+.dw-btn-accent {
+  background: #e8f0fe;
+  color: #1169d3;
+  border: 1px solid #cfe0fb;
+}
+
+.dw-btn-accent:hover {
+  background: #dbe9fd;
 }
 
 .dw-btn-left {
   margin-right: auto;
 }
 
+/* ---------------- Delete confirmation ---------------- */
+
 .dw-confirm {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 2vh;
+  padding: 1vh 0;
 }
 
 .dw-confirm-text {
   margin: 0;
-  font-size: 14px;
-  color: var(--cal-text);
-}
-
-/* =========================================================
-   TRANSACTION MODAL
-   Matches the New Project macOS-style modal
-   ========================================================= */
-
-.dw-form {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    width: 100%;
-    font-size: 0.8rem;
-    color: #1d1d1f;
-}
-
-
-/* ---------------------------------------------------------
-   Fields
-   --------------------------------------------------------- */
-
-.dw-field {
-    display: grid;
-    grid-template-columns: 7vw 1fr;
-    align-items: center;
-    gap: 1vw;
-    padding: 1.4vh 0;
-    min-height: 6vh;
-}
-
-.dw-label {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-
-    font-family: inherit;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #1d1d1f;
-}
-
-
-/* Optional marker for mandatory fields */
-
-.dw-label-required::after {
-    content: " *";
-    color: #8b8b8b;
-    font-weight: 400;
-}
-
-
-/* ---------------------------------------------------------
-   Inputs / Select
-   --------------------------------------------------------- */
-
-.dw-input,
-.dw-select {
-    width: 100%;
-    box-sizing: border-box;
-
-    padding: 0.7vh 0.7vw;
-
-    border-radius: 6px;
-    border: 1px solid #d5d3d6;
-
-    background: #fff;
-
-    color: #1d1d1f;
-    font: inherit;
-
-    outline: none;
-
-    box-shadow:
-        inset 0 1px 1px rgba(0, 0, 0, 0.04);
-
-    transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease;
-}
-
-.dw-input::placeholder {
-    color: #aaa;
-}
-
-.dw-select {
-    cursor: pointer;
-}
-
-
-/* ---------------------------------------------------------
-   Amount
-   --------------------------------------------------------- */
-
-.dw-amount-wrap {
-    display: flex;
-    align-items: center;
-
-    width: 100%;
-    box-sizing: border-box;
-
-    border: 1px solid #d5d3d6;
-    border-radius: 6px;
-
-    background: #fff;
-
-    box-shadow:
-        inset 0 1px 1px rgba(0, 0, 0, 0.04);
-
-    overflow: hidden;
-
-    transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease;
-}
-
-.dw-currency {
-    display: flex;
-    align-items: center;
-
-    height: 100%;
-
-    padding: 0 0.8vw;
-
-    color: #555;
-    font-size: 0.8rem;
-
-    border-right: 1px solid #dedcdf;
-
-    background: #f7f6f8;
-}
-
-.dw-amount-input {
-    flex: 1;
-
-    min-width: 0;
-
-    padding: 0.7vh 0.7vw;
-
-    border: none;
-    outline: none;
-
-    background: transparent;
-
-    color: #1d1d1f;
-
-    font: inherit;
-}
-
-.dw-amount-input::placeholder {
-    color: #aaa;
-}
-
-
-/* ---------------------------------------------------------
-   Transaction type
-   --------------------------------------------------------- */
-
-.dw-type-toggle {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-
-    margin: 1vh 0 0.5vh 0;
-
-    background: #e8e7ea;
-
-    border: 1px solid #d0cfd2;
-    border-radius: 7px;
-
-    overflow: hidden;
-}
-
-.dw-type-btn {
-    position: relative;
-
-    border: none;
-    border-radius: 0;
-
-    padding: 0.9vh 1vw;
-
-    background: transparent;
-
-    color: #555;
-
-    font-family: inherit;
-    font-size: 0.8rem;
-    font-weight: 500;
-
-    cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        color 0.15s ease,
-        box-shadow 0.15s ease;
-}
-
-.dw-type-btn + .dw-type-btn {
-    border-left: 1px solid #d0cfd2;
-}
-
-
-/* Selected expense */
-
-.dw-type-btn-active.dw-type-expense {
-    border-radius: 5px;
-    background: #fff;
-    color: #d1242f;
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.12);
-}
-
-
-/* Selected income/acquired */
-
-.dw-type-btn-active.dw-type-income {
-    border-radius: 5px;
-    background: #fff;
-    color: #1a7f37;
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.12);
-}
-
-
-/* ---------------------------------------------------------
-   Horizontal separators
-   --------------------------------------------------------- */
-
-.dw-field {
-    border-bottom: 1px solid #e1e0e3;
-}
-
-.dw-field:last-of-type {
-    border-bottom: none;
-}
-
-
-/* ---------------------------------------------------------
-   Form actions / footer
-   --------------------------------------------------------- */
-
-.dw-form-actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-
-    gap: 0.5vw;
-
-    margin-top: 2vh;
-    padding-top: 2vh;
-
-    border-top: 1px solid #e8e7e9;
-}
-
-
-/* Buttons */
-
-.dw-btn {
-    min-width: 5vw;
-
-    padding: 0.7vh 0.7vw;
-
-    border-radius: 6px;
-
-    font-family: inherit;
-    font-size: 0.8rem;
-    font-weight: 400;
-
-    cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        box-shadow 0.15s ease,
-        transform 0.05s ease;
-}
-
-
-/* Cancel */
-
-.dw-btn-secondary {
-    background: linear-gradient(#faf8fb, #e0dfe3);
-
-    color: #1d1d1f;
-
-    border: 1px solid #d5d4d8;
-}
-
-.dw-btn-secondary:hover {
-    background: linear-gradient(#ffffff, #e6e5e9);
-
-    box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.9) inset,
-        0 1px 3px rgba(0, 0, 0, 0.15);
-}
-
-.dw-btn-secondary:active {
-    transform: translateY(1px);
-
-    background: linear-gradient(#e0dfe3, #faf8fb);
-}
-
-
-/* Primary */
-
-.dw-btn-primary {
-    background: linear-gradient(#428cef, #1169d3);
-
-    color: #fff;
-
-    border: 1px solid #1164c9;
-}
-
-.dw-btn-primary:hover:not(:disabled) {
-    background: linear-gradient(#5a9bff, #1b74e4);
-
-    box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.25) inset,
-        0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-.dw-btn-primary:active:not(:disabled) {
-    transform: translateY(1px);
-
-    background: linear-gradient(#1169d3, #428cef);
-
-    box-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.25) inset;
-}
-
-.dw-btn-primary:disabled {
-    opacity: 0.45;
-    cursor: default;
-}
-
-
-/* Delete */
-
-.dw-btn-danger {
-    background: transparent;
-
-    color: #d1242f;
-
-    border: 1px solid transparent;
-}
-
-.dw-btn-danger:hover {
-    background: #fce8e9;
-}
-
-.dw-btn-left {
-    margin-right: auto;
-}
-
-
-/* ---------------------------------------------------------
-   No categories / hints
-   --------------------------------------------------------- */
-
-.dw-field-hint {
-    color: #999;
-
-    font-size: 0.75rem;
-    font-style: italic;
-}
-
-
-/* ---------------------------------------------------------
-   Delete confirmation
-   --------------------------------------------------------- */
-
-.dw-confirm {
-    display: flex;
-    flex-direction: column;
-
-    gap: 2vh;
-
-    padding: 1vh 0;
-}
-
-.dw-confirm-text {
-    margin: 0;
-
-    font-size: 0.8rem;
-    color: #1d1d1f;
-}
-
-.dw-overlay {
-    position: fixed;
-    inset: 0;
-
-    background: rgba(0, 0, 0, 0.55);
-
-    backdrop-filter: blur(6px);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    z-index: 9999;
-}
-
-.dw-window {
-    background: rgba(242, 241, 243, 1);
-
-    color: #1d1d1f;
-
-    width: 40vw;
-
-    border-radius: 12px;
-
-    box-shadow:
-        0 30px 90px rgba(0, 0, 0, 0.45);
-
-    overflow: hidden;
-
-    animation: newProjectIn 0.25s ease-out;
-}
-
-.dw-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    height: 5vh;
-
-    background: linear-gradient(#edebee, #e0dee1);
-
-    border-bottom: 1px solid #d5d3d6;
-
-    font-size: 0.9rem;
-}
-
-.dw-header h4 {
-    margin: 0;
-}
-
-.dw-content {
-    padding: 1.5vh 2vw;
-}
-
-/* ---------------- Transaction modal ---------------- */
-
-.new-project-window .form-row input,
-.new-project-window .form-row select {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.new-project-window .dw-type-toggle {
-    display: flex;
-    align-items: center;
-    gap: 0.5vw;
-}
-
-.new-project-window .dw-type-btn {
-    padding: 0.6vh 0.8vw;
-    border-radius: 6px;
-    border: 1px solid #d5d3d6;
-    background: linear-gradient(#faf8fb, #e0dfe3);
-    color: #1d1d1f;
-    font: inherit;
-    cursor: pointer;
-}
-
-.new-project-window .dw-type-btn:hover {
-    background: linear-gradient(#ffffff, #e6e5e9);
-}
-
-.new-project-window .dw-type-btn-active {
-    background: linear-gradient(#428cef, #1169d3);
-    border-color: #1164c9;
-    color: white;
-}
-
-.new-project-window .dw-type-btn-active:hover {
-    background: linear-gradient(#5a9bff, #1b74e4);
-}
-
-.new-project-window .dw-amount-wrap {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    border: 1px solid #d5d3d6;
-    border-radius: 6px;
-    background: #fff;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-
-.new-project-window .dw-currency {
-    padding: 0.7vh 0.7vw;
-    color: #555;
-    background: #f2f1f3;
-    border-right: 1px solid #d5d3d6;
-}
-
-.new-project-window .dw-amount-input {
-    flex: 1;
-    width: 100%;
-    padding: 0.7vh 0.7vw;
-    border: none !important;
-    outline: none;
-    background: transparent;
-}
-
-.new-project-window .dw-field-hint {
-    color: #888;
-    font-size: 0.75rem;
-}
-
-.new-project-window .dw-confirm-text {
-    margin: 0;
-    color: #1d1d1f;
-}
-
-.new-project-window .transaction-delete-btn {
-    color: #d1242f;
-}
-
-.new-project-window .transaction-delete-btn:hover {
-    background: #fce8e9;
-    border-color: #e8b9bd;
+  font-size: 0.8rem;
+  color: #1d1d1f;
 }
