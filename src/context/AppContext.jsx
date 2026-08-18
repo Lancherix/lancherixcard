@@ -194,16 +194,32 @@ export function AppProvider({ children }) {
   // remount when AuthCallback navigates to "/".
   const refreshState = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
-    try {
-      const [data, profile] = await Promise.all([
-        requestJson(`/state?today=${getLocalDateString()}`),
-        requestJson("/me"),
-      ]);
 
-      dispatch({ type: "HYDRATE", payload: data });
-      dispatch({ type: "SET_PROFILE", payload: profile });
+    try {
+      const data = await requestJson(
+        `/state?today=${getLocalDateString()}`
+      );
+
+      dispatch({
+        type: "HYDRATE",
+        payload: data,
+      });
+
+      try {
+        const profile = await requestJson("/me");
+
+        dispatch({
+          type: "SET_PROFILE",
+          payload: profile,
+        });
+      } catch (profileError) {
+        console.error("Failed to load user profile:", profileError);
+      }
     } catch (error) {
-      dispatch({ type: "SET_ERROR", payload: error.message });
+      dispatch({
+        type: "SET_ERROR",
+        payload: error.message,
+      });
     }
   };
 
