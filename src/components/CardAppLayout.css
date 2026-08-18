@@ -147,8 +147,8 @@ body,
 }
 
 .cal-menu-btn:last-child svg {
-  width: 21px;
-  height: 21px;
+  width: 23px;
+  height: 23px;
 }
 
 .cal-menu-btn:hover:not(:disabled) {
