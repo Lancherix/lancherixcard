@@ -301,7 +301,8 @@ function RecurringRow({ item, onClick, categories, formatMoney }) {
       <span className="mt-rec-info">
         <span className="mt-rec-name">{item.name}</span>
         <span className="mt-rec-sub">
-          {tCategory(item.categoryKey)} · {t(`frequencies.${item.frequency}`)} · {t("moneyTab.nextLabel")} {item.nextDate}
+          {tCategory(item.categoryKey)} · {t(`frequencies.${item.frequency}`)}
+          {t("moneyTab.nextLabel")} {item.nextDate}
         </span>
       </span>
       <span className={"mt-rec-amount" + (isIncome ? " mt-amount-income" : "")}>

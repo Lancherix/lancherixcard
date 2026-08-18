@@ -138,7 +138,7 @@ export const translations = {
       editTransaction: "Edit Transaction",
       addRecurring: "Add Recurring",
       editRecurring: "Edit Recurring",
-      nextLabel: "next",
+      nextLabel: "Next",
     },
     reportsTab: {
       incomeVsExpenses: "Income vs Expenses",
@@ -298,7 +298,7 @@ export const translations = {
       editTransaction: "Modifier la transaction",
       addRecurring: "Ajouter un élément récurrent",
       editRecurring: "Modifier l'élément récurrent",
-      nextLabel: "prochain",
+      nextLabel: "Prochain",
     },
     reportsTab: {
       incomeVsExpenses: "Revenus vs Dépenses",
@@ -458,7 +458,7 @@ export const translations = {
       editTransaction: "Editar transacción",
       addRecurring: "Agregar recurrente",
       editRecurring: "Editar recurrente",
-      nextLabel: "próximo",
+      nextLabel: "Próximo",
     },
     reportsTab: {
       incomeVsExpenses: "Ingresos vs Gastos",
