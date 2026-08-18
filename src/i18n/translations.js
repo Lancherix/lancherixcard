@@ -35,6 +35,7 @@ export const translations = {
       goal: "Goal",
       withdrawal: "Withdrawal",
       type: "Type",
+      newTransaction: "New Transaction",
     },
     icons: {
       home: "Home",
@@ -209,6 +210,7 @@ export const translations = {
       goal: "Objectif",
       withdrawal: "Retrait",
       type: "Type",
+      newTransaction: "Nouvelle transaction",
     },
     icons: {
       home: "Accueil",
@@ -383,6 +385,7 @@ export const translations = {
       goal: "Meta",
       withdrawal: "Retiro",
       type: "Tipo",
+      newTransaction: "Nueva transacción",
     },
     icons: {
       home: "Inicio",
