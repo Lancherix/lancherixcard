@@ -343,14 +343,14 @@ export function MoneyTransactionsColumn() {
       <div className="dw-col-header">
         <h3 className="dw-heading">{t("moneyTab.transactions")}</h3>
         <button
-          className="dw-add-btn dw-add-btn-tx"
+          className="dw-add-btn"
           onClick={() => setModalState({ mode: "add" })}
         >
           + {t("common.add")}
         </button>
       </div>
 
-      <div className="dw-tx-list">
+      <div className="dw-txl-list">
         {sorted.length > 0 ? (
           sorted.map((tx) => (
             <TxRow
@@ -408,7 +408,7 @@ export function MoneyRecurringColumn() {
     <div className="leaf-fill dw-tx-panel">
       <div className="dw-col-header">
         <h3 className="dw-heading">{t("moneyTab.recurring")}</h3>
-        <button className="dw-add-btn dw-add-btn-tx" onClick={() => setModalState({ mode: "add" })}>+ {t("common.add")}</button>
+        <button className="dw-add-btn" onClick={() => setModalState({ mode: "add" })}>+ {t("common.add")}</button>
       </div>
       <div className="dw-txl-list">
         {sorted.length > 0 ? (
