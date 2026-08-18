@@ -1,5 +1,5 @@
 .settings-panel {
-  gap: 14px;
+  gap: 1vh;
 }
 
 /* ---- Personal info ---- */
@@ -57,12 +57,11 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  flex: 1;
   min-height: 0;
   overflow: auto;
   background-color: var(--cal-bg);
   border-radius: var(--cal-radius);
-  padding: 1.5vh;
+  padding: 1.5vh 1.5vh 2vh 1.5vh;
 }
 
 .settings-readonly-row {

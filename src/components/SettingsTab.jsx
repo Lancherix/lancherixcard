@@ -111,7 +111,7 @@ export function CurrencyColumn() {
     <div className="leaf-fill settings-panel">
       <div className="dw-col-header">
         <h3 className="dw-heading">{t("settings.currency")}</h3>
-        <button className="dw-add-btn" onClick={() => setModalOpen(true)}>{t("settings.changeCurrency")}</button>
+        <button className="dw-add-btn dw-add-btn-neutral" onClick={() => setModalOpen(true)}>{t("common.modify")}</button>
       </div>
 
       <div className="settings-currency-current">
@@ -121,7 +121,7 @@ export function CurrencyColumn() {
           <span className="settings-currency-code">{currency?.code ?? currency}</span>
         </div>
       </div>
-      
+
       {modalOpen && (
         <ModalShell title={t("settings.changeCurrency")} onClose={() => setModalOpen(false)}>
           <ChangeCurrencyModal onClose={() => setModalOpen(false)} />
