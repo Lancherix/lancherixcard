@@ -104,7 +104,7 @@ function Home() {
     {
       key: "reports",
       label: t("nav.reports"),
-      icon: t("icons.reports"),
+      icon: t("dashboard.report"),
       panel: {
         type: "split",
         direction: "column",
