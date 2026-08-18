@@ -10,7 +10,6 @@ import "./App.css";
 import { AppProvider, useAppData } from "./context/AppContext";
 import { I18nProvider, useTranslation } from "./context/I18nContext";
 import { TransactionsList, ReportWidget, GoalsWidget, Empty } from "./components/DashboardWidgets";
-import AddTransactionModal from "./components/AddTransactionModal";
 import { MoneyTransactionsColumn, MoneyRecurringColumn } from "./components/MoneyTab";
 import { BudgetOverviewColumn, BudgetCategoriesColumn } from "./components/BudgetTab";
 import HistoryTab from "./components/HistoryTab";
@@ -18,6 +17,7 @@ import { ReportsTrendColumn, ReportsBreakdownColumn } from "./components/Reports
 import SavingsGoalsTab from "./components/SavingsGoalsTab";
 import CurrencyOnboarding from "./components/CurrencyOnboarding";
 import ChangeCurrencyModal from "./components/ChangeCurrencyModal";
+import { PersonalInfoColumn, LanguageColumn, CurrencyColumn } from "./components/SettingsTab";
 
 function Redirecting() {
   useEffect(() => {
@@ -62,7 +62,7 @@ function Home() {
             direction: "column",
             children: [
               { type: "leaf", content: <ReportWidget /> },
-              { type: "leaf", content: <BudgetOverviewColumn />  },
+              { type: "leaf", content: <BudgetOverviewColumn /> },
               { type: "leaf", content: <GoalsWidget /> },
             ],
           },
@@ -121,7 +121,7 @@ function Home() {
             type: "split",
             direction: "column",
             children: [
-              { type: "leaf", content: <ReportsTrendColumn />},
+              { type: "leaf", content: <ReportsTrendColumn /> },
               { type: "empty", content: <Empty /> },
             ],
           },
@@ -145,17 +145,17 @@ function Home() {
       },
     },
     {
-      key: "new",
-      label: t("nav.newTransaction"),
-      icon: "+",
-      modal: {
-        title: t("moneyTab.addTransaction"),
-        content: ({ onClose }) => (
-          <AddTransactionModal
-            onClose={onClose}
-            onSave={(tx) => addTransaction(tx)}
-          />
-        ),
+      key: "settings",
+      label: t("nav.settings"),
+      icon: t("icons.settings"),
+      panel: {
+        type: "split",
+        direction: "row",
+        children: [
+          { type: "leaf", content: <PersonalInfoColumn /> },
+          { type: "leaf", content: <LanguageColumn /> },
+          { type: "leaf", content: <CurrencyColumn /> },
+        ],
       },
     },
   ];
