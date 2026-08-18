@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useAppData } from "../context/AppContext";
 import { getLocalDateString } from "../context/AppContext";
 import { useTranslation } from "../context/I18nContext";
@@ -12,17 +13,17 @@ const frequencyKeys = ["Weekly", "Biweekly", "Monthly", "Yearly"];
 function TypeToggle({ type, onChange }) {
   const { t } = useTranslation();
   return (
-    <div className="mt-type-toggle" role="tablist" aria-label="Type">
+    <div className="dw-type-toggle" role="tablist" aria-label="Type">
       <button
         type="button" role="tab" aria-selected={type === "expense"}
-        className={"mt-type-btn" + (type === "expense" ? " mt-type-btn-active mt-type-expense" : "")}
+        className={"dw-type-btn" + (type === "expense" ? " dw-type-btn-active dw-type-expense" : "")}
         onClick={() => onChange("expense")}
       >
         {t("common.spent")}
       </button>
       <button
         type="button" role="tab" aria-selected={type === "income"}
-        className={"mt-type-btn" + (type === "income" ? " mt-type-btn-active mt-type-income" : "")}
+        className={"dw-type-btn" + (type === "income" ? " dw-type-btn-active dw-type-income" : "")}
         onClick={() => onChange("income")}
       >
         {t("common.acquired")}
@@ -35,13 +36,13 @@ function TypeToggle({ type, onChange }) {
 
 function NoCategoriesHint() {
   return (
-    <span style={{ fontSize: 12, color: "var(--cal-muted)", fontStyle: "italic" }}>
+    <span className="dw-field-hint">
       Add a category in the Budget tab first
     </span>
   );
 }
 
-/* ---------------- Transaction form: dispatches through context ---------------- */
+/* ---------------- Transaction form: self-contained, same markup as GoalForm/TransactionForm ---------------- */
 
 function TransactionForm({ onClose, initialValues }) {
   const { addTransaction, updateTransaction, deleteTransaction, categories, currencySymbol } = useAppData();
@@ -50,9 +51,6 @@ function TransactionForm({ onClose, initialValues }) {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   const [type, setType] = useState(initialValues?.type ?? "expense");
-  // Mirrors the dashboard's TransactionForm: an optional display name that
-  // falls back to the category label, so mt-tx-name is never blank
-  // regardless of which form created the transaction.
   const [name, setName] = useState(initialValues?.name ?? "");
   const [amount, setAmount] = useState(initialValues ? String(initialValues.amount) : "");
   const [categoryKey, setCategoryKey] = useState(initialValues?.categoryKey ?? categories[0]?.key ?? "other");
@@ -79,81 +77,133 @@ function TransactionForm({ onClose, initialValues }) {
     onClose();
   };
 
+  const handleDelete = () => {
+    if (!initialValues?.id) return;
+    deleteTransaction(initialValues.id);
+    onClose();
+  };
+
   if (confirmingDelete) {
-    return (
-      <div className="mt-confirm">
-        <p className="mt-confirm-text">{t("moneyTab.deleteTransactionConfirm")}</p>
-        <div className="mt-form-actions">
-          <button type="button" className="mt-btn mt-btn-secondary" onClick={() => setConfirmingDelete(false)}>{t("common.cancel")}</button>
-          <button
-            type="button"
-            className="mt-btn mt-btn-danger"
-            onClick={() => {
-              deleteTransaction(initialValues.id);
-              onClose();
-            }}
-          >
-            {t("common.delete")}
-          </button>
+    return createPortal(
+      <div className="new-project-overlay">
+        <div className="new-project-window" onClick={(e) => e.stopPropagation()}>
+          <div className="new-project-header">
+            <h4>{t("common.delete")}</h4>
+          </div>
+
+          <div className="new-project-content">
+            <div className="form-row">
+              <p className="dw-confirm-text">
+                {t("moneyTab.deleteTransactionConfirm")}
+              </p>
+            </div>
+          </div>
+
+          <div className="new-project-footer">
+            <button type="button" className="secondary-btn" onClick={() => setConfirmingDelete(false)}>
+              {t("common.cancel")}
+            </button>
+            <button type="button" className="secondary-btn transaction-delete-btn" onClick={handleDelete}>
+              {t("common.delete")}
+            </button>
+          </div>
         </div>
-      </div>
+      </div>,
+      document.getElementById("modal-root")
     );
   }
 
-  return (
-    <form className="mt-form" onSubmit={handleSubmit}>
-      <TypeToggle type={type} onChange={setType} />
-      <label className="mt-field">
-        <span className="mt-label">{t("common.name")}</span>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder={t("moneyTab.namePlaceholder")}
-          className="mt-input"
-          autoFocus
-        />
-      </label>
-      <label className="mt-field">
-        <span className="mt-label">{t("common.amount")}</span>
-        <div className="mt-amount-wrap">
-          <span className="mt-currency">{currencySymbol}</span>
-          <input type="number" inputMode="decimal" step="0.01" min="0" placeholder="0.00"
-            value={amount} onChange={(e) => setAmount(e.target.value)} className="mt-amount-input" />
+  return createPortal(
+    <div className="new-project-overlay">
+      <div className="new-project-window" onClick={(e) => e.stopPropagation()}>
+        <div className="new-project-header">
+          <h4>{isEditing ? t("moneyTab.editTransaction") : t("moneyTab.addTransaction")}</h4>
         </div>
-      </label>
-      <label className="mt-field">
-        <span className="mt-label">{t("common.category")}</span>
-        {categories.length > 0 ? (
-          <select value={categoryKey} onChange={(e) => setCategoryKey(e.target.value)} className="mt-select">
-            {categories.map((c) => <option key={c.id} value={c.key}>{tCategory(c.key)}</option>)}
-          </select>
-        ) : (
-          <NoCategoriesHint />
-        )}
-      </label>
-      <label className="mt-field">
-        <span className="mt-label">{t("common.date")}</span>
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="mt-input" />
-      </label>
-      <label className="mt-field">
-        <span className="mt-label">{t("common.note")}</span>
-        <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder={t("common.optional")} className="mt-textarea" rows={2} />
-      </label>
-      <div className="mt-form-actions">
-        {isEditing && (
-          <button type="button" className="mt-btn mt-btn-danger mt-btn-left" onClick={() => setConfirmingDelete(true)}>{t("common.delete")}</button>
-        )}
-        <button type="button" className="mt-btn mt-btn-secondary" onClick={onClose}>{t("common.cancel")}</button>
-        <button type="submit" className="mt-btn mt-btn-primary" disabled={!isValid}>
-          {isEditing ? t("common.saveChanges") : t("common.save")}
-        </button>
+
+        <div className="new-project-content">
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.type")}</label>
+            <TypeToggle type={type} onChange={setType} />
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.name")}</label>
+            <input
+              type="text"
+              placeholder={t("moneyTab.namePlaceholder")}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              autoFocus
+            />
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.amount")}</label>
+            <div className="dw-amount-wrap">
+              <span className="dw-currency">{currencySymbol}</span>
+              <input
+                type="number"
+                inputMode="decimal"
+                step="0.01"
+                min="0"
+                placeholder="0.00"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="dw-amount-input"
+              />
+            </div>
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.category")}</label>
+            {categories.length > 0 ? (
+              <select value={categoryKey} onChange={(e) => setCategoryKey(e.target.value)}>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.key}>{tCategory(c.key)}</option>
+                ))}
+              </select>
+            ) : (
+              <NoCategoriesHint />
+            )}
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.date")}</label>
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.note")}</label>
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder={t("common.optional")}
+              className="dw-textarea"
+              rows={2}
+            />
+          </div>
+        </div>
+
+        <div className="new-project-footer">
+          {isEditing && (
+            <button type="button" className="secondary-btn transaction-delete-btn dw-btn-left" onClick={() => setConfirmingDelete(true)}>
+              {t("common.delete")}
+            </button>
+          )}
+          <button type="button" className="secondary-btn" onClick={onClose}>
+            {t("common.cancel")}
+          </button>
+          <button type="button" className="primary-btn" disabled={!isValid} onClick={handleSubmit}>
+            {isEditing ? t("common.saveChanges") : t("common.save")}
+          </button>
+        </div>
       </div>
-    </form>
+    </div>,
+    document.getElementById("modal-root")
   );
 }
 
-/* ---------------- Recurring form: dispatches through context ---------------- */
+/* ---------------- Recurring form: self-contained, same markup pattern ---------------- */
 
 function RecurringForm({ onClose, initialValues }) {
   const { addRecurring, updateRecurring, deleteRecurring, categories, currencySymbol } = useAppData();
@@ -180,72 +230,127 @@ function RecurringForm({ onClose, initialValues }) {
     onClose();
   };
 
+  const handleDelete = () => {
+    if (!initialValues?.id) return;
+    deleteRecurring(initialValues.id);
+    onClose();
+  };
+
   if (confirmingDelete) {
-    return (
-      <div className="mt-confirm">
-        <p className="mt-confirm-text">{t("moneyTab.deleteRecurringConfirm")}</p>
-        <div className="mt-form-actions">
-          <button type="button" className="mt-btn mt-btn-secondary" onClick={() => setConfirmingDelete(false)}>{t("common.cancel")}</button>
-          <button
-            type="button"
-            className="mt-btn mt-btn-danger"
-            onClick={() => {
-              deleteRecurring(initialValues.id);
-              onClose();
-            }}
-          >
-            {t("common.remove")}
-          </button>
+    return createPortal(
+      <div className="new-project-overlay">
+        <div className="new-project-window" onClick={(e) => e.stopPropagation()}>
+          <div className="new-project-header">
+            <h4>{t("common.remove")}</h4>
+          </div>
+
+          <div className="new-project-content">
+            <div className="form-row">
+              <p className="dw-confirm-text">
+                {t("moneyTab.deleteRecurringConfirm")}
+              </p>
+            </div>
+          </div>
+
+          <div className="new-project-footer">
+            <button type="button" className="secondary-btn" onClick={() => setConfirmingDelete(false)}>
+              {t("common.cancel")}
+            </button>
+            <button type="button" className="secondary-btn transaction-delete-btn" onClick={handleDelete}>
+              {t("common.remove")}
+            </button>
+          </div>
         </div>
-      </div>
+      </div>,
+      document.getElementById("modal-root")
     );
   }
 
-  return (
-    <form className="mt-form" onSubmit={handleSubmit}>
-      <TypeToggle type={type} onChange={setType} />
-      <label className="mt-field">
-        <span className="mt-label">{t("common.name")}</span>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder={t("moneyTab.namePlaceholder")} className="mt-input" autoFocus />
-      </label>
-      <label className="mt-field">
-        <span className="mt-label">{t("common.amount")}</span>
-        <div className="mt-amount-wrap">
-          <span className="mt-currency">{currencySymbol}</span>
-          <input type="number" inputMode="decimal" step="0.01" min="0" placeholder="0.00"
-            value={amount} onChange={(e) => setAmount(e.target.value)} className="mt-amount-input" />
+  return createPortal(
+    <div className="new-project-overlay">
+      <div className="new-project-window" onClick={(e) => e.stopPropagation()}>
+        <div className="new-project-header">
+          <h4>{isEditing ? t("moneyTab.editRecurring") : t("moneyTab.addRecurring")}</h4>
         </div>
-      </label>
-      <label className="mt-field">
-        <span className="mt-label">{t("common.category")}</span>
-        {categories.length > 0 ? (
-          <select value={categoryKey} onChange={(e) => setCategoryKey(e.target.value)} className="mt-select">
-            {categories.map((c) => <option key={c.id} value={c.key}>{tCategory(c.key)}</option>)}
-          </select>
-        ) : (
-          <NoCategoriesHint />
-        )}
-      </label>
-      <label className="mt-field">
-        <span className="mt-label">{t("common.frequency")}</span>
-        <select value={frequency} onChange={(e) => setFrequency(e.target.value)} className="mt-select">
-          {frequencyKeys.map((f) => <option key={f} value={f}>{t(`frequencies.${f}`)}</option>)}
-        </select>
-      </label>
-      <label className="mt-field">
-        <span className="mt-label">{t("common.nextDate")}</span>
-        <input type="date" value={nextDate} onChange={(e) => setNextDate(e.target.value)} className="mt-input" />
-      </label>
-      <div className="mt-form-actions">
-        {isEditing && (
-          <button type="button" className="mt-btn mt-btn-danger mt-btn-left" onClick={() => setConfirmingDelete(true)}>{t("common.remove")}</button>
-        )}
-        <button type="button" className="mt-btn mt-btn-secondary" onClick={onClose}>{t("common.cancel")}</button>
-        <button type="submit" className="mt-btn mt-btn-primary" disabled={!isValid}>
-          {isEditing ? t("common.saveChanges") : t("common.add")}
-        </button>
+
+        <div className="new-project-content">
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.type")}</label>
+            <TypeToggle type={type} onChange={setType} />
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.name")}</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder={t("moneyTab.namePlaceholder")}
+              autoFocus
+            />
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.amount")}</label>
+            <div className="dw-amount-wrap">
+              <span className="dw-currency">{currencySymbol}</span>
+              <input
+                type="number"
+                inputMode="decimal"
+                step="0.01"
+                min="0"
+                placeholder="0.00"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="dw-amount-input"
+              />
+            </div>
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.category")}</label>
+            {categories.length > 0 ? (
+              <select value={categoryKey} onChange={(e) => setCategoryKey(e.target.value)}>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.key}>{tCategory(c.key)}</option>
+                ))}
+              </select>
+            ) : (
+              <NoCategoriesHint />
+            )}
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.frequency")}</label>
+            <select value={frequency} onChange={(e) => setFrequency(e.target.value)}>
+              {frequencyKeys.map((f) => (
+                <option key={f} value={f}>{t(`frequencies.${f}`)}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.nextDate")}</label>
+            <input type="date" value={nextDate} onChange={(e) => setNextDate(e.target.value)} />
+          </div>
+        </div>
+
+        <div className="new-project-footer">
+          {isEditing && (
+            <button type="button" className="secondary-btn transaction-delete-btn dw-btn-left" onClick={() => setConfirmingDelete(true)}>
+              {t("common.remove")}
+            </button>
+          )}
+          <button type="button" className="secondary-btn" onClick={onClose}>
+            {t("common.cancel")}
+          </button>
+          <button type="button" className="primary-btn" disabled={!isValid} onClick={handleSubmit}>
+            {isEditing ? t("common.saveChanges") : t("common.add")}
+          </button>
+        </div>
       </div>
-    </form>
+    </div>,
+    document.getElementById("modal-root")
   );
 }
 
@@ -258,34 +363,15 @@ function TxRow({ tx, onClick, categories, formatMoney }) {
 
   return (
     <button className="dw-tx-row" onClick={() => onClick(tx)}>
-      <span
-        className="dw-tx-icon"
-        style={{
-          background: (category?.color ?? "#6e6e73") + "22",
-        }}
-      >
-        <Icon
-          name={category?.icon ?? "other"}
-          size={16}
-          color={category?.color}
-        />
+      <span className="dw-tx-icon" style={{ background: (category?.color ?? "#6e6e73") + "22" }}>
+        <Icon name={category?.icon ?? "other"} size={16} color={category?.color} />
       </span>
-
       <span className="dw-tx-info">
         <span className="dw-tx-name">{tx.name}</span>
-        <span className="dw-tx-sub">
-          {tCategory(tx.categoryKey)} · {tx.date}
-        </span>
+        <span className="dw-tx-sub">{tCategory(tx.categoryKey)} · {tx.date}</span>
       </span>
-
-      <span
-        className={
-          "dw-tx-amount" +
-          (isIncome ? " dw-amount-income" : " dw-amount-expense")
-        }
-      >
-        {isIncome ? "+" : "-"}
-        {formatMoney(tx.amount)}
+      <span className={"dw-tx-amount" + (isIncome ? " dw-amount-income" : " dw-amount-expense")}>
+        {isIncome ? "+" : "-"}{formatMoney(tx.amount)}
       </span>
     </button>
   );
@@ -298,55 +384,21 @@ function RecurringRow({ item, onClick, categories, formatMoney }) {
 
   return (
     <button className="mt-rec-row" onClick={() => onClick(item)}>
-      <span
-        className="dw-tx-icon"
-        style={{
-          background: (category?.color ?? "#6e6e73") + "22",
-        }}
-      >
-        <Icon
-          name={category?.icon ?? "other"}
-          size={16}
-          color={category?.color}
-        />
+      <span className="dw-tx-icon" style={{ background: (category?.color ?? "#6e6e73") + "22" }}>
+        <Icon name={category?.icon ?? "other"} size={16} color={category?.color} />
       </span>
-
       <span className="mt-rec-info">
         <span className="mt-rec-name">{item.name}</span>
-
         <span className="mt-rec-sub">
-          {tCategory(item.categoryKey)} ·{" "}
-          {t(`frequencies.${item.frequency}`)}
+          {tCategory(item.categoryKey)} · {t(`frequencies.${item.frequency}`)}
           <br />
           {t("moneyTab.nextLabel")}: {item.nextDate}
         </span>
       </span>
-
-      <span
-        className={
-          "mt-rec-amount" + (isIncome ? " mt-amount-income" : "")
-        }
-      >
-        {isIncome ? "+" : "-"}
-        {formatMoney(item.amount)}
+      <span className={"mt-rec-amount" + (isIncome ? " mt-amount-income" : "")}>
+        {isIncome ? "+" : "-"}{formatMoney(item.amount)}
       </span>
     </button>
-  );
-}
-
-/* ---------------- shared modal shell ---------------- */
-
-function ModalShell({ title, onClose, children }) {
-  return (
-    <div className="cal-modal-backdrop" onClick={onClose}>
-      <div className="cal-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
-        <div className="cal-modal-header">
-          <span className="cal-modal-title">{title}</span>
-          <button className="cal-modal-close" onClick={onClose} aria-label="Close">✕</button>
-        </div>
-        <div className="cal-modal-body">{children}</div>
-      </div>
-    </div>
   );
 }
 
@@ -365,10 +417,7 @@ export function MoneyTransactionsColumn() {
     <div className="leaf-fill dw-tx-panel">
       <div className="dw-col-header">
         <h3 className="dw-heading">{t("moneyTab.transactions")}</h3>
-        <button
-          className="dw-add-btn"
-          onClick={() => setModalState({ mode: "add" })}
-        >
+        <button className="dw-add-btn" onClick={() => setModalState({ mode: "add" })}>
           + {t("common.add")}
         </button>
       </div>
@@ -381,36 +430,19 @@ export function MoneyTransactionsColumn() {
               tx={tx}
               categories={categories}
               formatMoney={formatMoney}
-              onClick={(item) =>
-                setModalState({ mode: "edit", item })
-              }
+              onClick={(item) => setModalState({ mode: "edit", item })}
             />
           ))
         ) : (
-          <span className="cal-actions-placeholder">
-            {t("moneyTab.noTransactionsYet")}
-          </span>
+          <span className="cal-actions-placeholder">{t("moneyTab.noTransactionsYet")}</span>
         )}
       </div>
 
       {modalState && (
-        <ModalShell
-          title={
-            modalState.mode === "edit"
-              ? t("moneyTab.editTransaction")
-              : t("moneyTab.addTransaction")
-          }
+        <TransactionForm
           onClose={closeModal}
-        >
-          <TransactionForm
-            onClose={closeModal}
-            initialValues={
-              modalState.mode === "edit"
-                ? modalState.item
-                : null
-            }
-          />
-        </ModalShell>
+          initialValues={modalState.mode === "edit" ? modalState.item : null}
+        />
       )}
     </div>
   );
@@ -436,7 +468,13 @@ export function MoneyRecurringColumn() {
       <div className="dw-txl-list">
         {sorted.length > 0 ? (
           sorted.map((item) => (
-            <RecurringRow key={item.id} item={item} categories={categories} formatMoney={formatMoney} onClick={(i) => setModalState({ mode: "edit", item: i })} />
+            <RecurringRow
+              key={item.id}
+              item={item}
+              categories={categories}
+              formatMoney={formatMoney}
+              onClick={(i) => setModalState({ mode: "edit", item: i })}
+            />
           ))
         ) : (
           <span className="cal-actions-placeholder">{t("moneyTab.noRecurringYet")}</span>
@@ -444,12 +482,10 @@ export function MoneyRecurringColumn() {
       </div>
 
       {modalState && (
-        <ModalShell title={modalState.mode === "edit" ? t("moneyTab.editRecurring") : t("moneyTab.addRecurring")} onClose={closeModal}>
-          <RecurringForm
-            onClose={closeModal}
-            initialValues={modalState.mode === "edit" ? modalState.item : null}
-          />
-        </ModalShell>
+        <RecurringForm
+          onClose={closeModal}
+          initialValues={modalState.mode === "edit" ? modalState.item : null}
+        />
       )}
     </div>
   );
