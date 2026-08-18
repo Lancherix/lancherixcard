@@ -295,19 +295,40 @@ function RecurringRow({ item, onClick, categories, formatMoney }) {
   const { t, tCategory } = useTranslation();
   const isIncome = item.type === "income";
   const category = categories.find((c) => c.key === item.categoryKey);
+
   return (
     <button className="mt-rec-row" onClick={() => onClick(item)}>
-      <span className={"mt-rec-dot" + (isIncome ? " mt-rec-dot-income" : "")} aria-hidden="true" />
+      <span
+        className="dw-tx-icon"
+        style={{
+          background: (category?.color ?? "#6e6e73") + "22",
+        }}
+      >
+        <Icon
+          name={category?.icon ?? "other"}
+          size={16}
+          color={category?.color}
+        />
+      </span>
+
       <span className="mt-rec-info">
         <span className="mt-rec-name">{item.name}</span>
+
         <span className="mt-rec-sub">
-          {tCategory(item.categoryKey)} · {t(`frequencies.${item.frequency}`)}
+          {tCategory(item.categoryKey)} ·{" "}
+          {t(`frequencies.${item.frequency}`)}
           <br />
           {t("moneyTab.nextLabel")}: {item.nextDate}
         </span>
       </span>
-      <span className={"mt-rec-amount" + (isIncome ? " mt-amount-income" : "")}>
-        {isIncome ? "+" : "-"}{formatMoney(item.amount)}
+
+      <span
+        className={
+          "mt-rec-amount" + (isIncome ? " mt-amount-income" : "")
+        }
+      >
+        {isIncome ? "+" : "-"}
+        {formatMoney(item.amount)}
       </span>
     </button>
   );
