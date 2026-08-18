@@ -117,7 +117,14 @@ function Home() {
         type: "split",
         direction: "row",
         children: [
-          { type: "leaf", content: <ReportsTrendColumn /> },
+          {
+            type: "split",
+            direction: "column",
+            children: [
+              { type: "leaf", content: <ReportsTrendColumn />},
+              { type: "empty", content: <Empty /> },
+            ],
+          },
           { type: "leaf", content: <ReportsBreakdownColumn /> },
         ],
       },
