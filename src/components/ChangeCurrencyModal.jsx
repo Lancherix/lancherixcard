@@ -2,12 +2,14 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useAppData } from "../context/AppContext";
 import { CURRENCIES, formatMoney } from "../context/AppContext";
+import { useTranslation } from "../context/I18nContext";
 import "./DashboardWidgets.css";
 
 const CURRENCY_ORDER = ["USD", "COP", "EUR", "GBP", "CAD"];
 
 export default function ChangeCurrencyModal({ onClose }) {
   const { currency, changeCurrency, budget } = useAppData();
+  const { t } = useTranslation();
   const currentCode = currency?.code ?? "USD";
 
   const [targetCode, setTargetCode] = useState(
@@ -21,6 +23,11 @@ export default function ChangeCurrencyModal({ onClose }) {
   const currentCfg = CURRENCIES[currentCode];
   const targetCfg = CURRENCIES[targetCode];
   const previewAmount = isValid ? budget * parsedRate : null;
+
+  // hint sentence has a bolded currency chunk in the middle, so we split
+  // the translated template on the literal "{{currency}}" marker rather
+  // than interpolating a plain string, keeping the <strong> in JSX.
+  const [hintBefore, hintAfter] = t("changeCurrency.hint").split("{{currency}}");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,21 +43,21 @@ export default function ChangeCurrencyModal({ onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="new-project-header">
-          <h4>Change Currency</h4>
+          <h4>{t("changeCurrency.title")}</h4>
         </div>
 
         <div className="new-project-content">
           <div className="form-row">
             <span />
             <p className="dw-goal-contribute-hint">
-              You're currently using <strong>{currentCfg.flag} {currentCfg.code}</strong>. Pick a
-              new currency and the exchange rate to convert your existing amounts — otherwise your
-              numbers would just be relabeled, not converted.
+              {hintBefore}
+              <strong>{currentCfg.flag} {currentCfg.code}</strong>
+              {hintAfter}
             </p>
           </div>
 
           <div className="form-row form-row-a form-row-name">
-            <label>New currency</label>
+            <label>{t("changeCurrency.newCurrency")}</label>
 
             <select
               value={targetCode}
@@ -59,7 +66,7 @@ export default function ChangeCurrencyModal({ onClose }) {
               {CURRENCY_ORDER.map((code) => (
                 <option key={code} value={code} disabled={code === currentCode}>
                   {CURRENCIES[code].flag} {CURRENCIES[code].code} — {CURRENCIES[code].name}
-                  {code === currentCode ? " (current)" : ""}
+                  {code === currentCode ? ` ${t("changeCurrency.current")}` : ""}
                 </option>
               ))}
             </select>
@@ -67,9 +74,9 @@ export default function ChangeCurrencyModal({ onClose }) {
 
           <div className="form-row form-row-a form-row-name">
             <label>
-              Rate 
+              {t("changeCurrency.rate")}
               <br />
-              (1 {currentCfg.code} = {targetCfg.code})
+              {t("changeCurrency.rateFormula", { from: currentCfg.code, to: targetCfg.code })}
             </label>
 
             <input
@@ -88,7 +95,7 @@ export default function ChangeCurrencyModal({ onClose }) {
             <div className="form-row">
               <span />
               <div className="dw-goal-current-readout">
-                <span className="dw-goal-current-label">Your budget would become</span>
+                <span className="dw-goal-current-label">{t("changeCurrency.budgetBecomes")}</span>
                 <span className="dw-goal-current-value">
                   {formatMoney(previewAmount, targetCfg)}
                 </span>
@@ -99,7 +106,7 @@ export default function ChangeCurrencyModal({ onClose }) {
 
         <div className="new-project-footer">
           <button type="button" className="secondary-btn" onClick={onClose}>
-            Cancel
+            {t("common.cancel")}
           </button>
 
           <button
@@ -108,7 +115,7 @@ export default function ChangeCurrencyModal({ onClose }) {
             disabled={!isValid}
             onClick={handleSubmit}
           >
-            Convert & switch
+            {t("changeCurrency.convertAndSwitch")}
           </button>
         </div>
       </div>

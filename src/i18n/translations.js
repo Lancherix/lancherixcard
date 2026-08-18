@@ -90,7 +90,6 @@ export const translations = {
       budget: "Budget",
       remaining: "Remaining",
       noCategoriesYet: "No categories yet",
-      namePlaceholder: "Optional — defaults to category name",
     },
     historyTab: {
       searchPlaceholder: "Search transactions...",
@@ -179,6 +178,21 @@ export const translations = {
       Monthly: "Monthly",
       Yearly: "Yearly",
     },
+    currencyOnboarding: {
+      eyebrow: "Before we start",
+      title: "What currency do you use?",
+      subtitle: "Every amount, chart, and total in your dashboard will be shown this way. You can change it later.",
+    },
+    changeCurrency: {
+      title: "Change Currency",
+      hint: "You're currently using {{currency}}. Pick a new currency and the exchange rate to convert your existing amounts — otherwise your numbers would just be relabeled, not converted.",
+      newCurrency: "New currency",
+      current: "(current)",
+      rate: "Rate",
+      rateFormula: "(1 {{from}} = {{to}})",
+      budgetBecomes: "Your budget would become",
+      convertAndSwitch: "Convert & switch",
+    },
   },
 
   fr: {
@@ -265,7 +279,6 @@ export const translations = {
       budget: "Budget",
       remaining: "Restant",
       noCategoriesYet: "Aucune catégorie pour le moment",
-      namePlaceholder: "Facultatif — utilise le nom de la catégorie par défaut",
     },
     historyTab: {
       searchPlaceholder: "Rechercher des transactions...",
@@ -354,6 +367,21 @@ export const translations = {
       Monthly: "Mensuel",
       Yearly: "Annuel",
     },
+    currencyOnboarding: {
+      eyebrow: "Avant de commencer",
+      title: "Quelle devise utilisez-vous ?",
+      subtitle: "Chaque montant, graphique et total de votre tableau de bord sera affiché ainsi. Vous pourrez la changer plus tard.",
+    },
+    changeCurrency: {
+      title: "Changer de devise",
+      hint: "Vous utilisez actuellement {{currency}}. Choisissez une nouvelle devise et le taux de change pour convertir vos montants existants — sinon vos chiffres seraient simplement renommés, pas convertis.",
+      newCurrency: "Nouvelle devise",
+      current: "(actuelle)",
+      rate: "Taux",
+      rateFormula: "(1 {{from}} = {{to}})",
+      budgetBecomes: "Votre budget deviendrait",
+      convertAndSwitch: "Convertir et changer",
+    },
   },
 
   es: {
@@ -440,7 +468,6 @@ export const translations = {
       budget: "Presupuesto",
       remaining: "Restante",
       noCategoriesYet: "No hay categorías todavía",
-      namePlaceholder: "Opcional — usa el nombre de la categoría por defecto",
     },
     historyTab: {
       searchPlaceholder: "Buscar transacciones...",
@@ -528,6 +555,21 @@ export const translations = {
       Biweekly: "Quincenal",
       Monthly: "Mensual",
       Yearly: "Anual",
+    },
+    currencyOnboarding: {
+      eyebrow: "Antes de empezar",
+      title: "¿Qué moneda usas?",
+      subtitle: "Cada monto, gráfico y total de tu panel se mostrará así. Puedes cambiarla más tarde.",
+    },
+    changeCurrency: {
+      title: "Cambiar moneda",
+      hint: "Actualmente usas {{currency}}. Elige una nueva moneda y la tasa de cambio para convertir tus montos existentes — de lo contrario, tus cifras solo se renombrarían, no se convertirían.",
+      newCurrency: "Nueva moneda",
+      current: "(actual)",
+      rate: "Tasa",
+      rateFormula: "(1 {{from}} = {{to}})",
+      budgetBecomes: "Tu presupuesto sería",
+      convertAndSwitch: "Convertir y cambiar",
     },
   },
 };

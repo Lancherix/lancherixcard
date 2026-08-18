@@ -1,5 +1,6 @@
 import { CURRENCIES, formatMoney } from "../context/AppContext";
 import { useAppData } from "../context/AppContext";
+import { useTranslation } from "../context/I18nContext";
 import "./CurrencyOnboarding.css";
 
 // A representative "everyday" price shown per-currency so the number scale
@@ -17,14 +18,15 @@ const CURRENCY_ORDER = ["USD", "COP", "EUR", "GBP", "CAD"];
 
 export default function CurrencyOnboarding() {
   const { setCurrency } = useAppData();
+  const { t } = useTranslation();
 
   return (
     <div className="cur-onboard">
       <div className="cur-onboard-card">
-        <span className="cur-onboard-eyebrow">Before we start</span>
-        <h1 className="cur-onboard-title">What currency do you use?</h1>
+        <span className="cur-onboard-eyebrow">{t("currencyOnboarding.eyebrow")}</span>
+        <h1 className="cur-onboard-title">{t("currencyOnboarding.title")}</h1>
         <p className="cur-onboard-subtitle">
-          Every amount, chart, and total in your dashboard will be shown this way. You can change it later.
+          {t("currencyOnboarding.subtitle")}
         </p>
 
         <div className="cur-onboard-grid">
