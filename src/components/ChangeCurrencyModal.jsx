@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useAppData } from "../context/AppContext";
 import { CURRENCIES, formatMoney } from "../context/AppContext";
 import "./DashboardWidgets.css";
@@ -28,62 +29,88 @@ export default function ChangeCurrencyModal({ onClose }) {
     onClose();
   };
 
-  return (
-    <form className="dw-form" onSubmit={handleSubmit}>
-      <p className="dw-goal-contribute-hint">
-        You're currently using <strong>{currentCfg.flag} {currentCfg.code}</strong>. Pick a new
-        currency and the exchange rate to convert your existing amounts — otherwise your numbers
-        would just be relabeled, not converted.
-      </p>
-
-      <label className="dw-field">
-        <span className="dw-label">New currency</span>
-        <select
-          value={targetCode}
-          onChange={(e) => setTargetCode(e.target.value)}
-          className="dw-select"
-        >
-          {CURRENCY_ORDER.map((code) => (
-            <option key={code} value={code} disabled={code === currentCode}>
-              {CURRENCIES[code].flag} {CURRENCIES[code].code} — {CURRENCIES[code].name}
-              {code === currentCode ? " (current)" : ""}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <label className="dw-field">
-        <span className="dw-label">
-          Exchange rate (1 {currentCfg.code} = ? {targetCfg.code})
-        </span>
-        <input
-          type="number"
-          inputMode="decimal"
-          step="any"
-          min="0"
-          placeholder="e.g. 0.00028 or 3900"
-          value={rate}
-          onChange={(e) => setRate(e.target.value)}
-          className="dw-input"
-          autoFocus
-        />
-      </label>
-
-      {isValid && (
-        <div className="dw-goal-current-readout">
-          <span className="dw-goal-current-label">Your budget would become</span>
-          <span className="dw-goal-current-value">{formatMoney(previewAmount, targetCfg)}</span>
+  return createPortal(
+    <div className="new-project-overlay">
+      <div
+        className="new-project-window"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="new-project-header">
+          <h4>Change Currency</h4>
         </div>
-      )}
 
-      <div className="dw-form-actions">
-        <button type="button" className="dw-btn dw-btn-secondary" onClick={onClose}>
-          Cancel
-        </button>
-        <button type="submit" className="dw-btn dw-btn-primary" disabled={!isValid}>
-          Convert & switch
-        </button>
+        <div className="new-project-content">
+          <div className="form-row">
+            <span />
+            <p className="dw-goal-contribute-hint">
+              You're currently using <strong>{currentCfg.flag} {currentCfg.code}</strong>. Pick a
+              new currency and the exchange rate to convert your existing amounts — otherwise your
+              numbers would just be relabeled, not converted.
+            </p>
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>New currency</label>
+
+            <select
+              value={targetCode}
+              onChange={(e) => setTargetCode(e.target.value)}
+            >
+              {CURRENCY_ORDER.map((code) => (
+                <option key={code} value={code} disabled={code === currentCode}>
+                  {CURRENCIES[code].flag} {CURRENCIES[code].code} — {CURRENCIES[code].name}
+                  {code === currentCode ? " (current)" : ""}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>
+              Rate (1 {currentCfg.code} = ? {targetCfg.code})
+            </label>
+
+            <input
+              type="number"
+              inputMode="decimal"
+              step="any"
+              min="0"
+              placeholder="e.g. 0.00028 or 3900"
+              value={rate}
+              onChange={(e) => setRate(e.target.value)}
+              autoFocus
+            />
+          </div>
+
+          {isValid && (
+            <div className="form-row">
+              <span />
+              <div className="dw-goal-current-readout">
+                <span className="dw-goal-current-label">Your budget would become</span>
+                <span className="dw-goal-current-value">
+                  {formatMoney(previewAmount, targetCfg)}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="new-project-footer">
+          <button type="button" className="secondary-btn" onClick={onClose}>
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            className="primary-btn"
+            disabled={!isValid}
+            onClick={handleSubmit}
+          >
+            Convert & switch
+          </button>
+        </div>
       </div>
-    </form>
+    </div>,
+    document.getElementById("modal-root")
   );
 }
