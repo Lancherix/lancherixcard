@@ -205,240 +205,119 @@ function TransactionForm({ onClose, initialValues }) {
      ========================================================= */
 
   return createPortal(
-
-    <div className="dw-overlay">
-
+    <div className="new-project-overlay">
       <div
-        className="dw-window"
+        className="new-project-window"
         onClick={(e) => e.stopPropagation()}
       >
-
-        {/* -------------------------------------------------
-           Header
-           ------------------------------------------------- */}
-
-        <div className="dw-header">
-
+        <div className="new-project-header">
           <h4>
             {isEditing
               ? t("common.editTransaction")
               : t("common.newTransaction")}
           </h4>
-
         </div>
 
+        <div className="new-project-content">
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.type")}</label>
+            <TypeToggle
+              type={type}
+              onChange={setType}
+            />
+          </div>
 
-        {/* -------------------------------------------------
-           Content
-           ------------------------------------------------- */}
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.name")}</label>
+            <input
+              type="text"
+              placeholder={t("moneyTab.namePlaceholder")}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
 
-        <div className="dw-content">
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.amount")}</label>
+            <div className="dw-amount-wrap">
+              <span className="dw-currency">{currencySymbol}</span>
+              <input
+                type="number"
+                inputMode="decimal"
+                step="0.01"
+                min="0"
+                placeholder="0.00"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="dw-amount-input"
+                autoFocus
+              />
+            </div>
+          </div>
 
-          <form
-            className="dw-form"
-            onSubmit={handleSubmit}
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.category")}</label>
+            {categories.length > 0 ? (
+              <select
+                value={categoryKey}
+                onChange={(e) => setCategoryKey(e.target.value)}
+              >
+                {categories.map((c) => (
+                  <option key={c.id} value={c.key}>
+                    {tCategory(c.key)}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <span className="dw-field-hint">
+                Add a category in the Budget tab first
+              </span>
+            )}
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.date")}</label>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="new-project-footer">
+          {isEditing && (
+            <button
+              type="button"
+              className="secondary-btn"
+              style={{ color: "#d1242f" }}
+              onClick={() => setConfirmingDelete(true)}
+            >
+              {t("common.delete")}
+            </button>
+          )}
+
+          <button
+            type="button"
+            className="secondary-btn"
+            onClick={onClose}
           >
+            {t("common.cancel")}
+          </button>
 
-            {/* -------------------------------------------------
-               Type
-               ------------------------------------------------- */}
-
-            <div className="dw-field">
-
-              <span className="dw-label">
-                {t("common.type")}
-              </span>
-
-              <TypeToggle
-                type={type}
-                onChange={setType}
-              />
-
-            </div>
-
-
-            {/* -------------------------------------------------
-               Name
-               ------------------------------------------------- */}
-
-            <label className="dw-field">
-
-              <span className="dw-label">
-
-                {t("common.name")}
-
-              </span>
-
-              <input
-                type="text"
-                placeholder={t("moneyTab.namePlaceholder")}
-                value={name}
-                onChange={(e) =>
-                  setName(e.target.value)
-                }
-                className="dw-input"
-              />
-
-            </label>
-
-
-            {/* -------------------------------------------------
-               Amount
-               ------------------------------------------------- */}
-
-            <label className="dw-field">
-
-              <span className="dw-label">
-                {t("common.amount")}
-              </span>
-
-              <div className="dw-amount-wrap">
-
-                <span className="dw-currency">
-                  {currencySymbol}
-                </span>
-
-                <input
-                  type="number"
-                  inputMode="decimal"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  value={amount}
-                  onChange={(e) =>
-                    setAmount(e.target.value)
-                  }
-                  className="dw-amount-input"
-                  autoFocus
-                />
-
-              </div>
-
-            </label>
-
-
-            {/* -------------------------------------------------
-               Category
-               ------------------------------------------------- */}
-
-            <label className="dw-field">
-
-              <span className="dw-label">
-                {t("common.category")}
-              </span>
-
-              {categories.length > 0 ? (
-
-                <select
-                  value={categoryKey}
-                  onChange={(e) =>
-                    setCategoryKey(e.target.value)
-                  }
-                  className="dw-select"
-                >
-
-                  {categories.map((c) => (
-
-                    <option
-                      key={c.id}
-                      value={c.key}
-                    >
-                      {tCategory(c.key)}
-                    </option>
-
-                  ))}
-
-                </select>
-
-              ) : (
-
-                <span className="dw-field-hint">
-                  Add a category in the Budget tab first
-                </span>
-
-              )}
-
-            </label>
-
-
-            {/* -------------------------------------------------
-               Date
-               ------------------------------------------------- */}
-
-            <label className="dw-field">
-
-              <span className="dw-label">
-                {t("common.date")}
-              </span>
-
-              <input
-                type="date"
-                value={date}
-                onChange={(e) =>
-                  setDate(e.target.value)
-                }
-                className="dw-input"
-              />
-
-            </label>
-
-
-            {/* -------------------------------------------------
-               Footer buttons
-               ------------------------------------------------- */}
-
-            <div className="dw-form-actions">
-
-              {/* Delete button when editing */}
-
-              {isEditing && (
-
-                <button
-                  type="button"
-                  className="dw-btn dw-btn-danger dw-btn-left"
-                  onClick={() =>
-                    setConfirmingDelete(true)
-                  }
-                >
-                  {t("common.delete")}
-                </button>
-
-              )}
-
-
-              {/* Cancel */}
-
-              <button
-                type="button"
-                className="dw-btn dw-btn-secondary"
-                onClick={onClose}
-              >
-                {t("common.cancel")}
-              </button>
-
-
-              {/* Save */}
-
-              <button
-                type="submit"
-                className="dw-btn dw-btn-primary"
-                disabled={!isValid}
-              >
-                {isEditing
-                  ? t("common.saveChanges")
-                  : t("common.save")}
-              </button>
-
-            </div>
-
-          </form>
-
+          <button
+            type="button"
+            className="primary-btn"
+            disabled={!isValid}
+            onClick={handleSubmit}
+          >
+            {isEditing
+              ? t("common.saveChanges")
+              : t("common.save")}
+          </button>
         </div>
-
       </div>
-
     </div>,
-
     document.getElementById("modal-root")
   );
 }
@@ -922,10 +801,10 @@ export function GoalsWidget() {
 }
 
 export function Empty() {
-  
+
   return (
     <div className="leaf-fill">
-      
+
     </div>
   );
 }
