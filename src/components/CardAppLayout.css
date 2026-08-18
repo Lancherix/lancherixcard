@@ -206,6 +206,11 @@ body,
   overflow: auto;
 }
 
+.cal-panel-empty {
+  background: transparent;
+  box-shadow: none;
+}
+
 /* highlight the active menu button */
 .cal-menu-btn-active {
   background: var(--cal-accent-soft);

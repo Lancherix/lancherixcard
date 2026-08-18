@@ -703,7 +703,7 @@ export function GoalsWidget() {
 export function Empty() {
   
   return (
-    <div className="leaf-fill cal-empty-leaf">
+    <div className="leaf-fill">
       
     </div>
   );

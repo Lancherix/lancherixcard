@@ -25,6 +25,14 @@ function PanelRenderer({ panel }) {
     );
   }
 
+  if (panel.type === "empty") {
+    return (
+      <div className="cal-panel-empty">
+        {panel.content}
+      </div>
+    );
+  }
+
   // leaf
   return (
     <div className="cal-panel-leaf">

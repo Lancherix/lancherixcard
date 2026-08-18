@@ -95,8 +95,8 @@ function Home() {
             direction: "column",
             children: [
               { type: "leaf", content: <BudgetOverviewColumn /> },
-              { type: "leaf", content: <Empty /> },
-              { type: "leaf", content: <Empty /> },
+              { type: "empty", content: <Empty /> },
+              { type: "empty", content: <Empty /> },
             ],
           },
           { type: "leaf", content: <BudgetCategoriesColumn /> },
