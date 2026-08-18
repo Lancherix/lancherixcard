@@ -256,15 +256,15 @@ function TxRow({ tx, onClick, categories, formatMoney }) {
   const { tCategory } = useTranslation();
   const category = categories.find((c) => c.key === tx.categoryKey);
   return (
-    <button className="mt-tx-row" onClick={() => onClick(tx)}>
-      <span className="mt-tx-icon" style={{ background: (category?.color ?? "#6e6e73") + "22" }}>
+    <button className="dt-tx-row" onClick={() => onClick(tx)}>
+      <span className="dt-tx-icon" style={{ background: (category?.color ?? "#6e6e73") + "22" }}>
         <Icon name={category?.icon ?? "other"} size={16} color={category?.color} />
       </span>
-      <span className="mt-tx-info">
-        <span className="mt-tx-name">{tx.name}</span>
-        <span className="mt-tx-sub">{tCategory(tx.categoryKey)} · {tx.date}</span>
+      <span className="dt-tx-info">
+        <span className="dt-tx-name">{tx.name}</span>
+        <span className="dt-tx-sub">{tCategory(tx.categoryKey)} · {tx.date}</span>
       </span>
-      <span className={"mt-tx-amount" + (isIncome ? " mt-amount-income" : " mt-amount-expense")}>
+      <span className={"dt-tx-amount" + (isIncome ? " dt-amount-income" : " dt-amount-expense")}>
         {isIncome ? "+" : "-"}{formatMoney(tx.amount)}
       </span>
     </button>
