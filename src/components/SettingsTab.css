@@ -62,7 +62,7 @@
   overflow: auto;
   background-color: var(--cal-bg);
   border-radius: var(--cal-radius);
-  padding: 1vh;
+  padding: 1.5vh;
 }
 
 .settings-readonly-row {

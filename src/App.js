@@ -14,7 +14,6 @@ import { MoneyTransactionsColumn, MoneyRecurringColumn } from "./components/Mone
 import { BudgetOverviewColumn, BudgetCategoriesColumn } from "./components/BudgetTab";
 import HistoryTab from "./components/HistoryTab";
 import { ReportsTrendColumn, ReportsBreakdownColumn } from "./components/ReportsTab";
-import SavingsGoalsTab from "./components/SavingsGoalsTab";
 import CurrencyOnboarding from "./components/CurrencyOnboarding";
 import { AccountColumn, CurrencyColumn } from "./components/SettingsTab";
 
@@ -129,12 +128,6 @@ function Home() {
       },
     },
     {
-      key: "goals",
-      label: t("nav.goals"),
-      icon: t("icons.goals"),
-      panel: { type: "leaf", content: <SavingsGoalsTab /> },
-    },
-    {
       key: "settings",
       label: t("nav.settings"),
       icon: t("icons.settings"),
@@ -142,8 +135,22 @@ function Home() {
         type: "split",
         direction: "row",
         children: [
-          { type: "leaf", content: <AccountColumn /> },
-          { type: "leaf", content: <CurrencyColumn /> },
+          {
+            type: "split",
+            direction: "column",
+            children: [
+              { type: "leaf", content: <AccountColumn /> },
+              { type: "empty", content: <Empty /> },
+            ],
+          },
+          {
+            type: "split",
+            direction: "column",
+            children: [
+              { type: "leaf", content: <CurrencyColumn /> },
+              { type: "empty", content: <Empty /> },
+            ],
+          },
         ],
       },
     },
