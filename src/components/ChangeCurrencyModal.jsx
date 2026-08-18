@@ -69,7 +69,7 @@ export default function ChangeCurrencyModal({ onClose }) {
             <label>
               Rate 
               <br />
-              (1 {currentCfg.code} = ? {targetCfg.code})
+              (1 {currentCfg.code} = {targetCfg.code})
             </label>
 
             <input
