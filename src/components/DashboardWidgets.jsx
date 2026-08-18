@@ -749,7 +749,7 @@ function GoalForm({ onClose, initialValues }) {
           )}
 
           <div className="form-row form-row-a form-row-name">
-            <label>{t("goalForm.goalName")}</label>
+            <label>{t("common.name")}</label>
 
             <input
               type="text"

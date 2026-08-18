@@ -76,7 +76,7 @@ function BudgetForm({ onClose, initialLimit }) {
 
         <div className="new-project-content">
           <div className="form-row form-row-a form-row-name">
-            <label>{t("dashboard.monthlyBudget")}</label>
+            <label>{t("icons.budget")}</label>
 
             <div className="dw-amount-wrap">
               <span className="dw-currency">{currencySymbol}</span>
