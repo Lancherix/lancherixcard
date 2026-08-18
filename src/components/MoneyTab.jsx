@@ -405,10 +405,10 @@ export function MoneyRecurringColumn() {
   const sorted = [...recurring].sort((a, b) => (a.nextDate > b.nextDate ? 1 : -1));
 
   return (
-    <div className="leaf-fill mt-rec-panel">
-      <div className="mt-col-header">
-        <h3 className="mt-heading mt-heading-recurring">{t("moneyTab.recurring")}</h3>
-        <button className="mt-add-btn mt-add-btn-rec" onClick={() => setModalState({ mode: "add" })}>+ {t("common.add")}</button>
+    <div className="leaf-fill dw-tx-panel">
+      <div className="dw-col-header">
+        <h3 className="dw-heading">{t("moneyTab.recurring")}</h3>
+        <button className="dw-add-btn dw-add-btn-tx" onClick={() => setModalState({ mode: "add" })}>+ {t("common.add")}</button>
       </div>
       <div className="mt-rec-list">
         {sorted.length > 0 ? (
