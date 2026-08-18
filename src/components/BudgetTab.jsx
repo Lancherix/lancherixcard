@@ -251,10 +251,10 @@ export function BudgetOverviewColumn() {
   const statValueStyle = { whiteSpace: "nowrap", fontSize: "clamp(12px, 3vw, 16px)" };
 
   return (
-    <div className="leaf-fill bt-overview-panel">
-      <div className="bt-col-header">
-        <h3 className="bt-heading">{t("budgetTab.monthlyBudget")}</h3>
-        <button className="bt-add-btn bt-add-btn-neutral" onClick={() => setEditingBudget(true)}>{t("common.edit")}</button>
+    <div className="leaf-fill dw-txl-panel">
+      <div className="dw-col-header">
+        <h3 className="dw-heading">{t("budgetTab.monthlyBudget")}</h3>
+        <button className="dw-add-btn dw-add-btn-neutral" onClick={() => setEditingBudget(true)}>{t("common.edit")}</button>
       </div>
 
       <div className="bt-overview-body">
