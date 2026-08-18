@@ -1,15 +1,20 @@
+/* ---- Settings panel ---- */
+
 .settings-panel {
-  gap: 14px;
+  gap: 1vh;
 }
 
-/* ---- Personal info ---- */
+/* ---- Personal profile ---- */
 
 .settings-profile-head {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  padding: 4px 2px 12px;
   flex-shrink: 0;
 }
+
+/* Profile picture */
 
 .settings-avatar {
   width: 58px;
@@ -41,17 +46,22 @@
   object-position: center;
 }
 
+/* Profile text */
+
 .settings-profile-head-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  justify-content: center;
+  gap: 3px;
   min-width: 0;
 }
 
 .settings-profile-name {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
+  line-height: 1.25;
   color: var(--cal-text);
+
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -59,85 +69,58 @@
 
 .settings-profile-username {
   font-size: 12px;
+  line-height: 1.25;
   color: var(--cal-muted);
-}
 
-.settings-form {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-}
-
-.settings-readonly-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-}
-
-.settings-readonly-row {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 8px 10px;
-  background: var(--cal-bg);
-  border-radius: var(--cal-radius-sm);
-}
-
-.settings-readonly-label {
-  font-size: 10px;
-  color: var(--cal-muted);
-}
-
-.settings-readonly-value {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--cal-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* ---- Language ---- */
+/* ---- Read-only account information ---- */
 
-.settings-option-list {
+.settings-readonly-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  flex: 1;
+  gap: 0;
+
   min-height: 0;
   overflow: auto;
-}
 
-.settings-option-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border: none;
   background: var(--cal-bg);
-  border-radius: var(--cal-radius-sm);
-  padding: 10px 12px;
-  cursor: pointer;
-  font-family: var(--cal-font-body);
-  text-align: left;
+  border-radius: var(--cal-radius);
+
+  padding: 4px 14px;
 }
 
-.settings-option-row-active {
-  background: var(--cal-accent-soft);
+.settings-readonly-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  padding: 11px 0;
 }
 
-.settings-option-label {
+.settings-readonly-row + .settings-readonly-row {
+  border-top: 1px solid rgba(0, 0, 0, 0.055);
+}
+
+.settings-readonly-label {
+  font-size: 10px;
+  line-height: 1.2;
+  color: var(--cal-muted);
+  font-weight: 500;
+}
+
+.settings-readonly-value {
   font-size: 13px;
+  line-height: 1.3;
   font-weight: 600;
   color: var(--cal-text);
-}
 
-.settings-option-check {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--cal-accent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ---- Currency ---- */
@@ -146,8 +129,10 @@
   display: flex;
   align-items: center;
   gap: 12px;
+
   background: var(--cal-bg);
   border-radius: var(--cal-radius);
+
   padding: 12px 14px;
   flex-shrink: 0;
 }
@@ -157,6 +142,7 @@
   font-size: 22px;
   font-weight: 700;
   color: var(--cal-accent);
+
   width: 32px;
   text-align: center;
   flex-shrink: 0;
