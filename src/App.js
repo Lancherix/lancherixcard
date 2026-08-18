@@ -127,7 +127,7 @@ function Home() {
     {
       key: "settings",
       label: t("nav.settings"),
-      icon: t("icons.settings"),
+      icon: "+",
       panel: {
         type: "split",
         direction: "row",

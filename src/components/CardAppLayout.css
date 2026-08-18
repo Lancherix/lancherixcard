@@ -135,7 +135,7 @@ body,
 }
 
 .cal-menu-btn:last-child {
-  flex: 0.6;
+  aspect-ratio: 1 / 1;
 }
 
 .cal-menu-btn:hover:not(:disabled) {
