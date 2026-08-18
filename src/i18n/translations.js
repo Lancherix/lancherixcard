@@ -15,6 +15,7 @@ export const translations = {
       saveChanges: "Save changes",
       add: "Add",
       edit: "Edit",
+      modify: "Modify",
       back: "Back",
       optional: "Optional",
       name: "Name",
@@ -41,6 +42,7 @@ export const translations = {
       history: "History",
       reports: "Reports",
       goals: "Goals",
+      settings: "Settings",
     },
     nav: {
       dashboard: "Dashboard",
@@ -50,6 +52,7 @@ export const translations = {
       reports: "Reports",
       goals: "Goals",
       newTransaction: "New transaction",
+      settings: "Settings",
     },
     categories: {
       food: "Food",
@@ -158,6 +161,16 @@ export const translations = {
       newGoal: "+ New goal",
       empty: "No goals yet — start one!",
     },
+    settings: {
+      account: "Account",
+      fullName: "Full name",
+      username: "Username",
+      email: "Email",
+      language: "Language",
+      currency: "Currency",
+      currentCurrency: "Current currency",
+      changeCurrency: "Change currency",
+    },
     frequencies: {
       Weekly: "Weekly",
       Biweekly: "Biweekly",
@@ -175,6 +188,7 @@ export const translations = {
       saveChanges: "Enregistrer les modifications",
       add: "Ajouter",
       edit: "Modifier",
+      modify: "Modifier",
       back: "Retour",
       optional: "Facultatif",
       name: "Nom",
@@ -201,6 +215,7 @@ export const translations = {
       history: "Historique",
       reports: "Rapports",
       goals: "Objectifs",
+      settings: "Paramètres",
     },
     nav: {
       dashboard: "Tableau de bord",
@@ -210,6 +225,7 @@ export const translations = {
       reports: "Rapports",
       goals: "Objectifs",
       newTransaction: "Nouvelle transaction",
+      settings: "Paramètres",
     },
     categories: {
       food: "Alimentation",
@@ -318,6 +334,16 @@ export const translations = {
       newGoal: "+ Nouvel objectif",
       empty: "Aucun objectif pour l'instant — commencez-en un !",
     },
+    settings: {
+      account: "Compte",
+      fullName: "Nom complet",
+      username: "Nom d'utilisateur",
+      email: "E-mail",
+      language: "Langue",
+      currency: "Devise",
+      currentCurrency: "Devise actuelle",
+      changeCurrency: "Changer de devise",
+    },
     frequencies: {
       Weekly: "Hebdomadaire",
       Biweekly: "Toutes les deux semaines",
@@ -335,6 +361,7 @@ export const translations = {
       saveChanges: "Guardar cambios",
       add: "Añadir",
       edit: "Editar",
+      modify: "Modificar",
       back: "Atrás",
       optional: "Opcional",
       name: "Nombre",
@@ -361,6 +388,7 @@ export const translations = {
       history: "Historial",
       reports: "Informes",
       goals: "Metas",
+      settings: "Ajustes",
     },
     nav: {
       dashboard: "Panel",
@@ -370,6 +398,7 @@ export const translations = {
       reports: "Informes",
       goals: "Metas",
       newTransaction: "Nueva transacción",
+      settings: "Ajustes",
     },
     categories: {
       food: "Comida",
@@ -477,6 +506,16 @@ export const translations = {
       heading: "Metas de ahorro",
       newGoal: "+ Nueva meta",
       empty: "Aún no hay metas — ¡comienza una!",
+    },
+    settings: {
+      account: "Cuenta",
+      fullName: "Nombre completo",
+      username: "Nombre de usuario",
+      email: "Correo electrónico",
+      language: "Idioma",
+      currency: "Moneda",
+      currentCurrency: "Moneda actual",
+      changeCurrency: "Cambiar moneda",
     },
     frequencies: {
       Weekly: "Semanal",
