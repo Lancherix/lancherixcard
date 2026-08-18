@@ -170,6 +170,7 @@ export const translations = {
       currency: "Currency",
       currentCurrency: "Current currency",
       changeCurrency: "Change currency",
+      birthDate: "Birth date",
     },
     frequencies: {
       Weekly: "Weekly",
@@ -343,6 +344,7 @@ export const translations = {
       currency: "Devise",
       currentCurrency: "Devise actuelle",
       changeCurrency: "Changer de devise",
+      birthDate: "Date de naissance",
     },
     frequencies: {
       Weekly: "Hebdomadaire",
@@ -516,6 +518,7 @@ export const translations = {
       currency: "Moneda",
       currentCurrency: "Moneda actual",
       changeCurrency: "Cambiar moneda",
+      birthDate: "Fecha de nacimiento",
     },
     frequencies: {
       Weekly: "Semanal",

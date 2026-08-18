@@ -60,13 +60,15 @@
   flex: 1;
   min-height: 0;
   overflow: auto;
+  background-color: var(--cal-bg);
+  border-radius: var(--cal-radius);
+  padding: 1vh;
 }
 
 .settings-readonly-row {
   display: flex;
   flex-direction: column;
   gap: 0.5vh;
-  padding: 0 0 0 1vw;
 }
 
 .settings-readonly-label {

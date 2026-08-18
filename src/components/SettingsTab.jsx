@@ -34,13 +34,15 @@ const MOCK_PROFILE = {
   fullName: "Alex Morgan",
   username: "alexmorgan",
   email: "alex.morgan@example.com",
+  month: "January",
+  date: 15,
+  year: 2000,
 };
 
 const LANGUAGE_LABELS = {
   fr: "Français",
   en: "English",
   es: "Español",
-  pt: "Português",
 };
 
 export function AccountColumn() {
@@ -78,20 +80,18 @@ export function AccountColumn() {
 
       <div className="settings-readonly-list">
         <div className="settings-readonly-row">
-          <span className="settings-readonly-label">{t("settings.fullName")}</span>
-          <span className="settings-readonly-value">{profile.fullName}</span>
-        </div>
-        <div className="settings-readonly-row">
-          <span className="settings-readonly-label">{t("settings.username")}</span>
-          <span className="settings-readonly-value">@{profile.username}</span>
-        </div>
-        <div className="settings-readonly-row">
           <span className="settings-readonly-label">{t("settings.email")}</span>
           <span className="settings-readonly-value">{profile.email}</span>
         </div>
         <div className="settings-readonly-row">
           <span className="settings-readonly-label">{t("settings.language")}</span>
           <span className="settings-readonly-value">{languageLabel}</span>
+        </div>
+        <div className="settings-readonly-row">
+          <span className="settings-readonly-label">{t("settings.birthDate")}</span>
+          <span className="settings-readonly-value">
+            {profile.month} {profile.date}, {profile.year}
+          </span>
         </div>
       </div>
     </div>
