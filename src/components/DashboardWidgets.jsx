@@ -11,20 +11,6 @@ const goalColorChoices = ["#ff9500", "#0071e3", "#5856d6", "#ff2d55", "#34c759",
 
 /* ---------------- shared bits ---------------- */
 
-function ModalShell({ title, onClose, children }) {
-  return (
-    <div className="cal-modal-backdrop" onClick={onClose}>
-      <div className="cal-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
-        <div className="cal-modal-header">
-          <span className="cal-modal-title">{title}</span>
-          <button className="cal-modal-close" onClick={onClose} aria-label="Close">✕</button>
-        </div>
-        <div className="cal-modal-body">{children}</div>
-      </div>
-    </div>
-  );
-}
-
 function TypeToggle({ type, onChange }) {
   const { t } = useTranslation();
   return (
@@ -370,8 +356,6 @@ export function ReportWidget() {
     },
   ];
 
-  // was .slice(0, 3) — now shows every category with real spending,
-  // sorted highest first, scrollable if the list runs long
   const spendingCategories = [...categories]
     .filter((c) => c.spent > 0)
     .sort((a, b) => b.spent - a.spent);
@@ -441,12 +425,15 @@ export function ReportWidget() {
   );
 }
 
-/* ---------------- RIGHT COLUMN, ROW 2: Budget, reads + writes context ---------------- */
+/* ---------------- RIGHT COLUMN, ROW 2: Budget, reads + writes context ----------------
+   Self-contained modal, matching TransactionForm's structure exactly:
+   new-project-overlay > new-project-window > header + content + footer,
+   rendered via the same portal target. No longer wrapped by ModalShell. */
 
 function BudgetForm({ onClose, initialLimit }) {
   const { setBudget, currencySymbol } = useAppData();
   const { t } = useTranslation();
-  const [limit, setLimit] = useState(String(initialLimit));
+  const [limit, setLimit] = useState(String(initialLimit ?? ""));
   const parsed = parseFloat(limit);
   const isValid = limit.trim() !== "" && !isNaN(parsed) && parsed > 0;
 
@@ -457,27 +444,66 @@ function BudgetForm({ onClose, initialLimit }) {
     onClose();
   };
 
-  return (
-    <form className="dw-form" onSubmit={handleSubmit}>
-      <label className="dw-field">
-        <span className="dw-label">{t("dashboard.monthlyBudget")}</span>
-        <div className="dw-amount-wrap">
-          <span className="dw-currency">{currencySymbol}</span>
-          <input
-            type="number" inputMode="decimal" step="0.01" min="0"
-            value={limit} onChange={(e) => setLimit(e.target.value)} className="dw-amount-input" autoFocus
-          />
+  return createPortal(
+    <div className="new-project-overlay">
+      <div
+        className="new-project-window"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="new-project-header">
+          <h4>{t("dashboard.monthlyBudget")}</h4>
         </div>
-      </label>
-      <div className="dw-form-actions">
-        <button type="button" className="dw-btn dw-btn-secondary" onClick={onClose}>{t("common.cancel")}</button>
-        <button type="submit" className="dw-btn dw-btn-primary" disabled={!isValid}>{t("common.save")}</button>
+
+        <div className="new-project-content">
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("dashboard.monthlyBudget")}</label>
+
+            <div className="dw-amount-wrap">
+              <span className="dw-currency">{currencySymbol}</span>
+
+              <input
+                type="number"
+                inputMode="decimal"
+                step="0.01"
+                min="0"
+                placeholder="0.00"
+                value={limit}
+                onChange={(e) => setLimit(e.target.value)}
+                className="dw-amount-input"
+                autoFocus
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="new-project-footer">
+          <button
+            type="button"
+            className="secondary-btn"
+            onClick={onClose}
+          >
+            {t("common.cancel")}
+          </button>
+
+          <button
+            type="button"
+            className="primary-btn"
+            disabled={!isValid}
+            onClick={handleSubmit}
+          >
+            {t("common.save")}
+          </button>
+        </div>
       </div>
-    </form>
+    </div>,
+    document.getElementById("modal-root")
   );
 }
 
-/* ---------------- RIGHT COLUMN, ROW 3: Goals, reads + writes context ---------------- */
+/* ---------------- RIGHT COLUMN, ROW 3: Goals, reads + writes context ----------------
+   Same self-contained pattern as TransactionForm: each internal view
+   (details / funds / confirmDelete) renders its own full overlay+window,
+   with header/content/footer laid out exactly like the New Project modal. */
 
 function GoalForm({ onClose, initialValues }) {
   const { addGoal, updateGoal, deleteGoal, contributeToGoal, withdrawFromGoal, currencySymbol, formatMoney } = useAppData();
@@ -536,164 +562,295 @@ function GoalForm({ onClose, initialValues }) {
   };
 
   if (view === "confirmDelete") {
-    return (
-      <div className="dw-confirm">
-        <p className="dw-confirm-text">{t("goalForm.deleteGoalConfirm")}</p>
-        <div className="dw-form-actions">
-          <button type="button" className="dw-btn dw-btn-secondary" onClick={() => setView("details")}>{t("common.cancel")}</button>
-          <button type="button" className="dw-btn dw-btn-danger" onClick={() => { deleteGoal(initialValues.id); onClose(); }}>
-            {t("common.delete")}
-          </button>
+    return createPortal(
+      <div className="new-project-overlay">
+        <div
+          className="new-project-window"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="new-project-header">
+            <h4>{t("common.delete")}</h4>
+          </div>
+
+          <div className="new-project-content">
+            <div className="form-row">
+              <p className="dw-confirm-text">
+                {t("goalForm.deleteGoalConfirm")}
+              </p>
+            </div>
+          </div>
+
+          <div className="new-project-footer">
+            <button
+              type="button"
+              className="secondary-btn"
+              onClick={() => setView("details")}
+            >
+              {t("common.cancel")}
+            </button>
+
+            <button
+              type="button"
+              className="secondary-btn transaction-delete-btn"
+              onClick={() => { deleteGoal(initialValues.id); onClose(); }}
+            >
+              {t("common.delete")}
+            </button>
+          </div>
         </div>
-      </div>
+      </div>,
+      document.getElementById("modal-root")
     );
   }
 
   if (view === "funds") {
-    return (
-      <form className="dw-form" onSubmit={handleFundsSubmit}>
-        <div className="dw-type-toggle" role="tablist" aria-label="Funds direction">
-          <button
-            type="button" role="tab" aria-selected={fundsMode === "add"}
-            className={"dw-type-btn" + (fundsMode === "add" ? " dw-type-btn-active dw-type-income" : "")}
-            onClick={() => setFundsMode("add")}
-          >
-            {t("common.add")}
-          </button>
-          <button
-            type="button" role="tab" aria-selected={fundsMode === "remove"}
-            className={"dw-type-btn" + (fundsMode === "remove" ? " dw-type-btn-active dw-type-expense" : "")}
-            onClick={() => setFundsMode("remove")}
-          >
-            {t("common.remove")}
-          </button>
-        </div>
-
-        <p className="dw-goal-contribute-hint">
-          {fundsMode === "add" ? t("goalForm.addFundsHint") : t("goalForm.removeFundsHint")}
-        </p>
-
-        <label className="dw-field">
-          <span className="dw-label">{t("common.amount")}</span>
-          <div className="dw-amount-wrap">
-            <span className="dw-currency">{currencySymbol}</span>
-            <input
-              type="number" inputMode="decimal" step="0.01" min="0" placeholder="0.00"
-              value={amount} onChange={(e) => setAmount(e.target.value)} className="dw-amount-input" autoFocus
-            />
+    return createPortal(
+      <div className="new-project-overlay">
+        <div
+          className="new-project-window"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="new-project-header">
+            <h4>{t("goalForm.addRemove")}</h4>
           </div>
-        </label>
-        {overRemoving && (
-          <span className="dw-goal-error">
-            {t("goalForm.cantRemoveMore", { amount: formatMoney(initialValues.current) })}
-          </span>
-        )}
 
-        <label className="dw-field">
-          <span className="dw-label">{t("common.date")}</span>
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="dw-input" />
-        </label>
+          <div className="new-project-content">
+            <div className="form-row form-row-a form-row-name">
+              <label>{t("common.type")}</label>
 
-        <div className="dw-form-actions">
-          <button type="button" className="dw-btn dw-btn-secondary" onClick={() => setView("details")}>{t("common.back")}</button>
-          <button type="submit" className="dw-btn dw-btn-primary" disabled={!fundsValid}>
-            {fundsMode === "add" ? t("goalForm.addFunds") : t("goalForm.removeFunds")}
-          </button>
+              <div className="dw-type-toggle" role="tablist" aria-label="Funds direction">
+                <button
+                  type="button" role="tab" aria-selected={fundsMode === "add"}
+                  className={"dw-type-btn" + (fundsMode === "add" ? " dw-type-btn-active dw-type-income" : "")}
+                  onClick={() => setFundsMode("add")}
+                >
+                  {t("common.add")}
+                </button>
+                <button
+                  type="button" role="tab" aria-selected={fundsMode === "remove"}
+                  className={"dw-type-btn" + (fundsMode === "remove" ? " dw-type-btn-active dw-type-expense" : "")}
+                  onClick={() => setFundsMode("remove")}
+                >
+                  {t("common.remove")}
+                </button>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <span />
+              <p className="dw-goal-contribute-hint">
+                {fundsMode === "add" ? t("goalForm.addFundsHint") : t("goalForm.removeFundsHint")}
+              </p>
+            </div>
+
+            <div className="form-row form-row-a form-row-name">
+              <label>{t("common.amount")}</label>
+
+              <div className="dw-amount-wrap">
+                <span className="dw-currency">{currencySymbol}</span>
+
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="dw-amount-input"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            {overRemoving && (
+              <div className="form-row">
+                <span />
+                <span className="dw-goal-error">
+                  {t("goalForm.cantRemoveMore", { amount: formatMoney(initialValues.current) })}
+                </span>
+              </div>
+            )}
+
+            <div className="form-row form-row-a form-row-name">
+              <label>{t("common.date")}</label>
+
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="new-project-footer">
+            <button
+              type="button"
+              className="secondary-btn"
+              onClick={() => setView("details")}
+            >
+              {t("common.back")}
+            </button>
+
+            <button
+              type="button"
+              className="primary-btn"
+              disabled={!fundsValid}
+              onClick={handleFundsSubmit}
+            >
+              {fundsMode === "add" ? t("goalForm.addFunds") : t("goalForm.removeFunds")}
+            </button>
+          </div>
         </div>
-      </form>
+      </div>,
+      document.getElementById("modal-root")
     );
   }
 
-  return (
-    <form className="dw-form" onSubmit={handleSaveDetails}>
-      {isEditing && (
-        <div className="dw-field">
-          <span className="dw-label">{t("goalForm.status")}</span>
-          <div className="dw-type-toggle" role="tablist" aria-label="Goal status">
-            <button
-              type="button" role="tab" aria-selected={status === "active"}
-              className={"dw-type-btn" + (status === "active" ? " dw-type-btn-active dw-type-income" : "")}
-              onClick={() => setStatus("active")}
-            >
-              {t("goalForm.statusActive")}
-            </button>
-            <button
-              type="button" role="tab" aria-selected={status === "completed"}
-              className={"dw-type-btn" + (status === "completed" ? " dw-type-btn-active dw-type-income" : "")}
-              onClick={() => setStatus("completed")}
-            >
-              {t("goalForm.statusCompleted")}
-            </button>
-            <button
-              type="button" role="tab" aria-selected={status === "acquired"}
-              className={"dw-type-btn" + (status === "acquired" ? " dw-type-btn-active dw-type-income" : "")}
-              onClick={() => setStatus("acquired")}
-            >
-              {t("goalForm.statusAcquired")}
-            </button>
+  return createPortal(
+    <div className="new-project-overlay">
+      <div
+        className="new-project-window"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="new-project-header">
+          <h4>{isEditing ? t("goalForm.editGoal") : t("goalForm.newGoal")}</h4>
+        </div>
+
+        <div className="new-project-content">
+          {isEditing && (
+            <div className="form-row form-row-a form-row-name">
+              <label>{t("goalForm.status")}</label>
+
+              <div className="dw-type-toggle" role="tablist" aria-label="Goal status">
+                <button
+                  type="button" role="tab" aria-selected={status === "active"}
+                  className={"dw-type-btn" + (status === "active" ? " dw-type-btn-active dw-type-income" : "")}
+                  onClick={() => setStatus("active")}
+                >
+                  {t("goalForm.statusActive")}
+                </button>
+                <button
+                  type="button" role="tab" aria-selected={status === "completed"}
+                  className={"dw-type-btn" + (status === "completed" ? " dw-type-btn-active dw-type-income" : "")}
+                  onClick={() => setStatus("completed")}
+                >
+                  {t("goalForm.statusCompleted")}
+                </button>
+                <button
+                  type="button" role="tab" aria-selected={status === "acquired"}
+                  className={"dw-type-btn" + (status === "acquired" ? " dw-type-btn-active dw-type-income" : "")}
+                  onClick={() => setStatus("acquired")}
+                >
+                  {t("goalForm.statusAcquired")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("goalForm.goalName")}</label>
+
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              autoFocus={!isEditing}
+            />
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.icon")}</label>
+
+            <div className="dw-icon-grid">
+              {goalIconChoices.map((i) => (
+                <button
+                  type="button" key={i}
+                  className={"dw-icon-choice" + (icon === i ? " dw-icon-choice-active" : "")}
+                  onClick={() => setIcon(i)}
+                >
+                  <Icon name={i} size={18} color={icon === i ? color : undefined} />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.color")}</label>
+
+            <div className="dw-color-grid">
+              {goalColorChoices.map((c) => (
+                <button
+                  type="button" key={c}
+                  className={"dw-color-choice" + (color === c ? " dw-color-choice-active" : "")}
+                  style={{ background: c }}
+                  onClick={() => setColor(c)}
+                  aria-label={c}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="form-row form-row-a form-row-name">
+            <label>{t("common.target")}</label>
+
+            <div className="dw-amount-wrap">
+              <span className="dw-currency">{currencySymbol}</span>
+
+              <input
+                type="number"
+                inputMode="decimal"
+                step="0.01"
+                min="0"
+                value={target}
+                onChange={(e) => setTarget(e.target.value)}
+                className="dw-amount-input"
+              />
+            </div>
           </div>
         </div>
-      )}
 
-      <label className="dw-field">
-        <span className="dw-label">{t("goalForm.goalName")}</span>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="dw-input" autoFocus />
-      </label>
-
-      <div className="dw-field">
-        <span className="dw-label">{t("common.icon")}</span>
-        <div className="dw-icon-grid">
-          {goalIconChoices.map((i) => (
+        <div className="new-project-footer">
+          {isEditing && (
             <button
-              type="button" key={i}
-              className={"dw-icon-choice" + (icon === i ? " dw-icon-choice-active" : "")}
-              onClick={() => setIcon(i)}
+              type="button"
+              className="secondary-btn transaction-delete-btn dw-btn-left"
+              onClick={() => setView("confirmDelete")}
             >
-              <Icon name={i} size={18} color={icon === i ? color : undefined} />
+              {t("common.delete")}
             </button>
-          ))}
-        </div>
-      </div>
+          )}
 
-      <div className="dw-field">
-        <span className="dw-label">{t("common.color")}</span>
-        <div className="dw-color-grid">
-          {goalColorChoices.map((c) => (
+          <button
+            type="button"
+            className="secondary-btn"
+            onClick={onClose}
+          >
+            {t("common.cancel")}
+          </button>
+
+          {isEditing && (
             <button
-              type="button" key={c}
-              className={"dw-color-choice" + (color === c ? " dw-color-choice-active" : "")}
-              style={{ background: c }}
-              onClick={() => setColor(c)}
-              aria-label={c}
-            />
-          ))}
+              type="button"
+              className="secondary-btn"
+              onClick={() => setView("funds")}
+            >
+              {t("goalForm.addRemove")}
+            </button>
+          )}
+
+          <button
+            type="button"
+            className="primary-btn"
+            disabled={!detailsValid}
+            onClick={handleSaveDetails}
+          >
+            {isEditing ? t("common.saveChanges") : t("goalForm.createGoal")}
+          </button>
         </div>
       </div>
-
-      <label className="dw-field">
-        <span className="dw-label">{t("common.target")}</span>
-        <div className="dw-amount-wrap">
-          <span className="dw-currency">{currencySymbol}</span>
-          <input
-            type="number" inputMode="decimal" step="0.01" min="0"
-            value={target} onChange={(e) => setTarget(e.target.value)} className="dw-amount-input"
-          />
-        </div>
-      </label>
-
-      <div className="dw-form-actions">
-        {isEditing && (
-          <button type="button" className="dw-btn dw-btn-danger dw-btn-left" onClick={() => setView("confirmDelete")}>{t("common.delete")}</button>
-        )}
-        <button type="button" className="dw-btn dw-btn-secondary" onClick={onClose}>{t("common.cancel")}</button>
-        {isEditing && (
-          <button type="button" className="dw-btn dw-btn-accent" onClick={() => setView("funds")}>{t("goalForm.addRemove")}</button>
-        )}
-        <button type="submit" className="dw-btn dw-btn-primary" disabled={!detailsValid}>
-          {isEditing ? t("common.saveChanges") : t("goalForm.createGoal")}
-        </button>
-      </div>
-    </form>
+    </div>,
+    document.getElementById("modal-root")
   );
 }
 
@@ -766,9 +923,10 @@ export function GoalsWidget() {
       </div>
 
       {modalState && (
-        <ModalShell title={modalState.mode === "edit" ? t("goalForm.editGoal") : t("goalForm.newGoal")} onClose={closeModal}>
-          <GoalForm onClose={closeModal} initialValues={modalState.mode === "edit" ? modalState.item : null} />
-        </ModalShell>
+        <GoalForm
+          onClose={closeModal}
+          initialValues={modalState.mode === "edit" ? modalState.item : null}
+        />
       )}
     </div>
   );

@@ -435,7 +435,7 @@
 .dw-goal-contribute-hint {
   margin: 0;
   font-size: 12px;
-  color: var(--cal-muted);
+  color: #6e6e73;
   line-height: 1.4;
 }
 
@@ -443,21 +443,20 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  background: var(--cal-bg);
-  border-radius: var(--cal-radius);
+  background: #e8e7ea;
+  border-radius: 8px;
   padding: 10px 14px;
 }
 
 .dw-goal-current-label {
   font-size: 12px;
-  color: var(--cal-muted);
+  color: #6e6e73;
 }
 
 .dw-goal-current-value {
-  font-family: var(--cal-font-display);
   font-size: 16px;
   font-weight: 700;
-  color: var(--cal-text);
+  color: #1d1d1f;
 }
 
 .dw-goal-error {
@@ -481,20 +480,19 @@
 }
 
 .dw-color-choice-active {
-  border-color: var(--cal-text);
+  border-color: #1d1d1f;
 }
 
 /* ============================================================
    MODAL SYSTEM
-   One shared "New Project"-style modal, used by every dashboard
-   modal. TransactionForm renders raw .new-project-* markup;
-   ModalShell (Budget/Goal) renders .cal-modal-* markup — both
-   are styled together here so they render identically instead
-   of silently drifting apart.
+   One shared "New Project"-style modal. TransactionForm,
+   BudgetForm, and GoalForm each build this exact markup
+   themselves (overlay > window > header + content + footer)
+   and portal it into #modal-root, so all three render
+   identically by construction rather than by coincidence.
    ============================================================ */
 
-.new-project-overlay,
-.cal-modal-backdrop {
+.new-project-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
@@ -505,8 +503,7 @@
   z-index: 9999;
 }
 
-.new-project-window,
-.cal-modal {
+.new-project-window {
   background: rgba(242, 241, 243, 1);
   color: #1d1d1f;
   width: 40vw;
@@ -517,9 +514,7 @@
   animation: newProjectIn 0.25s ease-out;
 }
 
-.new-project-header,
-.cal-modal-header {
-  position: relative;
+.new-project-header {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -530,38 +525,12 @@
   font-size: 0.9rem;
 }
 
-.new-project-header h4,
-.cal-modal-title {
+.new-project-header h4 {
   margin: 0;
   font-weight: 600;
 }
 
-.cal-modal-close {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 22px;
-  height: 22px;
-  border: none;
-  border-radius: 50%;
-  background: transparent;
-  color: #86868b;
-  font-size: 13px;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.cal-modal-close:hover {
-  background: rgba(0, 0, 0, 0.08);
-  color: #1d1d1f;
-}
-
-.new-project-content,
-.cal-modal-body {
+.new-project-content {
   padding: 2vh 2vw;
   font-size: 0.8rem;
 }
@@ -586,10 +555,9 @@
   }
 }
 
-/* ---------------- Form rows / fields (shared by both markups) ---------------- */
+/* ---------------- Form rows / fields ---------------- */
 
-.form-row,
-.dw-field {
+.form-row {
   display: grid;
   grid-template-columns: 7vw 1fr;
   align-items: center;
@@ -599,13 +567,11 @@
   border-bottom: 1px solid #e1e0e3;
 }
 
-.form-row:last-of-type,
-.dw-field:last-of-type {
+.form-row:last-of-type {
   border-bottom: none;
 }
 
-.form-row label,
-.dw-label {
+.form-row label {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -616,9 +582,7 @@
 }
 
 .form-row input,
-.form-row select,
-.dw-input,
-.dw-select {
+.form-row select {
   width: 100%;
   box-sizing: border-box;
   padding: 0.7vh 0.7vw;
@@ -632,14 +596,18 @@
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.form-row select,
-.dw-select {
+.form-row select {
   cursor: pointer;
 }
 
-.form-row input::placeholder,
-.dw-input::placeholder {
+.form-row input::placeholder {
   color: #aaa;
+}
+
+.form-row input:focus,
+.form-row select:focus {
+  border-color: #1169d3;
+  box-shadow: 0 0 0 3px rgba(17, 105, 211, 0.15);
 }
 
 .dw-field-hint {
@@ -690,6 +658,11 @@
 
 .dw-amount-input::placeholder {
   color: #aaa;
+}
+
+.dw-amount-wrap:focus-within {
+  border-color: #1169d3;
+  box-shadow: 0 0 0 3px rgba(17, 105, 211, 0.15);
 }
 
 /* ---------------- Type / status toggle ---------------- */
@@ -763,11 +736,8 @@
 }
 
 /* ---------------- Buttons ---------------- */
-/* .primary-btn / .secondary-btn: used directly by TransactionForm's
-   markup. .dw-btn-*: used by Budget/Goal forms. Same look, both
-   defined here so neither depends on another page's stylesheet. */
+/* Used identically by TransactionForm, BudgetForm, and GoalForm. */
 
-.dw-btn,
 .primary-btn,
 .secondary-btn {
   min-width: 5vw;
@@ -780,72 +750,53 @@
   transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
 }
 
-.dw-btn-secondary,
 .secondary-btn {
   background: linear-gradient(#faf8fb, #e0dfe3);
   color: #1d1d1f;
   border: 1px solid #d5d4d8;
 }
 
-.dw-btn-secondary:hover,
 .secondary-btn:hover {
   background: linear-gradient(#ffffff, #e6e5e9);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
-.dw-btn-secondary:active,
 .secondary-btn:active {
   transform: translateY(1px);
   background: linear-gradient(#e0dfe3, #faf8fb);
 }
 
-.dw-btn-primary,
 .primary-btn {
   background: linear-gradient(#428cef, #1169d3);
   color: #fff;
   border: 1px solid #1164c9;
 }
 
-.dw-btn-primary:hover:not(:disabled),
 .primary-btn:hover:not(:disabled) {
   background: linear-gradient(#5a9bff, #1b74e4);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset, 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-.dw-btn-primary:active:not(:disabled),
 .primary-btn:active:not(:disabled) {
   transform: translateY(1px);
   background: linear-gradient(#1169d3, #428cef);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) inset;
 }
 
-.dw-btn-primary:disabled,
 .primary-btn:disabled {
   opacity: 0.45;
   cursor: default;
 }
 
-.dw-btn-danger,
 .transaction-delete-btn {
   background: transparent;
   color: #d1242f;
   border: 1px solid transparent;
 }
 
-.dw-btn-danger:hover,
 .transaction-delete-btn:hover {
   background: #fce8e9;
   border-color: #e8b9bd;
-}
-
-.dw-btn-accent {
-  background: #e8f0fe;
-  color: #1169d3;
-  border: 1px solid #cfe0fb;
-}
-
-.dw-btn-accent:hover {
-  background: #dbe9fd;
 }
 
 .dw-btn-left {
@@ -853,13 +804,6 @@
 }
 
 /* ---------------- Delete confirmation ---------------- */
-
-.dw-confirm {
-  display: flex;
-  flex-direction: column;
-  gap: 2vh;
-  padding: 1vh 0;
-}
 
 .dw-confirm-text {
   margin: 0;
