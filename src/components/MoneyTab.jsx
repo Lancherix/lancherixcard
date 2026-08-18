@@ -410,7 +410,7 @@ export function MoneyRecurringColumn() {
         <h3 className="dw-heading">{t("moneyTab.recurring")}</h3>
         <button className="dw-add-btn dw-add-btn-tx" onClick={() => setModalState({ mode: "add" })}>+ {t("common.add")}</button>
       </div>
-      <div className="mt-rec-list">
+      <div className="dw-txl-list">
         {sorted.length > 0 ? (
           sorted.map((item) => (
             <RecurringRow key={item.id} item={item} categories={categories} formatMoney={formatMoney} onClick={(i) => setModalState({ mode: "edit", item: i })} />
