@@ -100,34 +100,7 @@
   color: var(--cal-text);
 }
 
-.bt-overview-bar-track {
-  height: 8px;
-  border-radius: 4px;
-  background: var(--cal-bg);
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.bt-overview-bar-fill {
-  height: 100%;
-  background: var(--cal-accent);
-  border-radius: 4px;
-}
-
-.bt-overview-bar-over {
-  background: #d1242f;
-}
-
 /* ---- categories column ---- */
-
-.bt-cat-list {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
 
 .bt-cat-row {
   display: flex;

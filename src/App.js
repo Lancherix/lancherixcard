@@ -75,7 +75,7 @@ function Home() {
         type: "split",
         direction: "row",
         children: [
-          { type: "leaf", content: <MoneyTransactionsColumn /> },
+          { type: "leaf", content: <TransactionsList/> },
           { type: "leaf", content: <MoneyRecurringColumn /> },
         ],
       },
