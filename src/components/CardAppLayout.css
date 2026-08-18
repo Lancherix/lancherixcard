@@ -135,11 +135,15 @@ body,
 }
 
 .cal-menu-btn:last-child {
+  flex: 0 0 var(--cal-menu-row-height);
+  width: var(--cal-menu-row-height);
+  height: var(--cal-menu-row-height);
+  padding: 0;
+  border-radius: 50%;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--cal-menu-row-height);
-  padding: 0;
 }
 
 .cal-menu-btn:hover:not(:disabled) {
