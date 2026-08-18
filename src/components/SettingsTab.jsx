@@ -116,7 +116,7 @@ export function AccountColumn() {
           </span>
 
           <span className="settings-profile-username">
-            @{profile.username}
+            {profile.username}
           </span>
         </div>
       </div>
