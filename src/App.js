@@ -90,7 +90,15 @@ function Home() {
         type: "split",
         direction: "row",
         children: [
-          { type: "leaf", content: <BudgetOverviewColumn /> },
+          {
+            type: "split",
+            direction: "column",
+            children: [
+              { type: "leaf", content: <BudgetOverviewColumn /> },
+              { type: "leaf", content: <GoalsWidget /> },
+              { type: "leaf", content: <GoalsWidget /> },
+            ],
+          },
           { type: "leaf", content: <BudgetCategoriesColumn /> },
         ],
       },
