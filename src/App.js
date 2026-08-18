@@ -17,7 +17,7 @@ import { ReportsTrendColumn, ReportsBreakdownColumn } from "./components/Reports
 import SavingsGoalsTab from "./components/SavingsGoalsTab";
 import CurrencyOnboarding from "./components/CurrencyOnboarding";
 import ChangeCurrencyModal from "./components/ChangeCurrencyModal";
-import { PersonalInfoColumn, LanguageColumn, CurrencyColumn } from "./components/SettingsTab";
+import { AccountColumn, CurrencyColumn } from "./components/SettingsTab";
 
 function Redirecting() {
   useEffect(() => {
@@ -152,8 +152,7 @@ function Home() {
         type: "split",
         direction: "row",
         children: [
-          { type: "leaf", content: <PersonalInfoColumn /> },
-          { type: "leaf", content: <LanguageColumn /> },
+          { type: "leaf", content: <AccountColumn /> },
           { type: "leaf", content: <CurrencyColumn /> },
         ],
       },
