@@ -1,0 +1,659 @@
+.leaf-fill {
+  width: 100%;
+  height: 100%;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.dw-heading {
+  margin: 0;
+  flex-shrink: 0;
+  font-family: var(--cal-font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cal-text);
+}
+
+.dw-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.dw-add-btn {
+  border: none;
+  background: var(--cal-accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: var(--cal-radius-sm);
+  padding: 5px 11px;
+  cursor: pointer;
+}
+
+.dw-add-btn-neutral {
+  background: var(--cal-bg);
+  color: var(--cal-text);
+}
+
+/* ---------------- Transactions (left column) ---------------- */
+
+.dw-txl-panel {
+  gap: 10px;
+}
+
+.dw-txl-list {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.dw-tx-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 4px;
+  border: none;
+  border-bottom: 1px solid var(--cal-border);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--cal-font-body);
+  box-sizing: border-box;
+}
+
+.dw-tx-row:hover {
+  background: var(--cal-accent-soft);
+}
+
+.dw-tx-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.dw-tx-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dw-tx-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cal-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dw-tx-sub {
+  font-size: 11px;
+  color: var(--cal-muted);
+}
+
+.dw-tx-amount {
+  font-size: clamp(11px, 3vw, 13px);
+  font-weight: 600;
+  color: var(--cal-text);
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.dw-amount-income {
+  color: #1a7f37;
+}
+
+/* ---------------- Report (row 1) ---------------- */
+
+.dw-report-panel {
+  gap: 8px;
+}
+
+.dw-report-delta {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--cal-radius-sm);
+  background: var(--cal-bg);
+  flex-shrink: 0;
+}
+
+.dw-report-delta-up {
+  color: #d1242f;
+}
+
+.dw-report-delta-down {
+  color: #1a7f37;
+}
+
+.dw-report-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dw-report-trend {
+  flex: 1;
+  min-height: 24px;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.dw-report-trend-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  height: 100%;
+}
+
+.dw-report-trend-bars {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+}
+
+.dw-report-bar {
+  width: 5px;
+  border-radius: 2px 2px 0 0;
+  min-height: 2px;
+}
+
+.dw-report-bar-income {
+  background: #1a7f37;
+  opacity: 0.85;
+}
+
+.dw-report-bar-expense {
+  background: #d1242f;
+  opacity: 0.85;
+}
+
+.dw-report-trend-label {
+  font-size: 8px;
+  color: var(--cal-muted);
+  flex-shrink: 0;
+}
+
+.dw-report-cats {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.dw-report-cat-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dw-report-cat-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dw-report-cat-name {
+  font-size: 10px;
+  color: var(--cal-text);
+  width: 50px;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dw-report-cat-bar-track {
+  flex: 1;
+  min-width: 0;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--cal-bg);
+  overflow: hidden;
+}
+
+.dw-report-cat-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+}
+
+.dw-report-cat-amount {
+  font-size: 10px;
+  color: var(--cal-muted);
+  min-width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------- Budget (row 2) ---------------- */
+
+.dw-bpr-panel {
+  gap: 8px;
+}
+
+.dw-bpr-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: start;
+  gap: 1.5vw;
+  padding: 0.5vh 0 2vh 1vh;
+}
+
+.dw-bpr-ring-wrap {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dw-bpr-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.dw-bpr-center-value {
+  font-family: var(--cal-font-display);
+  font-size: clamp(14px, 4vw, 20px);
+  font-weight: 700;
+  color: var(--cal-text);
+  white-space: nowrap;
+}
+
+.dw-bpr-center-label {
+  font-size: 11px;
+  color: var(--cal-muted);
+}
+
+.dw-bpr-stats {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+.dw-bpr-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.dw-bpr-stat-label {
+  font-size: 10px;
+  color: var(--cal-muted);
+}
+
+.dw-bpr-stat-value {
+  font-family: var(--cal-font-display);
+  font-size: clamp(12px, 3vw, 16px);
+  font-weight: 700;
+  color: var(--cal-text);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.dw-bpr-stat-over {
+  color: #d1242f;
+}
+
+/* ---------------- Goals (row 3, NEW) ---------------- */
+
+.dw-goals-panel {
+  gap: 10px;
+  min-width: 0;
+}
+
+.dw-goals-row {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  overflow-x: auto;
+}
+
+.dw-goal-card {
+  flex-shrink: 0;
+  width: 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: var(--cal-bg);
+  border-radius: var(--cal-radius);
+  padding: 12px 8px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.dw-goal-card:hover {
+  background: var(--cal-accent-soft);
+}
+
+.dw-goal-ring-wrap {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dw-goal-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dw-goal-ring-icon {
+  font-size: 18px;
+}
+
+.dw-goal-card-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cal-text);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.dw-goal-card-amounts {
+  font-size: 10px;
+  color: var(--cal-muted);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+.dw-goal-card-complete {
+  color: #1a7f37;
+  font-weight: 600;
+}
+
+.dw-goal-contribute-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--cal-muted);
+  line-height: 1.4;
+}
+
+.dw-goal-current-readout {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  background: var(--cal-bg);
+  border-radius: var(--cal-radius);
+  padding: 10px 14px;
+}
+
+.dw-goal-current-label {
+  font-size: 12px;
+  color: var(--cal-muted);
+}
+
+.dw-goal-current-value {
+  font-family: var(--cal-font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cal-text);
+}
+
+.dw-btn-accent {
+  background: var(--cal-accent-soft);
+  color: var(--cal-accent);
+}
+
+.dw-goal-error {
+  font-size: 11px;
+  color: #d1242f;
+  margin-top: -8px;
+}
+
+.dw-goal-card-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #0969da;
+  background: #0969da22;
+  border-radius: 999px;
+  padding: 2px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.dw-color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dw-color-choice {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.dw-color-choice-active {
+  border-color: var(--cal-text);
+}
+
+/* ---------------- shared form styles ---------------- */
+
+.dw-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dw-type-toggle {
+  display: flex;
+  gap: 8px;
+  background: var(--cal-bg);
+  border-radius: var(--cal-radius-sm);
+  padding: 4px;
+}
+
+.dw-type-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: var(--cal-radius-sm);
+  padding: 8px 0;
+  font-family: var(--cal-font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cal-muted);
+  cursor: pointer;
+}
+
+.dw-type-btn-active.dw-type-expense {
+  background: var(--cal-surface);
+  color: #d1242f;
+  box-shadow: var(--cal-shadow-sm);
+}
+
+.dw-type-btn-active.dw-type-income {
+  background: var(--cal-surface);
+  color: #1a7f37;
+  box-shadow: var(--cal-shadow-sm);
+}
+
+.dw-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dw-label {
+  font-family: var(--cal-font-display);
+  font-size: 12px;
+  color: var(--cal-muted);
+}
+
+.dw-amount-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--cal-border-strong);
+  border-radius: var(--cal-radius);
+  padding: 8px 12px;
+  box-sizing: border-box;
+}
+
+.dw-currency {
+  color: var(--cal-muted);
+  font-size: 15px;
+}
+
+.dw-amount-input {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cal-text);
+  width: 100%;
+  font-family: var(--cal-font-display);
+  background: transparent;
+}
+
+.dw-input,
+.dw-select {
+  border: 1px solid var(--cal-border-strong);
+  border-radius: var(--cal-radius);
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: var(--cal-font-body);
+  color: var(--cal-text);
+  background: var(--cal-surface);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.dw-field-hint {
+  font-size: 12px;
+  color: var(--cal-muted);
+  font-style: italic;
+}
+
+.dw-icon-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dw-icon-choice {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 2px solid transparent;
+  background: var(--cal-bg);
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dw-icon-choice-active {
+  border-color: var(--cal-accent);
+}
+
+.dw-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.dw-btn {
+  border: none;
+  border-radius: var(--cal-radius-sm);
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--cal-font-body);
+}
+
+.dw-btn-secondary {
+  background: var(--cal-bg);
+  color: var(--cal-text);
+}
+
+.dw-btn-primary {
+  background: var(--cal-accent);
+  color: #fff;
+}
+
+.dw-btn-primary:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.dw-btn-danger {
+  background: transparent;
+  color: #d1242f;
+}
+
+.dw-btn-left {
+  margin-right: auto;
+}
+
+.dw-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dw-confirm-text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--cal-text);
+}

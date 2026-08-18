@@ -1,0 +1,165 @@
+import { useAppData } from "../context/AppContext";
+import { useTranslation } from "../context/I18nContext";
+import Icon from "./Icon";
+import "./ReportsTab.css";
+
+/* ---------------- LEFT: trend + comparison ---------------- */
+
+export function ReportsTrendColumn() {
+  const { income, expenses, formatMoney } = useAppData();
+  const { t } = useTranslation();
+
+  // Only show real data from the current month.
+  // Historical months will appear once real transaction history exists.
+  const monthlyData = [
+    {
+      key: "08",
+      label: t("reportsTab.months.Aug"),
+      income,
+      expenses,
+    },
+  ];
+
+  const maxVal = Math.max(
+    ...monthlyData.map((m) => Math.max(m.income, m.expenses)),
+    1
+  );
+
+  const current = monthlyData[monthlyData.length - 1];
+  const previous = monthlyData[monthlyData.length - 2];
+
+  const spentDelta = previous
+    ? current.expenses - previous.expenses
+    : 0;
+
+  const spentDeltaPct =
+    previous && previous.expenses > 0
+      ? (spentDelta / previous.expenses) * 100
+      : 0;
+
+  const spentUp = spentDelta > 0;
+
+  return (
+    <div className="leaf-fill rp-trend-panel">
+      <h3 className="rp-heading">
+        {t("reportsTab.incomeVsExpenses")}
+      </h3>
+
+      <div className="rp-chart">
+        {monthlyData.map((m) => (
+          <div className="rp-chart-col" key={m.key}>
+            <div className="rp-chart-bars">
+              <span
+                className="rp-bar rp-bar-income"
+                style={{
+                  height: `${(m.income / maxVal) * 100}%`,
+                }}
+                title={`${t("common.income")}: ${formatMoney(m.income)}`}
+              />
+
+              <span
+                className="rp-bar rp-bar-expense"
+                style={{
+                  height: `${(m.expenses / maxVal) * 100}%`,
+                }}
+                title={`${t("common.expenses")}: ${formatMoney(m.expenses)}`}
+              />
+            </div>
+
+            <span className="rp-chart-label">
+              {m.label}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="rp-legend">
+        <span className="rp-legend-item">
+          <span className="rp-legend-dot rp-legend-income" />
+          {t("common.income")}
+        </span>
+
+        <span className="rp-legend-item">
+          <span className="rp-legend-dot rp-legend-expense" />
+          {t("common.expenses")}
+        </span>
+      </div>
+
+      {previous && (
+        <div className="rp-compare">
+          <span className="rp-compare-label">
+            {t("reportsTab.thisMonthVsLast")}
+          </span>
+
+          <div className="rp-compare-row">
+            <span
+              className={
+                "rp-compare-value" +
+                (spentUp
+                  ? " rp-compare-up"
+                  : " rp-compare-down")
+              }
+            >
+              {spentUp ? "▲" : "▼"}{" "}
+              {Math.abs(spentDeltaPct).toFixed(1)}%
+            </span>
+
+            <span className="rp-compare-sub">
+              {spentUp
+                ? t("reportsTab.spendingUp")
+                : t("reportsTab.spendingDown")}{" "}
+              — {formatMoney(current.expenses)} vs {formatMoney(previous.expenses)}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---------------- RIGHT: spending breakdown ---------------- */
+
+export function ReportsBreakdownColumn() {
+  const { categories, formatMoney, formatMoneyCompact } = useAppData();
+  const { t, tCategory } = useTranslation();
+
+  const spendingCategories = [...categories]
+    .filter((c) => c.spent > 0)
+    .sort((a, b) => b.spent - a.spent);
+
+  const total = spendingCategories.reduce((sum, c) => sum + c.spent, 0);
+
+  return (
+    <div className="leaf-fill rp-breakdown-panel">
+      <h3 className="rp-heading">{t("reportsTab.spendingBreakdown")}</h3>
+      <span className="rp-breakdown-total">{t("reportsTab.thisMonth", { amount: formatMoney(total) })}</span>
+
+      <div className="rp-breakdown-list">
+        {spendingCategories.length > 0 ? (
+          spendingCategories.map((cat) => {
+            const pct = total > 0 ? (cat.spent / total) * 100 : 0;
+            return (
+              <div className="rp-breakdown-row" key={cat.id}>
+                <span className="rp-breakdown-icon" style={{ background: cat.color + "22" }}>
+                  <Icon name={cat.icon} size={16} color={cat.color} />
+                </span>
+                <div className="rp-breakdown-info">
+                  <div className="rp-breakdown-top">
+                    <span className="rp-breakdown-name">{tCategory(cat.key)}</span>
+                    <span className="rp-breakdown-amount" title={formatMoney(cat.spent)}>{formatMoneyCompact(cat.spent)}</span>
+                  </div>
+                  <div className="rp-breakdown-bar-track">
+                    <div className="rp-breakdown-bar-fill" style={{ width: `${pct}%`, background: cat.color }} />
+                  </div>
+                </div>
+                <span className="rp-breakdown-pct">{pct.toFixed(0)}%</span>
+              </div>
+            );
+          })
+        ) : (
+          <span className="cal-actions-placeholder">{t("reportsTab.noSpendingYet")}</span>
+        )}
+      </div>
+    </div>
+  );
+}

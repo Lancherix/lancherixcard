@@ -1,0 +1,147 @@
+.atm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.atm-type-toggle {
+  display: flex;
+  gap: 8px;
+  background: var(--cal-bg);
+  border-radius: var(--cal-radius-sm);
+  padding: 4px;
+}
+
+.atm-type-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: var(--cal-radius-sm);
+  padding: 8px 0;
+  font-family: var(--cal-font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cal-muted);
+  cursor: pointer;
+}
+
+.atm-type-btn-active.atm-type-expense {
+  background: var(--cal-surface);
+  color: #d1242f;
+  box-shadow: var(--cal-shadow-sm);
+}
+
+.atm-type-btn-active.atm-type-income {
+  background: var(--cal-surface);
+  color: #1a7f37;
+  box-shadow: var(--cal-shadow-sm);
+}
+
+.atm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.atm-label {
+  font-family: var(--cal-font-display);
+  font-size: 12px;
+  color: var(--cal-muted);
+}
+
+.atm-amount-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--cal-border-strong);
+  border-radius: var(--cal-radius);
+  padding: 8px 12px;
+  box-sizing: border-box;
+}
+
+.atm-currency {
+  color: var(--cal-muted);
+  font-size: 15px;
+}
+
+.atm-amount-input {
+  border: none;
+  outline: none;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--cal-text);
+  width: 100%;
+  font-family: var(--cal-font-display);
+  background: transparent;
+}
+
+.atm-input,
+.atm-select,
+.atm-textarea {
+  border: 1px solid var(--cal-border-strong);
+  border-radius: var(--cal-radius);
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: var(--cal-font-body);
+  color: var(--cal-text);
+  background: var(--cal-surface);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.atm-textarea {
+  resize: vertical;
+}
+
+.atm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.atm-btn {
+  border: none;
+  border-radius: var(--cal-radius-sm);
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--cal-font-body);
+}
+
+.atm-btn-secondary {
+  background: var(--cal-bg);
+  color: var(--cal-text);
+}
+
+.atm-btn-primary {
+  background: var(--cal-accent);
+  color: #fff;
+}
+
+.atm-btn-primary:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.atm-btn-danger {
+  background: transparent;
+  color: #d1242f;
+}
+
+.atm-btn-left {
+  margin-right: auto; /* pushes Cancel/Save to the right, Delete stays left */
+}
+
+.atm-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.atm-confirm-text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--cal-text);
+}

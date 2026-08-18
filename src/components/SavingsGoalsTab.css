@@ -1,0 +1,279 @@
+.sg-panel {
+  gap: 14px;
+}
+
+.sg-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.sg-heading {
+  margin: 0;
+  font-family: var(--cal-font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cal-text);
+}
+
+.sg-add-btn {
+  border: none;
+  background: var(--cal-accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--cal-radius-sm);
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+.sg-grid {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  align-content: start;
+}
+
+.sg-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  border-radius: var(--cal-radius);
+  background: var(--cal-bg);
+  padding: 16px 12px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.sg-card:hover {
+  background: var(--cal-accent-soft);
+}
+
+.sg-ring-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sg-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sg-ring-pct {
+  font-family: var(--cal-font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cal-text);
+}
+
+.sg-card-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.sg-card-icon {
+  font-size: 18px;
+}
+
+.sg-card-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cal-text);
+}
+
+.sg-card-amounts {
+  font-size: 11px;
+  color: var(--cal-muted);
+}
+
+.sg-card-complete {
+  color: #1a7f37;
+  font-weight: 600;
+}
+
+/* ---------------- form ---------------- */
+
+.sg-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sg-label {
+  font-family: var(--cal-font-display);
+  font-size: 12px;
+  color: var(--cal-muted);
+}
+
+.sg-input {
+  border: 1px solid var(--cal-border-strong);
+  border-radius: var(--cal-radius);
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: var(--cal-font-body);
+  color: var(--cal-text);
+  background: var(--cal-surface);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.sg-icon-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sg-icon-choice {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  border: 2px solid transparent;
+  background: var(--cal-bg);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sg-icon-choice-active {
+  border-color: var(--cal-accent);
+}
+
+.sg-amount-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--cal-border-strong);
+  border-radius: var(--cal-radius);
+  padding: 8px 12px;
+  box-sizing: border-box;
+}
+
+.sg-currency {
+  color: var(--cal-muted);
+  font-size: 15px;
+}
+
+.sg-amount-input {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cal-text);
+  width: 100%;
+  font-family: var(--cal-font-display);
+  background: transparent;
+}
+
+.sg-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.sg-btn {
+  border: none;
+  border-radius: var(--cal-radius-sm);
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--cal-font-body);
+}
+
+.sg-btn-secondary {
+  background: var(--cal-bg);
+  color: var(--cal-text);
+}
+
+.sg-btn-primary {
+  background: var(--cal-accent);
+  color: #fff;
+}
+
+.sg-btn-primary:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.sg-btn-danger {
+  background: transparent;
+  color: #d1242f;
+}
+
+.sg-btn-left {
+  margin-right: auto;
+}
+
+.sg-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sg-confirm-text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--cal-text);
+}
+
+.dw-goal-contribute-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--cal-muted);
+  line-height: 1.4;
+}
+
+.dw-goal-current-readout {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  background: var(--cal-bg);
+  border-radius: var(--cal-radius);
+  padding: 10px 14px;
+}
+
+.dw-goal-current-label {
+  font-size: 12px;
+  color: var(--cal-muted);
+}
+
+.dw-goal-current-value {
+  font-family: var(--cal-font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cal-text);
+}
+
+.dw-btn-accent {
+  background: var(--cal-accent-soft);
+  color: var(--cal-accent);
+}
+
+.dw-goal-error {
+  font-size: 11px;
+  color: #d1242f;
+  margin-top: -8px;
+}

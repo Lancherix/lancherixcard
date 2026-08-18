@@ -1,0 +1,380 @@
+/* ------------------------------------------------------------------
+   Design tokens
+   Palette: Apple Card–inspired light theme — soft neutral grays,
+   a single blue accent, generous whitespace, gentle elevation
+   instead of hard borders.
+------------------------------------------------------------------- */
+:root {
+  --cal-bg: #f5f5f7;
+  --cal-surface: #ffffff;
+  --cal-surface-raised: #ffffff;
+  --cal-border: rgba(0, 0, 0, 0.06);
+  --cal-border-strong: rgba(0, 0, 0, 0.08);
+  --cal-text: #1d1d1f;
+  --cal-muted: #6e6e73;
+  --cal-accent: #0071e3;
+  --cal-accent-soft: rgba(0, 113, 227, 0.08);
+
+  --cal-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --cal-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.05), 0 10px 30px rgba(0, 0, 0, 0.06);
+
+  --cal-font-display: "Roboto", system-ui, -apple-system, sans-serif;
+  --cal-font-body: "Roboto", system-ui, -apple-system, sans-serif;
+  --cal-font-mono: "Roboto", system-ui, -apple-system, sans-serif;
+
+  --cal-radius: 11px;
+  --cal-radius-sm: 100px;
+  --cal-margin: clamp(16px, 6vw, 64px); /* the two "equal size" margins */
+  --cal-card-width: 20vw;
+  --cal-menu-row-height: clamp(32px, 4vh, 40px);
+}
+
+/* No-scroll shell: the whole app fits exactly one viewport. */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+.cal-shell {
+  height: 100vh;
+  width: 100%;
+  background: var(--cal-bg);
+  color: var(--cal-text);
+  font-family: var(--cal-font-body);
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: clamp(12px, 2vw, 24px);
+}
+
+.cal-frame {
+  height: 100%;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: 1fr auto; /* content | footer */
+  gap: 12px;
+  min-height: 0;
+}
+
+/* ---------------- Content: margin | card | menu+actions | margin ---------------- */
+
+.cal-content {
+  display: grid;
+  grid-template-columns: var(--cal-margin) var(--cal-card-width) minmax(0, 1fr) var(--cal-margin);
+  grid-template-rows: var(--cal-menu-row-height) 1fr;
+  column-gap: 20px;
+  row-gap: 12px;
+  min-height: 0;
+}
+
+.cal-margin {
+  /* deliberately empty — mirrors the wireframe's equal side margins */
+  grid-row: 1 / 3;
+}
+
+.cal-margin-left {
+  grid-column: 1;
+}
+
+.cal-margin-right {
+  grid-column: 4;
+}
+
+.cal-card-column {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+.cal-card-thumb {
+  overflow: hidden;
+  box-shadow: var(--cal-shadow-md);
+  border-radius: 11px;
+  flex-shrink: 0;
+}
+
+.cal-card-thumb img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
+.cal-card-thumb-label {
+  font-family: var(--cal-font-display);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--cal-muted);
+}
+
+.cal-menu-buttons {
+  grid-column: 3;
+  grid-row: 1;
+  display: flex;
+  gap: 10px;
+}
+
+.cal-menu-btn {
+  flex: 1;
+  height: 100%;
+  border-radius: var(--cal-radius-sm);
+  border: 1px solid var(--cal-border);
+  background: var(--cal-surface);
+  color: var(--cal-text);
+  font-family: var(--cal-font-body);
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: var(--cal-shadow-sm);
+  transition: box-shadow 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+
+.cal-menu-btn:last-child {
+  flex: 0.6;
+}
+
+.cal-menu-btn:hover:not(:disabled) {
+  background: var(--cal-accent-soft);
+  box-shadow: var(--cal-shadow-md);
+}
+
+.cal-menu-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.cal-menu-btn:focus-visible {
+  outline: 2px solid var(--cal-accent);
+  outline-offset: 2px;
+}
+
+.cal-menu-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* was: single white box. now: flex container, boxes live on leaves */
+.cal-actions {
+  grid-column: 3;
+  grid-row: 2;
+  min-height: 0;
+  display: flex; /* children (a row/col split, or a single leaf) fill this */
+}
+
+/* recursive split containers */
+.cal-panel-row {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.cal-panel-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.cal-panel-slot {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+}
+
+/* the actual visual "box" — one per leaf */
+.cal-panel-leaf {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  border-radius: var(--cal-radius);
+  background: var(--cal-surface);
+  box-shadow: var(--cal-shadow-md);
+  padding: 1vh 1vh 1.6vh 1.6vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+/* highlight the active menu button */
+.cal-menu-btn-active {
+  background: var(--cal-accent-soft);
+  border-color: var(--cal-accent);
+  box-shadow: var(--cal-shadow-md);
+}
+
+/* ---------------- Footer ---------------- */
+
+.cal-footer {
+  padding-top: 12px;
+  border-top: 1px solid var(--cal-border);
+  display: flex;
+  justify-content: center;
+}
+
+.cal-footer-copy {
+  font-family: var(--cal-font-mono);
+  font-size: 12px;
+  color: var(--cal-muted);
+  letter-spacing: 0.01em;
+}
+
+.cal-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.cal-modal {
+  width: min(480px, 100%);
+  max-height: 80vh;
+  background: var(--cal-surface);
+  border-radius: var(--cal-radius);
+  box-shadow: var(--cal-shadow-md);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.cal-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--cal-border);
+}
+
+.cal-modal-title {
+  font-family: var(--cal-font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cal-text);
+}
+
+.cal-modal-close {
+  border: none;
+  background: transparent;
+  color: var(--cal-muted);
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-modal-close:hover {
+  background: var(--cal-accent-soft);
+  color: var(--cal-text);
+}
+
+.cal-modal-body {
+  padding: 20px;
+  overflow: auto;
+}
+
+.cal-permanent-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow: auto; /* if the column ever gets tight, this scrolls, not the page */
+}
+
+.cal-permanent-row {
+  display: flex;
+  gap: 10px;
+}
+
+.cal-permanent-tile {
+  flex: 1;
+  min-width: 0;
+  background: var(--cal-surface);
+  border-radius: var(--cal-radius);
+  box-shadow: var(--cal-shadow-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.cal-permanent-tile-label {
+  font-family: var(--cal-font-display);
+  font-size: 11px;
+  color: var(--cal-muted);
+  letter-spacing: 0.01em;
+}
+
+.cal-permanent-tile-value {
+  font-family: var(--cal-font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--cal-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cal-permanent-tile-sub {
+  font-family: var(--cal-font-body);
+  font-size: 10px;
+  color: var(--cal-muted);
+}
+
+.cal-permanent-tile-wide {
+  width: 100%;
+}
+
+.cal-permanent-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 40px;
+  margin-top: 4px;
+  width: 100%;
+  min-width: 0;
+}
+.cal-permanent-bars span {
+  flex: 1;
+  min-width: 0;
+  background: var(--cal-accent);
+  opacity: 1;
+  border-radius: 2px;
+  min-height: 3px;
+}
+
+/* ---------------- Responsive ---------------- */
+
+@media (max-width: 640px) {
+  .cal-content {
+    grid-template-columns: 10px 90px 1fr 10px;
+  }
+
+  .cal-menu-btn {
+    font-size: 11px;
+  }
+
+  .cal-permanent-row {
+    flex-direction: column;
+  }
+}
