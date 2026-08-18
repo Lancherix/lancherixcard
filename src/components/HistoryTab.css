@@ -13,7 +13,7 @@
   min-width: 0;
   height: 30px;
   border: 1px solid var(--cal-border-strong);
-  border-radius: var(--cal-radius-sm);
+  border-radius: var(--cal-radius);
   padding: 5px 10px;
   font-size: 12px;
   font-family: var(--cal-font-body);

@@ -93,7 +93,7 @@ function Home() {
             direction: "column",
             children: [
               { type: "leaf", content: <BudgetOverviewColumn /> },
-              { type: "empty", content: <Empty /> },
+              { type: "leaf", content: <GoalsWidget /> },
               { type: "empty", content: <Empty /> },
             ],
           },
