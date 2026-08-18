@@ -253,7 +253,7 @@ export function BudgetOverviewColumn() {
   return (
     <div className="leaf-fill dw-txl-panel">
       <div className="dw-col-header">
-        <h3 className="dw-heading">{t("budgetTab.monthlyBudget")}</h3>
+        <h3 className="dw-heading">{t("icons.budget")}</h3>
         <button className="dw-add-btn dw-add-btn-neutral" onClick={() => setEditingBudget(true)}>{t("common.edit")}</button>
       </div>
 

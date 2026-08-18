@@ -70,7 +70,7 @@ function Home() {
     {
       key: "money",
       label: t("nav.money"),
-      icon: t("icons.flows"),
+      icon: t("dashboard.transactions"),
       panel: {
         type: "split",
         direction: "row",

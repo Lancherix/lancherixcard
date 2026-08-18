@@ -146,6 +146,11 @@ body,
   justify-content: center;
 }
 
+.cal-menu-btn:last-child svg {
+  width: 21px;
+  height: 21px;
+}
+
 .cal-menu-btn:hover:not(:disabled) {
   background: var(--cal-accent-soft);
   box-shadow: var(--cal-shadow-md);
