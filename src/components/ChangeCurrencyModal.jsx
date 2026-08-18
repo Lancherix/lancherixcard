@@ -56,7 +56,7 @@ export default function ChangeCurrencyModal({ onClose }) {
             </p>
           </div>
 
-          <div className="form-row form-row-a form-row-name">
+                    <div className="form-row form-row-a form-row-name">
             <label>{t("changeCurrency.newCurrency")}</label>
 
             <select
@@ -65,7 +65,7 @@ export default function ChangeCurrencyModal({ onClose }) {
             >
               {CURRENCY_ORDER.map((code) => (
                 <option key={code} value={code} disabled={code === currentCode}>
-                  {CURRENCIES[code].flag} {CURRENCIES[code].code} — {CURRENCIES[code].name}
+                  {CURRENCIES[code].flag} {CURRENCIES[code].code} — {t(`currencyNames.${code}`)}
                   {code === currentCode ? ` ${t("changeCurrency.current")}` : ""}
                 </option>
               ))}
@@ -84,13 +84,13 @@ export default function ChangeCurrencyModal({ onClose }) {
               inputMode="decimal"
               step="any"
               min="0"
-              placeholder="e.g. 0.00028 or 3900"
+              placeholder={t("changeCurrency.ratePlaceholder")}
               value={rate}
               onChange={(e) => setRate(e.target.value)}
               autoFocus
             />
           </div>
-
+          
           {isValid && (
             <div className="form-row">
               <span />
