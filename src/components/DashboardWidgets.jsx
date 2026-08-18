@@ -267,10 +267,6 @@ function TransactionForm({ onClose, initialValues }) {
 
                 {t("common.name")}
 
-                <small>
-                  (optional)
-                </small>
-
               </span>
 
               <input

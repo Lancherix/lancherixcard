@@ -512,13 +512,11 @@
 }
 
 .dw-type-btn-active.dw-type-expense {
-  background: var(--cal-surface);
   color: #d1242f;
   box-shadow: var(--cal-shadow-sm);
 }
 
 .dw-type-btn-active.dw-type-income {
-  background: var(--cal-surface);
   color: #1a7f37;
   box-shadow: var(--cal-shadow-sm);
 }
@@ -529,7 +527,7 @@
   gap: 4px;
   border: 1px solid var(--cal-border-strong);
   border-radius: var(--cal-radius);
-  padding: 8px 12px;
+  padding: 0 0 0 0.5vw;
   box-sizing: border-box;
 }
 
@@ -715,8 +713,6 @@
 
 .dw-input:focus,
 .dw-select:focus {
-    border-color: #8db8f0;
-
     box-shadow:
         0 0 0 2px rgba(0, 113, 227, 0.15);
 }

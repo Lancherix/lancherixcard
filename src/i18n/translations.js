@@ -34,6 +34,7 @@ export const translations = {
       expenses: "Expenses",
       goal: "Goal",
       withdrawal: "Withdrawal",
+      type: "Type",
     },
     icons: {
       home: "Home",
@@ -207,6 +208,7 @@ export const translations = {
       expenses: "Dépenses",
       goal: "Objectif",
       withdrawal: "Retrait",
+      type: "Type",
     },
     icons: {
       home: "Accueil",
@@ -380,6 +382,7 @@ export const translations = {
       expenses: "Gastos",
       goal: "Meta",
       withdrawal: "Retiro",
+      type: "Tipo",
     },
     icons: {
       home: "Inicio",
