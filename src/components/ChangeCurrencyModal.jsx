@@ -67,7 +67,10 @@ export default function ChangeCurrencyModal({ onClose }) {
 
           <div className="form-row form-row-a form-row-name">
             <label>
-              Rate (1 {currentCfg.code} = ? {targetCfg.code})
+              Rate
+            </label>
+            <label>
+              (1 {currentCfg.code} = ? {targetCfg.code})
             </label>
 
             <input

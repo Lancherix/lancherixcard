@@ -579,6 +579,7 @@
   font-size: 0.8rem;
   font-weight: 600;
   color: #1d1d1f;
+  text-align: end;
 }
 
 .form-row input,
