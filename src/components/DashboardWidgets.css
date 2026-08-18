@@ -7,6 +7,20 @@
   min-height: 0;
 }
 
+.cal-empty-leaf {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: 0;
+  padding: 1vh 1vh 1.6vh 1.6vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
 .dw-heading {
   margin: 0;
   flex-shrink: 0;
