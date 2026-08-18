@@ -24,13 +24,15 @@
 }
 
 .ht-sort-select {
-  background-image: linear-gradient(45deg, transparent 50%, var(--cal-muted) 50%),
-    linear-gradient(135deg, var(--cal-muted) 50%, transparent 50%);
-  background-position:
-    calc(100% - 10px) 12px,
-    calc(100% - 6px) 12px;
-  background-size: 4px 4px, 4px 4px;
-  background-repeat: no-repeat;
+  border: 1px solid var(--cal-border-strong);
+  border-radius: var(--cal-radius);
+  padding: 6px 10px;
+  font-size: 12px;
+  font-family: var(--cal-font-body);
+  color: var(--cal-text);
+  background: var(--cal-surface);
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .ht-chip-row {
