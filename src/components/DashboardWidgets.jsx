@@ -73,9 +73,7 @@ function TransactionForm({ onClose, initialValues }) {
   );
 
   const [amount, setAmount] = useState(
-    initialValues
-      ? String(initialValues.amount)
-      : ""
+    initialValues ? String(initialValues.amount) : ""
   );
 
   const [categoryKey, setCategoryKey] = useState(
@@ -85,12 +83,8 @@ function TransactionForm({ onClose, initialValues }) {
   );
 
   const [date, setDate] = useState(
-    initialValues?.date ??
-    getLocalDateString()
+    initialValues?.date ?? getLocalDateString()
   );
-
-
-  /* ---------------- Validation ---------------- */
 
   const parsedAmount = parseFloat(amount);
 
@@ -99,9 +93,6 @@ function TransactionForm({ onClose, initialValues }) {
     !isNaN(parsedAmount) &&
     parsedAmount > 0 &&
     categories.length > 0;
-
-
-  /* ---------------- Submit ---------------- */
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -126,83 +117,54 @@ function TransactionForm({ onClose, initialValues }) {
     onClose();
   };
 
-
-  /* ---------------- Delete ---------------- */
-
   const handleDelete = () => {
+    if (!initialValues?.id) return;
+
     deleteTransaction(initialValues.id);
     onClose();
   };
 
-
-  /* =========================================================
-     Delete confirmation
-     ========================================================= */
-
   if (confirmingDelete) {
     return createPortal(
-      <div className="dw-overlay">
-
+      <div className="new-project-overlay">
         <div
-          className="dw-window"
+          className="new-project-window"
           onClick={(e) => e.stopPropagation()}
         >
-
-          {/* Header */}
-
-          <div className="dw-header">
-            <h4>
-              {t("common.delete")}
-            </h4>
+          <div className="new-project-header">
+            <h4>{t("common.delete")}</h4>
           </div>
 
-
-          {/* Content */}
-
-          <div className="dw-content">
-
-            <div className="dw-confirm">
-
+          <div className="new-project-content">
+            <div className="form-row">
               <p className="dw-confirm-text">
                 {t("transactionModal.deleteConfirm")}
               </p>
-
-              <div className="dw-form-actions">
-
-                <button
-                  type="button"
-                  className="dw-btn dw-btn-secondary"
-                  onClick={() => setConfirmingDelete(false)}
-                >
-                  {t("common.cancel")}
-                </button>
-
-                <button
-                  type="button"
-                  className="dw-btn dw-btn-danger"
-                  onClick={handleDelete}
-                >
-                  {t("common.delete")}
-                </button>
-
-              </div>
-
             </div>
-
           </div>
 
+          <div className="new-project-footer">
+            <button
+              type="button"
+              className="secondary-btn"
+              onClick={() => setConfirmingDelete(false)}
+            >
+              {t("common.cancel")}
+            </button>
+
+            <button
+              type="button"
+              className="secondary-btn transaction-delete-btn"
+              onClick={handleDelete}
+            >
+              {t("common.delete")}
+            </button>
+          </div>
         </div>
-
       </div>,
-
       document.getElementById("modal-root")
     );
   }
-
-
-  /* =========================================================
-     Main transaction modal
-     ========================================================= */
 
   return createPortal(
     <div className="new-project-overlay">
@@ -221,6 +183,7 @@ function TransactionForm({ onClose, initialValues }) {
         <div className="new-project-content">
           <div className="form-row form-row-a form-row-name">
             <label>{t("common.type")}</label>
+
             <TypeToggle
               type={type}
               onChange={setType}
@@ -229,6 +192,7 @@ function TransactionForm({ onClose, initialValues }) {
 
           <div className="form-row form-row-a form-row-name">
             <label>{t("common.name")}</label>
+
             <input
               type="text"
               placeholder={t("moneyTab.namePlaceholder")}
@@ -239,8 +203,12 @@ function TransactionForm({ onClose, initialValues }) {
 
           <div className="form-row form-row-a form-row-name">
             <label>{t("common.amount")}</label>
+
             <div className="dw-amount-wrap">
-              <span className="dw-currency">{currencySymbol}</span>
+              <span className="dw-currency">
+                {currencySymbol}
+              </span>
+
               <input
                 type="number"
                 inputMode="decimal"
@@ -257,13 +225,17 @@ function TransactionForm({ onClose, initialValues }) {
 
           <div className="form-row form-row-a form-row-name">
             <label>{t("common.category")}</label>
+
             {categories.length > 0 ? (
               <select
                 value={categoryKey}
                 onChange={(e) => setCategoryKey(e.target.value)}
               >
                 {categories.map((c) => (
-                  <option key={c.id} value={c.key}>
+                  <option
+                    key={c.id}
+                    value={c.key}
+                  >
                     {tCategory(c.key)}
                   </option>
                 ))}
@@ -277,6 +249,7 @@ function TransactionForm({ onClose, initialValues }) {
 
           <div className="form-row form-row-a form-row-name">
             <label>{t("common.date")}</label>
+
             <input
               type="date"
               value={date}
@@ -289,8 +262,7 @@ function TransactionForm({ onClose, initialValues }) {
           {isEditing && (
             <button
               type="button"
-              className="secondary-btn"
-              style={{ color: "#d1242f" }}
+              className="secondary-btn transaction-delete-btn"
               onClick={() => setConfirmingDelete(true)}
             >
               {t("common.delete")}
@@ -370,12 +342,14 @@ export function TransactionsList() {
       </div>
 
       {modalState && (
-        <ModalShell title={modalState.mode === "edit" ? t("moneyTab.editTransaction") : t("moneyTab.addTransaction")} onClose={closeModal}>
-          <TransactionForm
-            onClose={closeModal}
-            initialValues={modalState.mode === "edit" ? modalState.item : null}
-          />
-        </ModalShell>
+        <TransactionForm
+          onClose={closeModal}
+          initialValues={
+            modalState.mode === "edit"
+              ? modalState.item
+              : null
+          }
+        />
       )}
     </div>
   );

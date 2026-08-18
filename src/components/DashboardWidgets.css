@@ -1067,22 +1067,11 @@
 
 /* ---------------- Transaction modal ---------------- */
 
-.new-project-window .form-row {
-    grid-template-columns: 7vw 1fr;
-}
-
 .new-project-window .form-row input,
 .new-project-window .form-row select {
     width: 100%;
     box-sizing: border-box;
 }
-
-.new-project-window .form-row:last-child {
-    border-bottom: none;
-}
-
-
-/* Transaction type */
 
 .new-project-window .dw-type-toggle {
     display: flex;
@@ -1114,57 +1103,42 @@
     background: linear-gradient(#5a9bff, #1b74e4);
 }
 
-
-/* Amount */
-
 .new-project-window .dw-amount-wrap {
     display: flex;
     align-items: center;
-
     width: 100%;
-
     border: 1px solid #d5d3d6;
     border-radius: 6px;
-
     background: #fff;
-
     overflow: hidden;
     box-sizing: border-box;
 }
 
 .new-project-window .dw-currency {
     padding: 0.7vh 0.7vw;
-
     color: #555;
-
     background: #f2f1f3;
-
     border-right: 1px solid #d5d3d6;
 }
 
 .new-project-window .dw-amount-input {
     flex: 1;
-
     width: 100%;
-
     padding: 0.7vh 0.7vw;
-
     border: none !important;
     outline: none;
-
     background: transparent;
 }
-
-
-/* Hint */
 
 .new-project-window .dw-field-hint {
     color: #888;
     font-size: 0.75rem;
 }
 
-
-/* Delete */
+.new-project-window .dw-confirm-text {
+    margin: 0;
+    color: #1d1d1f;
+}
 
 .new-project-window .transaction-delete-btn {
     color: #d1242f;
