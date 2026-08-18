@@ -41,8 +41,12 @@
 
 /* ---------------- Transactions (left column) ---------------- */
 
+.dw-tx-panel {
+  gap: 1vh;
+}
+
 .dw-txl-panel {
-  gap: 10px;
+  gap: 1vh;
 }
 
 .dw-txl-list {
