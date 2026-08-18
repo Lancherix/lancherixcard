@@ -102,28 +102,25 @@ function Home() {
       },
     },
     {
-      key: "history",
-      label: t("nav.history"),
-      icon: t("icons.history"),
-      panel: { type: "leaf", content: <HistoryTab /> },
-    },
-    {
       key: "reports",
       label: t("nav.reports"),
       icon: t("icons.reports"),
       panel: {
         type: "split",
-        direction: "row",
+        direction: "column",
         children: [
           {
             type: "split",
-            direction: "column",
+            direction: "row",
             children: [
               { type: "leaf", content: <ReportsTrendColumn /> },
-              { type: "empty", content: <Empty /> },
+              { type: "leaf", content: <ReportsBreakdownColumn /> },
             ],
           },
-          { type: "leaf", content: <ReportsBreakdownColumn /> },
+          {
+            type: "leaf",
+            content: <HistoryTab />,
+          },
         ],
       },
     },
