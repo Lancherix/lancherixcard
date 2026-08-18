@@ -274,14 +274,7 @@ export function BudgetOverviewColumn() {
           </div>
         </div>
       </div>
-
-      <div className="bt-overview-bar-track">
-        <div
-          className={"bt-overview-bar-fill" + (pct >= 100 ? " bt-overview-bar-over" : "")}
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-
+      
       {editingBudget && (
         <ModalShell title={t("budgetTab.editMonthlyBudget")} onClose={() => setEditingBudget(false)}>
           <BudgetForm onClose={() => setEditingBudget(false)} initialLimit={budget} />
