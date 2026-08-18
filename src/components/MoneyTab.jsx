@@ -255,17 +255,37 @@ function TxRow({ tx, onClick, categories, formatMoney }) {
   const isIncome = tx.type === "income";
   const { tCategory } = useTranslation();
   const category = categories.find((c) => c.key === tx.categoryKey);
+
   return (
-    <button className="dt-tx-row" onClick={() => onClick(tx)}>
-      <span className="dt-tx-icon" style={{ background: (category?.color ?? "#6e6e73") + "22" }}>
-        <Icon name={category?.icon ?? "other"} size={16} color={category?.color} />
+    <button className="dw-tx-row" onClick={() => onClick(tx)}>
+      <span
+        className="dw-tx-icon"
+        style={{
+          background: (category?.color ?? "#6e6e73") + "22",
+        }}
+      >
+        <Icon
+          name={category?.icon ?? "other"}
+          size={16}
+          color={category?.color}
+        />
       </span>
-      <span className="dt-tx-info">
-        <span className="dt-tx-name">{tx.name}</span>
-        <span className="dt-tx-sub">{tCategory(tx.categoryKey)} · {tx.date}</span>
+
+      <span className="dw-tx-info">
+        <span className="dw-tx-name">{tx.name}</span>
+        <span className="dw-tx-sub">
+          {tCategory(tx.categoryKey)} · {tx.date}
+        </span>
       </span>
-      <span className={"dt-tx-amount" + (isIncome ? " dt-amount-income" : " dt-amount-expense")}>
-        {isIncome ? "+" : "-"}{formatMoney(tx.amount)}
+
+      <span
+        className={
+          "dw-tx-amount" +
+          (isIncome ? " dw-amount-income" : " dw-amount-expense")
+        }
+      >
+        {isIncome ? "+" : "-"}
+        {formatMoney(tx.amount)}
       </span>
     </button>
   );
