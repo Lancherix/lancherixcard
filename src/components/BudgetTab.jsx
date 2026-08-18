@@ -303,13 +303,13 @@ export function BudgetCategoriesColumn() {
   const totalLimits = categories.reduce((sum, c) => sum + c.limit, 0);
 
   return (
-    <div className="leaf-fill bt-cat-panel">
-      <div className="bt-col-header">
-        <h3 className="bt-heading">{t("budgetTab.categoriesHeading", { total: formatMoney(totalLimits) })}</h3>
-        <button className="bt-add-btn bt-add-btn-accent" onClick={() => setModalState({ mode: "add" })}>+ {t("common.add")}</button>
+    <div className="leaf-fill dw-txl-panel">
+      <div className="dw-col-header">
+        <h3 className="dw-heading">{t("budgetTab.categoriesHeading", { total: formatMoney(totalLimits) })}</h3>
+        <button className="dw-add-btn" onClick={() => setModalState({ mode: "add" })}>+ {t("common.add")}</button>
       </div>
 
-      <div className="bt-cat-list">
+      <div className="dw-txl-list">
         {categories.length > 0 ? (
           categories.map((cat) => {
             const pct =
