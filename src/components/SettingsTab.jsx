@@ -201,7 +201,7 @@ export function CurrencyColumn() {
         <span className="settings-currency-symbol">{currencySymbol}</span>
         <div className="settings-currency-current-text">
           <span className="settings-readonly-label">{t("settings.currentCurrency")}</span>
-          <span className="settings-currency-code">{currency}</span>
+          <span className="settings-currency-code">{currency?.code ?? currency}</span>
         </div>
       </div>
 
