@@ -71,8 +71,8 @@ export function AccountColumn() {
     LANGUAGE_LABELS[languageCode] ?? languageCode;
 
   const birthDate = [
-    profile.month,
-    profile.date,
+    profile.month,-
+    profile.date,-
     profile.year,
   ]
     .filter(Boolean)
