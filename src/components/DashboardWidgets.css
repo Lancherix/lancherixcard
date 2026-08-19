@@ -142,6 +142,20 @@
   text-align: center;
 }
 
+/* Report's spending list has far less room than Transactions/Goals
+   (it shares dw-report-body with the trend chart above it), so this
+   keeps the same icon-over-label composition at a scale that actually
+   fits instead of overflowing or forcing scroll. */
+
+.dw-empty-state-compact {
+  gap: 6px;
+  padding: 4px 8px 12px;
+}
+
+.dw-empty-state-compact .dw-empty-state-label {
+  font-size: 11px;
+}
+
 /* ============================================================
    Report (row 1)
    ============================================================ */

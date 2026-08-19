@@ -42,10 +42,10 @@ function TypeToggle({ type, onChange }) {
 
 /* ---------------- Empty state: icon above label, nothing else ---------------- */
 
-function EmptyState({ icon, label }) {
+function EmptyState({ icon, label, compact }) {
   return (
-    <div className="dw-empty-state">
-      <Icon name={icon} size={32} color="var(--cal-muted)" />
+    <div className={"dw-empty-state" + (compact ? " dw-empty-state-compact" : "")}>
+      <Icon name={icon} size={compact ? 18 : 32} color="var(--cal-muted)" />
       <span className="dw-empty-state-label">{label}</span>
     </div>
   );
@@ -435,7 +435,7 @@ export function ReportWidget() {
               );
             })
           ) : (
-            <EmptyState icon="chart" label={t("dashboard.noSpendingYet")} />
+            <EmptyState icon="chart" label={t("dashboard.noSpendingYet")} compact />
           )}
         </div>
       </div>
