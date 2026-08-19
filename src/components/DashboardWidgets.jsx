@@ -33,6 +33,24 @@ function TypeToggle({ type, onChange }) {
   );
 }
 
+/* ---------------- Empty-state row/tile, shared by Transactions, Goals, Report ----------------
+   EmptyRow: same shape as dw-tx-row / dw-report-cat-row. Renders a <button> when
+   onClick is passed (Transactions), a plain <div> when it isn't (Report's static
+   spending list, which has no direct "add" action).
+   EmptyGoalTile: same fixed-width shape as dw-goal-card, since goals are laid
+   out as tiles, not rows. */
+
+/* ---------------- Empty state: icon above label, nothing else ---------------- */
+
+function EmptyState({ icon, label }) {
+  return (
+    <div className="dw-empty-state">
+      <Icon name={icon} size={24} color="var(--cal-muted)" />
+      <span className="dw-empty-state-label">{label}</span>
+    </div>
+  );
+}
+
 /* ---------------- Transaction form: dispatches through context ---------------- */
 
 function TransactionForm({ onClose, initialValues }) {
@@ -323,7 +341,7 @@ export function TransactionsList() {
             <TxRow key={tx.id} tx={tx} categories={categories} formatMoney={formatMoney} onClick={(item) => setModalState({ mode: "edit", item })} />
           ))
         ) : (
-          <span className="cal-actions-placeholder">{t("dashboard.noTransactionsYet")}</span>
+          <EmptyState icon="receipt" label={t("dashboard.noTransactionsYet")} />
         )}
       </div>
 
@@ -417,7 +435,7 @@ export function ReportWidget() {
               );
             })
           ) : (
-            <span className="cal-actions-placeholder">{t("dashboard.noSpendingYet")}</span>
+            <EmptyState icon="chart" label={t("dashboard.noSpendingYet")} />
           )}
         </div>
       </div>
@@ -918,7 +936,7 @@ export function GoalsWidget() {
             );
           })
         ) : (
-          <span className="cal-actions-placeholder">{t("dashboard.noGoalsYet")}</span>
+          <EmptyState icon="flag" label={t("dashboard.noGoalsYet")} />
         )}
       </div>
 
