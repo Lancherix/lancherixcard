@@ -19,7 +19,7 @@ select {
   height: auto;
   object-fit: contain;
   transform: translateY(-4vh);
-  animation: logoPulse 3s ease-in-out infinite;
+  animation: logoPulse 4s ease-in-out infinite;
 }
 
 @keyframes logoPulse {
