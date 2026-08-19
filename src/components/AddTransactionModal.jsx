@@ -116,7 +116,7 @@ export default function AddTransactionModal({ onClose, onSave, onDelete, initial
           </select>
         ) : (
           <span className="atm-field-hint" style={{ fontSize: 12, color: "var(--cal-muted)", fontStyle: "italic" }}>
-            Add a category in the Budget tab first
+            {t("budgetTab.noCategoriesHint")}
           </span>
         )}
       </label>

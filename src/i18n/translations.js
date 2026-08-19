@@ -90,6 +90,7 @@ export const translations = {
       budget: "Budget",
       remaining: "Remaining",
       noCategoriesYet: "No categories yet",
+      noCategoriesHint: "Add a category in the Budget tab first",
     },
     historyTab: {
       searchPlaceholder: "Search transactions...",
@@ -287,6 +288,7 @@ export const translations = {
       budget: "Budget",
       remaining: "Restant",
       noCategoriesYet: "Aucune catégorie pour le moment",
+      noCategoriesHint: "Ajoutez d'abord une catégorie dans l'onglet Budget",
     },
     historyTab: {
       searchPlaceholder: "Rechercher des transactions...",
@@ -484,6 +486,7 @@ export const translations = {
       budget: "Presupuesto",
       remaining: "Restante",
       noCategoriesYet: "No hay categorías todavía",
+      noCategoriesHint: "Primero agrega una categoría en la pestaña Presupuesto",
     },
     historyTab: {
       searchPlaceholder: "Buscar transacciones...",
@@ -680,6 +683,7 @@ export const translations = {
       budget: "Бюджет",
       remaining: "Осталось",
       noCategoriesYet: "Пока нет категорий",
+      noCategoriesHint: "Сначала добавьте категорию на вкладке «Бюджет»",
     },
     historyTab: {
       searchPlaceholder: "Поиск транзакций...",

@@ -228,7 +228,7 @@ function TransactionForm({ onClose, initialValues }) {
               </select>
             ) : (
               <span className="dw-field-hint">
-                Add a category in the Budget tab first
+                {t("budgetTab.noCategoriesHint")}
               </span>
             )}
           </div>

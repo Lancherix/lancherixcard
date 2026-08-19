@@ -37,7 +37,7 @@ function TypeToggle({ type, onChange }) {
 function NoCategoriesHint() {
   return (
     <span className="dw-field-hint">
-      Add a category in the Budget tab first
+      {t("budgetTab.noCategoriesHint")}
     </span>
   );
 }
