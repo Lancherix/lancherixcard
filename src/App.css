@@ -15,7 +15,8 @@ select {
 }
 
 .app-loading-logo {
-  width: 15vw;
+  width: 10vw;
   height: auto;
   object-fit: contain;
+  transform: translateY(-5vh);
 }
