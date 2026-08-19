@@ -143,13 +143,14 @@
   border: none;
   background: transparent;
   cursor: pointer;
-  padding: 16px;
+  padding: 2vh 5vw;
   box-sizing: border-box;
   font-family: var(--cal-font-body);
+
 }
 
 .dw-empty-block svg {
-  width: 20%;
+  width: 60%;
   height: auto;
 }
 
@@ -167,7 +168,7 @@
 }
 
 .dw-empty-block-label {
-  font-size: 12px;
+  font-size: 1rem;
   color: var(--cal-muted);
   text-align: center;
 }
