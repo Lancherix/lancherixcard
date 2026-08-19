@@ -22,7 +22,11 @@ function Redirecting() {
   useEffect(() => {
     redirectToLogin();
   }, []);
-  return <p>Redirecting to login...</p>;
+  return (
+    <div className="app-loading-screen">
+      <img src={symbol} alt="Lancherix" className="app-loading-logo" />
+    </div>
+  );
 }
 
 function Home() {
