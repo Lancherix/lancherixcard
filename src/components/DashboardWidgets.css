@@ -139,13 +139,17 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 2vh;
   border: none;
   background: transparent;
   cursor: pointer;
   padding: 16px;
   box-sizing: border-box;
   font-family: var(--cal-font-body);
+}
+
+.dw-empty-block svg {
+  width: 20%;
 }
 
 .dw-empty-block:hover {
