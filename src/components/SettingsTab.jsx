@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppData } from "../context/AppContext";
 import { useTranslation } from "../context/I18nContext";
 import ChangeCurrencyModal from "./ChangeCurrencyModal";
@@ -41,15 +41,63 @@ export function AccountColumn() {
   const { t, locale } = useTranslation();
   const { profile } = useAppData();
 
-  if (!profile) {
+  const [simulateLoading, setSimulateLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSimulateLoading(false);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!profile || simulateLoading) {
     return (
       <div className="leaf-fill settings-panel">
         <div className="dw-col-header">
           <h3 className="dw-heading">{t("settings.account")}</h3>
+
+          <button
+            className="dw-add-btn dw-add-btn-neutral"
+            disabled
+          >
+            {t("common.modify")}
+          </button>
         </div>
 
-        <div className="settings-loading">
-          {t("common.loading")}
+        <div className="settings-profile-head">
+          <span className="settings-avatar settings-skeleton settings-avatar-skeleton" />
+
+          <div className="settings-profile-head-text">
+            <span className="settings-skeleton settings-name-skeleton" />
+            <span className="settings-skeleton settings-username-skeleton" />
+          </div>
+        </div>
+
+        <div className="settings-readonly-list">
+          <div className="settings-readonly-row">
+            <span className="settings-readonly-label">
+              {t("settings.email")}
+            </span>
+
+            <span className="settings-skeleton settings-value-skeleton" />
+          </div>
+
+          <div className="settings-readonly-row">
+            <span className="settings-readonly-label">
+              {t("settings.language")}
+            </span>
+
+            <span className="settings-skeleton settings-value-skeleton settings-value-short" />
+          </div>
+
+          <div className="settings-readonly-row">
+            <span className="settings-readonly-label">
+              {t("settings.birthDate")}
+            </span>
+
+            <span className="settings-skeleton settings-value-skeleton settings-value-date" />
+          </div>
         </div>
       </div>
     );

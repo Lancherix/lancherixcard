@@ -177,3 +177,56 @@
 .settings-currency-btn {
   align-self: flex-start;
 }
+
+.settings-skeleton {
+  display: block;
+  background: #e5e5e7;
+  border-radius: 6px;
+  animation: settingsSkeleton 1.6s ease-in-out infinite;
+}
+
+@keyframes settingsSkeleton {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Profile */
+
+.settings-avatar-skeleton {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border-radius: 50%;
+}
+
+.settings-name-skeleton {
+  width: 130px;
+  height: 16px;
+  margin-bottom: 7px;
+}
+
+.settings-username-skeleton {
+  width: 90px;
+  height: 13px;
+}
+
+/* Read-only values */
+
+.settings-value-skeleton {
+  width: 170px;
+  height: 14px;
+}
+
+.settings-value-short {
+  width: 85px;
+}
+
+.settings-value-date {
+  width: 100px;
+}
