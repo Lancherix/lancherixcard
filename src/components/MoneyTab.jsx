@@ -87,13 +87,13 @@ function TransactionForm({ onClose, initialValues }) {
   if (confirmingDelete) {
     return createPortal(
       <div className="new-project-overlay">
-        <div className="new-project-window" onClick={(e) => e.stopPropagation()}>
+        <div className="confirm-window" onClick={(e) => e.stopPropagation()}>
           <div className="new-project-header">
             <h4>{t("common.delete")}</h4>
           </div>
 
           <div className="new-project-content">
-            <div className="form-row">
+            <div className="confirm-row">
               <p className="dw-confirm-text">
                 {t("moneyTab.deleteTransactionConfirm")}
               </p>
@@ -240,13 +240,13 @@ function RecurringForm({ onClose, initialValues }) {
   if (confirmingDelete) {
     return createPortal(
       <div className="new-project-overlay">
-        <div className="new-project-window" onClick={(e) => e.stopPropagation()}>
+        <div className="confirm-window" onClick={(e) => e.stopPropagation()}>
           <div className="new-project-header">
             <h4>{t("common.remove")}</h4>
           </div>
 
           <div className="new-project-content">
-            <div className="form-row">
+            <div className="confirm-row">
               <p className="dw-confirm-text">
                 {t("moneyTab.deleteRecurringConfirm")}
               </p>
