@@ -15,7 +15,7 @@ select {
 }
 
 .app-loading-logo {
-  width: 72px;
-  height: 72px;
+  width: 20vw;
+  height: auto;
   object-fit: contain;
 }
