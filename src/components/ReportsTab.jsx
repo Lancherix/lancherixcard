@@ -5,6 +5,15 @@ import "./ReportsTab.css";
 
 /* ---------------- LEFT: trend + comparison ---------------- */
 
+function EmptyState({ icon, label, compact }) {
+  return (
+    <div className={"dw-empty-state" + (compact ? " dw-empty-state-compact" : "")}>
+      <Icon name={icon} size={compact ? 18 : 32} color="var(--cal-muted)" />
+      <span className="dw-empty-state-label">{label}</span>
+    </div>
+  );
+}
+
 export function ReportsTrendColumn() {
   const { income, expenses, formatMoney } = useAppData();
   const { t } = useTranslation();
@@ -157,7 +166,7 @@ export function ReportsBreakdownColumn() {
             );
           })
         ) : (
-          <span className="cal-actions-placeholder">{t("reportsTab.noSpendingYet")}</span>
+          <EmptyState icon="chart" label={t("reportsTab.noSpendingYet")} />
         )}
       </div>
     </div>

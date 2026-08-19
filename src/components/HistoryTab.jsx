@@ -35,6 +35,15 @@ function HistoryRow({ tx, categories, formatMoney }) {
   );
 }
 
+function EmptyState({ icon, label, compact }) {
+  return (
+    <div className={"dw-empty-state" + (compact ? " dw-empty-state-compact" : "")}>
+      <Icon name={icon} size={compact ? 18 : 32} color="var(--cal-muted)" />
+      <span className="dw-empty-state-label">{label}</span>
+    </div>
+  );
+}
+
 /* ---------------- main panel ---------------- */
 
 export default function HistoryTab() {
@@ -129,7 +138,7 @@ export default function HistoryTab() {
         {filtered.length > 0 ? (
           filtered.map((tx) => <HistoryRow key={tx.id} tx={tx} categories={categories} formatMoney={formatMoney} />)
         ) : (
-          <span className="cal-actions-placeholder">{t("historyTab.noMatch")}</span>
+          <EmptyState icon="receipt" label={t("historyTab.noMatch")} />
         )}
       </div>
     </div>
