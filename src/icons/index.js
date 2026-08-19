@@ -20,6 +20,8 @@ import { ReactComponent as TripIcon } from "../assets/icons/trip.svg";
 import { ReactComponent as FlagIcon } from "../assets/icons/flag.svg";
 import { ReactComponent as ReceiptIcon } from "../assets/icons/receipt.svg";
 import { ReactComponent as ChartIcon } from "../assets/icons/chart.svg";
+import { ReactComponent as CycleIcon } from "../assets/icons/cycle.svg";
+import { ReactComponent as TagIcon } from "../assets/icons/tag.svg";
 
 export const ICONS = {
   // categories
@@ -42,9 +44,11 @@ export const ICONS = {
   musicPlayer: MusicPlayerIcon,
   ticket: TicketIcon,
   trip: TripIcon,
-  
+
   // empty states
   flag: FlagIcon,
   receipt: ReceiptIcon,
   chart: ChartIcon,
+  cycle: CycleIcon,
+  tag: TagIcon,
 };

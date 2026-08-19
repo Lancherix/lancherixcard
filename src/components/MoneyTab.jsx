@@ -43,6 +43,21 @@ function NoCategoriesHint() {
   );
 }
 
+/* ---------------- shared empty state: icon above label ----------------
+   Same component/markup as DashboardWidgets.jsx's EmptyState, duplicated
+   locally per that file's own convention (see TypeToggle above), reusing
+   the global dw-empty-state / dw-empty-state-compact classes already
+   defined in DashboardWidgets.css. */
+
+function EmptyState({ icon, label, compact }) {
+  return (
+    <div className={"dw-empty-state" + (compact ? " dw-empty-state-compact" : "")}>
+      <Icon name={icon} size={compact ? 18 : 32} color="var(--cal-muted)" />
+      <span className="dw-empty-state-label">{label}</span>
+    </div>
+  );
+}
+
 /* ---------------- Transaction form: self-contained, same markup as GoalForm/TransactionForm ---------------- */
 
 function TransactionForm({ onClose, initialValues }) {
@@ -435,7 +450,7 @@ export function MoneyTransactionsColumn() {
             />
           ))
         ) : (
-          <span className="cal-actions-placeholder">{t("moneyTab.noTransactionsYet")}</span>
+          <EmptyState icon="receipt" label={t("moneyTab.noTransactionsYet")} />
         )}
       </div>
 
@@ -478,7 +493,7 @@ export function MoneyRecurringColumn() {
             />
           ))
         ) : (
-          <span className="cal-actions-placeholder">{t("moneyTab.noRecurringYet")}</span>
+          <EmptyState icon="cycle" label={t("moneyTab.noRecurringYet")} />
         )}
       </div>
 
