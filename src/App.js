@@ -3,7 +3,7 @@ import AuthCallback from "./pages/AuthCallback";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CardAppLayout from "./components/CardAppLayout";
 import { redirectToLogin } from "./utils/auth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import cardImage from "./assets/card.png";
 import symbol from "./assets/symbolBlue.png";
 import "./App.css";
@@ -30,13 +30,14 @@ function Redirecting() {
 }
 
 function Home() {
+  const [minLoading, setMinLoading] = useState(true);
   const { totalBalance, remainingBudget, weeklyActivity, addTransaction, currency, loading, error } = useAppData();
   const { t } = useTranslation();
 
   // Still fetching from the backend — `currency` is null here too, but that
   // doesn't mean "new user" yet, so check loading first or every user would
   // flash the onboarding screen before their real data arrives.
-  if (loading) {
+  if (loading || minLoading) {
     return (
       <div className="app-loading-screen">
         <img src={symbol} alt="Lancherix" className="app-loading-logo" />
