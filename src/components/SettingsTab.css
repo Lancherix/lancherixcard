@@ -178,11 +178,50 @@
   align-self: flex-start;
 }
 
+/* ---- Account loading skeleton ---- */
+
 .settings-skeleton {
   display: block;
-  background: #e5e5e7;
+  background: var(--cal-surface-raised);
   border-radius: 6px;
   animation: settingsSkeleton 1.6s ease-in-out infinite;
+}
+
+/* Profile */
+
+.settings-avatar-skeleton {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  border-radius: 50%;
+}
+
+.settings-name-skeleton {
+  width: 130px;
+  height: 14px;
+  border-radius: 5px;
+}
+
+.settings-username-skeleton {
+  width: 90px;
+  height: 12px;
+  border-radius: 4px;
+}
+
+/* Read-only values */
+
+.settings-value-skeleton {
+  width: 170px;
+  height: 13px;
+  border-radius: 4px;
+}
+
+.settings-value-short {
+  width: 85px;
+}
+
+.settings-value-date {
+  width: 100px;
 }
 
 @keyframes settingsSkeleton {
@@ -194,39 +233,4 @@
   50% {
     opacity: 1;
   }
-}
-
-/* Profile */
-
-.settings-avatar-skeleton {
-  width: 48px;
-  height: 48px;
-  flex: 0 0 48px;
-  border-radius: 50%;
-}
-
-.settings-name-skeleton {
-  width: 130px;
-  height: 16px;
-  margin-bottom: 7px;
-}
-
-.settings-username-skeleton {
-  width: 90px;
-  height: 13px;
-}
-
-/* Read-only values */
-
-.settings-value-skeleton {
-  width: 170px;
-  height: 14px;
-}
-
-.settings-value-short {
-  width: 85px;
-}
-
-.settings-value-date {
-  width: 100px;
 }
