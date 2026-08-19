@@ -45,7 +45,7 @@ function TypeToggle({ type, onChange }) {
 function EmptyState({ icon, label }) {
   return (
     <div className="dw-empty-state">
-      <Icon name={icon} size={24} color="var(--cal-muted)" />
+      <Icon name={icon} size={32} color="var(--cal-muted)" />
       <span className="dw-empty-state-label">{label}</span>
     </div>
   );

@@ -131,13 +131,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 16px;
+  gap: 12px;
+  padding: 16px 16px 40px;
   box-sizing: border-box;
 }
 
 .dw-empty-state-label {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--cal-muted);
   text-align: center;
 }
