@@ -5,7 +5,7 @@ import { CURRENCIES, formatMoney } from "../context/AppContext";
 import { useTranslation } from "../context/I18nContext";
 import "./DashboardWidgets.css";
 
-const CURRENCY_ORDER = ["USD", "COP", "EUR", "GBP", "CAD"];
+const CURRENCY_ORDER = ["COP", "CAD", "EUR", "GBP", "USD"];
 
 export default function ChangeCurrencyModal({ onClose }) {
   const { currency, changeCurrency, budget } = useAppData();
