@@ -33,6 +33,39 @@ function TypeToggle({ type, onChange }) {
   );
 }
 
+/* ---------------- Empty-state row/tile, shared by Transactions, Goals, Report ----------------
+   EmptyRow: same shape as dw-tx-row / dw-report-cat-row. Renders a <button> when
+   onClick is passed (Transactions), a plain <div> when it isn't (Report's static
+   spending list, which has no direct "add" action).
+   EmptyGoalTile: same fixed-width shape as dw-goal-card, since goals are laid
+   out as tiles, not rows. */
+
+function EmptyRow({ icon, label, onClick }) {
+  const Tag = onClick ? "button" : "div";
+  return (
+    <Tag
+      className={"dw-empty-row" + (onClick ? "" : " dw-empty-row-static")}
+      {...(onClick ? { type: "button", onClick } : {})}
+    >
+      <span className="dw-empty-icon">
+        <Icon name={icon} size={16} color="var(--cal-muted)" />
+      </span>
+      <span className="dw-empty-label">{label}</span>
+    </Tag>
+  );
+}
+
+function EmptyGoalTile({ label, onClick }) {
+  return (
+    <button type="button" className="dw-goal-card" onClick={onClick}>
+      <span className="dw-empty-goal-icon">
+        <Icon name="flag" size={20} color="var(--cal-muted)" />
+      </span>
+      <span className="dw-goal-card-name">{label}</span>
+    </button>
+  );
+}
+
 /* ---------------- Transaction form: dispatches through context ---------------- */
 
 function TransactionForm({ onClose, initialValues }) {
@@ -323,7 +356,11 @@ export function TransactionsList() {
             <TxRow key={tx.id} tx={tx} categories={categories} formatMoney={formatMoney} onClick={(item) => setModalState({ mode: "edit", item })} />
           ))
         ) : (
-          <span className="cal-actions-placeholder">{t("dashboard.noTransactionsYet")}</span>
+          <EmptyRow
+            icon="receipt"
+            label={t("dashboard.noTransactionsYet")}
+            onClick={() => setModalState({ mode: "add" })}
+          />
         )}
       </div>
 
@@ -417,7 +454,7 @@ export function ReportWidget() {
               );
             })
           ) : (
-            <span className="cal-actions-placeholder">{t("dashboard.noSpendingYet")}</span>
+            <EmptyRow icon="chart" label={t("dashboard.noSpendingYet")} />
           )}
         </div>
       </div>
@@ -918,7 +955,10 @@ export function GoalsWidget() {
             );
           })
         ) : (
-          <span className="cal-actions-placeholder">{t("dashboard.noGoalsYet")}</span>
+          <EmptyGoalTile
+            label={t("dashboard.noGoalsYet")}
+            onClick={() => setModalState({ mode: "add" })}
+          />
         )}
       </div>
 

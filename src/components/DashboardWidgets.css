@@ -121,6 +121,55 @@
   color: #1a7f37;
 }
 
+/* ---------------- Empty-state row (Transactions, Report) ----------------
+   Same shape/rhythm as dw-tx-row / dw-report-cat-row so it slots into a
+   list without looking like a different kind of element. Renders as a
+   <button> (clickable, hover -> accent-soft) when there's an onClick, or
+   a plain <div> (no hover, default cursor) when there isn't — see
+   dw-empty-row-static, used by ReportWidget's spending list. */
+
+.dw-empty-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--cal-font-body);
+  box-sizing: border-box;
+}
+
+.dw-empty-row:hover {
+  background: var(--cal-accent-soft);
+}
+
+.dw-empty-row-static {
+  cursor: default;
+}
+
+.dw-empty-row-static:hover {
+  background: transparent;
+}
+
+.dw-empty-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: var(--cal-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dw-empty-label {
+  font-size: 13px;
+  color: var(--cal-muted);
+}
+
 /* ============================================================
    Report (row 1)
    ============================================================ */
@@ -389,6 +438,20 @@
 .dw-goal-ring-center {
   position: absolute;
   inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Empty-goal-tile icon: same footprint as dw-goal-ring-wrap (56px,
+   transparent) so the tile matches the height of populated goal cards
+   without a progress ring — a ring would imply progress that doesn't
+   exist yet. No background, same as dw-goal-ring-center: the icon
+   just sits centered in the space the ring would otherwise occupy. */
+
+.dw-empty-goal-icon {
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
