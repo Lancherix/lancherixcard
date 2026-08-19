@@ -48,6 +48,15 @@ function ProgressRing({ spent, limit, size = 120, stroke = 12 }) {
   );
 }
 
+function EmptyState({ icon, label, compact }) {
+  return (
+    <div className={"dw-empty-state" + (compact ? " dw-empty-state-compact" : "")}>
+      <Icon name={icon} size={compact ? 18 : 32} color="var(--cal-muted)" />
+      <span className="dw-empty-state-label">{label}</span>
+    </div>
+  );
+}
+
 /* ---------------- Budget form: self-contained, same markup as GoalForm/TransactionForm ---------------- */
 
 function BudgetForm({ onClose, initialLimit }) {
@@ -395,7 +404,7 @@ export function BudgetCategoriesColumn() {
             );
           })
         ) : (
-          <span className="cal-actions-placeholder">{t("budgetTab.noCategoriesYet")}</span>
+          <EmptyState icon="tag" label={t("budgetTab.noCategoriesYet")} />
         )}
       </div>
 
