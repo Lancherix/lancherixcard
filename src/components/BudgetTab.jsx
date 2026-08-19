@@ -151,7 +151,7 @@ function CategoryForm({ onClose, initialValues }) {
     return createPortal(
       <div className="new-project-overlay">
         <div
-          className="new-project-window"
+          className="confirm-window"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="new-project-header">
@@ -159,7 +159,7 @@ function CategoryForm({ onClose, initialValues }) {
           </div>
 
           <div className="new-project-content">
-            <div className="form-row">
+            <div className="confirm-row">
               <p className="dw-confirm-text">
                 {t("budgetTab.deleteCategoryConfirm")}
               </p>

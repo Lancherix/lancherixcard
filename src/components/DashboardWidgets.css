@@ -795,8 +795,29 @@
 
 /* ---------------- Delete confirmation ---------------- */
 
+.confirm-window {
+  background: rgba(242, 241, 243, 1);
+  color: #1d1d1f;
+  width: 25vw;
+  max-width: 480px;
+  border-radius: 12px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  animation: newProjectIn 0.25s ease-out;
+}
+
+.confirm-row {
+  display: grid;
+  align-items: center;
+  gap: 1vw;
+  padding: 2vh 2vw;
+  min-height: 6vh;
+  border-bottom: 1px solid #e1e0e3;
+}
+
 .dw-confirm-text {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: #1d1d1f;
+  font-weight: 400;
 }
