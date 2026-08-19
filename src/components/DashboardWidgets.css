@@ -150,6 +150,7 @@
 
 .dw-empty-block svg {
   width: 20%;
+  height: auto;
 }
 
 .dw-empty-block:hover {
