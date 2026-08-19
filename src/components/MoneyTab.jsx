@@ -35,6 +35,7 @@ function TypeToggle({ type, onChange }) {
 /* ---------------- shared "no categories yet" hint ---------------- */
 
 function NoCategoriesHint() {
+  const { t } = useTranslation();
   return (
     <span className="dw-field-hint">
       {t("budgetTab.noCategoriesHint")}
