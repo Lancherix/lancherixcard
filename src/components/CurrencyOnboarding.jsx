@@ -14,7 +14,7 @@ const SAMPLE_PRICE = {
   COP: 10000,
 };
 
-const CURRENCY_ORDER = ["USD", "COP", "EUR", "GBP", "CAD"];
+const CURRENCY_ORDER = ["COP", "CAD", "EUR", "GBP", "USD"];
 
 export default function CurrencyOnboarding() {
   const { setCurrency } = useAppData();
