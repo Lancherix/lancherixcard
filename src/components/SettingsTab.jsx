@@ -34,6 +34,7 @@ const LANGUAGE_LABELS = {
   fr: "Français",
   en: "English",
   es: "Español",
+  ru: "Русский"
 };
 
 export function AccountColumn() {

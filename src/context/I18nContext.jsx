@@ -25,6 +25,15 @@ function detectSystemLanguage() {
   return DEFAULT_LANGUAGE;
 }
 
+// Profile language may come back as a full locale tag ("ru-RU", "en-US")
+// rather than our two-letter codes — normalize before comparing against
+// SUPPORTED_LANGUAGES. Returns a valid code or null.
+function normalizeLanguageCode(code) {
+  if (!code || typeof code !== "string") return null;
+  const short = code.slice(0, 2).toLowerCase();
+  return SUPPORTED_LANGUAGES.includes(short) ? short : null;
+}
+
 function getStoredLanguage() {
   try {
     const stored = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
@@ -57,17 +66,17 @@ export function I18nProvider({ children }) {
   // profile-based detection in that case.
   const appCtx = useContext(AppContext);
 
-  // ASSUMPTION: the /me response (state.profile) has a `language` field
-  // holding a SUPPORTED_LANGUAGES code (e.g. "ru"). Adjust this line if
-  // your backend stores it under a different key.
-  const profileLanguage = appCtx?.state?.profile?.language;
+  // ASSUMPTION: the /me response (state.profile) has a `language` field,
+  // possibly a full locale tag like "ru-RU" — normalizeLanguageCode
+  // reduces it to a bare SUPPORTED_LANGUAGES code or null.
+  const profileLanguage = normalizeLanguageCode(appCtx?.state?.profile?.language);
 
   // Once the user's profile loads, prefer whatever language is on their
   // account over the browser/system guess used for first paint — but never
   // stomp an explicit choice the user already made via setLang.
   useEffect(() => {
     if (hasExplicitChoice) return;
-    if (profileLanguage && SUPPORTED_LANGUAGES.includes(profileLanguage)) {
+    if (profileLanguage) {
       setLangState(profileLanguage);
     }
   }, [profileLanguage, hasExplicitChoice]);
@@ -78,7 +87,7 @@ export function I18nProvider({ children }) {
   useEffect(() => {
     const handleLanguageChange = () => {
       if (hasExplicitChoice) return;
-      if (profileLanguage && SUPPORTED_LANGUAGES.includes(profileLanguage)) return;
+      if (profileLanguage) return;
       setLangState(detectSystemLanguage());
     };
     window.addEventListener("languagechange", handleLanguageChange);
