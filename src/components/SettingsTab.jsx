@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAppData } from "../context/AppContext";
 import { useTranslation } from "../context/I18nContext";
 import ChangeCurrencyModal from "./ChangeCurrencyModal";
@@ -41,17 +41,7 @@ export function AccountColumn() {
   const { t, locale } = useTranslation();
   const { profile } = useAppData();
 
-  const [simulateLoading, setSimulateLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setSimulateLoading(false);
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!profile || simulateLoading) {
+  if (!profile) {
     return (
       <div className="leaf-fill settings-panel">
         <div className="dw-col-header">
