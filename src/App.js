@@ -32,7 +32,7 @@ function Home() {
   // doesn't mean "new user" yet, so check loading first or every user would
   // flash the onboarding screen before their real data arrives.
   if (loading) {
-    return <p>Loading...</p>;
+    return <p>........</p>;
   }
 
   if (error) {
