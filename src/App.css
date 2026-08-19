@@ -19,4 +19,16 @@ select {
   height: auto;
   object-fit: contain;
   transform: translateY(-4vh);
+  animation: logoPulse 3s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.45;
+  }
 }
