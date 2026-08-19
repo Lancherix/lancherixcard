@@ -121,53 +121,50 @@
   color: #1a7f37;
 }
 
-/* ---------------- Empty-state row (Transactions, Report) ----------------
-   Same shape/rhythm as dw-tx-row / dw-report-cat-row so it slots into a
-   list without looking like a different kind of element. Renders as a
-   <button> (clickable, hover -> accent-soft) when there's an onClick, or
-   a plain <div> (no hover, default cursor) when there isn't — see
-   dw-empty-row-static, used by ReportWidget's spending list. */
+/* ---------------- Empty-state block (Transactions, Report) ----------------
+   Fills the whole available space in dw-txl-list / dw-report-cats (both
+   already flex:1 flex-column containers, so this just needs flex:1 itself
+   to claim the remaining room) with a centered icon-over-label stack,
+   rather than a single row sitting at the top with dead space below it.
+   Renders as a <button> (clickable, hover -> accent-soft) when there's
+   an onClick, or a plain <div> (no hover, default cursor) when there
+   isn't — see dw-empty-block-static, used by ReportWidget's spending
+   list, which has no direct "add" action. */
 
-.dw-empty-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.dw-empty-block {
+  flex: 1;
+  min-height: 0;
   width: 100%;
-  padding: 10px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   border: none;
   background: transparent;
   cursor: pointer;
-  text-align: left;
-  font-family: var(--cal-font-body);
+  padding: 16px;
   box-sizing: border-box;
+  font-family: var(--cal-font-body);
 }
 
-.dw-empty-row:hover {
+.dw-empty-block:hover {
   background: var(--cal-accent-soft);
+  border-radius: var(--cal-radius);
 }
 
-.dw-empty-row-static {
+.dw-empty-block-static {
   cursor: default;
 }
 
-.dw-empty-row-static:hover {
+.dw-empty-block-static:hover {
   background: transparent;
 }
 
-.dw-empty-icon {
-  width: 36px;
-  height: 36px;
-  flex-shrink: 0;
-  border-radius: 8px;
-  background: var(--cal-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.dw-empty-label {
-  font-size: 13px;
+.dw-empty-block-label {
+  font-size: 12px;
   color: var(--cal-muted);
+  text-align: center;
 }
 
 /* ============================================================

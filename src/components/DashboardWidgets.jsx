@@ -44,13 +44,11 @@ function EmptyRow({ icon, label, onClick }) {
   const Tag = onClick ? "button" : "div";
   return (
     <Tag
-      className={"dw-empty-row" + (onClick ? "" : " dw-empty-row-static")}
+      className={"dw-empty-block" + (onClick ? "" : " dw-empty-block-static")}
       {...(onClick ? { type: "button", onClick } : {})}
     >
-      <span className="dw-empty-icon">
-        <Icon name={icon} size={16} color="var(--cal-muted)" />
-      </span>
-      <span className="dw-empty-label">{label}</span>
+      <Icon name={icon} size={24} color="var(--cal-muted)" />
+      <span className="dw-empty-block-label">{label}</span>
     </Tag>
   );
 }
