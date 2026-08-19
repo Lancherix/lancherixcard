@@ -4,7 +4,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import CardAppLayout from "./components/CardAppLayout";
 import { redirectToLogin } from "./utils/auth";
 import { useEffect } from "react";
-import cardImage from "./assets/card.png"; // swap in your real card art
+import cardImage from "./assets/card.png";
+import symbol from "./assets/symbolBlue.png";
 import "./App.css";
 
 import { AppProvider, useAppData } from "./context/AppContext";
@@ -32,7 +33,11 @@ function Home() {
   // doesn't mean "new user" yet, so check loading first or every user would
   // flash the onboarding screen before their real data arrives.
   if (loading) {
-    return <p>........</p>;
+    return (
+      <div className="app-loading-screen">
+        <img src={symbol} alt="Lancherix" className="app-loading-logo" />
+      </div>
+    );
   }
 
   if (error) {
@@ -75,7 +80,7 @@ function Home() {
         type: "split",
         direction: "row",
         children: [
-          { type: "leaf", content: <TransactionsList/> },
+          { type: "leaf", content: <TransactionsList /> },
           { type: "leaf", content: <MoneyRecurringColumn /> },
         ],
       },
