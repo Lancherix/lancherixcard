@@ -178,13 +178,22 @@
   align-self: flex-start;
 }
 
-/* ---- Account loading skeleton ---- */
-
 .settings-skeleton {
   display: block;
-  background: var(--cal-surface-raised);
+  background: #e5e5e7;
   border-radius: 6px;
   animation: settingsSkeleton 1.6s ease-in-out infinite;
+}
+
+@keyframes settingsSkeleton {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 /* Profile */
@@ -222,15 +231,4 @@
 
 .settings-value-date {
   width: 100px;
-}
-
-@keyframes settingsSkeleton {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-
-  50% {
-    opacity: 1;
-  }
 }
