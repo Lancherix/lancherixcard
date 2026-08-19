@@ -171,7 +171,7 @@ function reducer(state, action) {
 
 /* ---------------- context + provider ---------------- */
 
-const AppContext = createContext(null);
+export const AppContext = createContext(null);
 
 // Small helper: hits the backend, parses JSON, and throws a real Error on
 // a non-2xx response instead of silently handing back an error body as if

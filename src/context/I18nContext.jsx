@@ -1,11 +1,14 @@
 import { createContext, useContext, useState, useCallback, useMemo, useEffect } from "react";
 import { translations, SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from "../i18n/translations";
+import { AppContext } from "./AppContext";
 
 const STORAGE_KEY = "lancherix-lang";
 
 /**
  * Looks at navigator.languages (in priority order) and returns the first
  * one we have a translation file for. Falls back to DEFAULT_LANGUAGE.
+ * This is now only a fallback for when we have no account-level language
+ * to go on (brand new profile, field missing, profile not loaded yet).
  */
 function detectSystemLanguage() {
   if (typeof navigator === "undefined") return DEFAULT_LANGUAGE;
@@ -22,14 +25,21 @@ function detectSystemLanguage() {
   return DEFAULT_LANGUAGE;
 }
 
-function getInitialLanguage() {
+function getStoredLanguage() {
   try {
     const stored = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
     if (stored && SUPPORTED_LANGUAGES.includes(stored)) return stored;
   } catch {
     // localStorage may be unavailable (e.g. private browsing) — ignore and fall through
   }
-  return detectSystemLanguage();
+  return null;
+}
+
+// First-paint guess, before the profile has had a chance to load:
+// explicit past choice > system language. Once the profile arrives,
+// the provider below may override this with the account's language.
+function getInitialLanguage() {
+  return getStoredLanguage() ?? detectSystemLanguage();
 }
 
 function getNested(obj, path) {
@@ -40,25 +50,45 @@ const I18nContext = createContext(null);
 
 export function I18nProvider({ children }) {
   const [lang, setLangState] = useState(getInitialLanguage);
+  const [hasExplicitChoice, setHasExplicitChoice] = useState(() => Boolean(getStoredLanguage()));
 
-  // Keep in sync if the user changes their OS/browser language while the app is open
+  // AppContext may not be mounted (or I18nProvider may render outside its
+  // tree in some setups) — guard rather than throw, and just skip
+  // profile-based detection in that case.
+  const appCtx = useContext(AppContext);
+
+  // ASSUMPTION: the /me response (state.profile) has a `language` field
+  // holding a SUPPORTED_LANGUAGES code (e.g. "ru"). Adjust this line if
+  // your backend stores it under a different key.
+  const profileLanguage = appCtx?.state?.profile?.language;
+
+  // Once the user's profile loads, prefer whatever language is on their
+  // account over the browser/system guess used for first paint — but never
+  // stomp an explicit choice the user already made via setLang.
+  useEffect(() => {
+    if (hasExplicitChoice) return;
+    if (profileLanguage && SUPPORTED_LANGUAGES.includes(profileLanguage)) {
+      setLangState(profileLanguage);
+    }
+  }, [profileLanguage, hasExplicitChoice]);
+
+  // Keep in sync if the user changes their OS/browser language while the
+  // app is open — only relevant when we have neither an explicit choice
+  // nor an account language to go on.
   useEffect(() => {
     const handleLanguageChange = () => {
-      try {
-        const stored = window.localStorage.getItem(STORAGE_KEY);
-        if (stored && SUPPORTED_LANGUAGES.includes(stored)) return; // explicit user choice wins
-      } catch {
-        // ignore
-      }
+      if (hasExplicitChoice) return;
+      if (profileLanguage && SUPPORTED_LANGUAGES.includes(profileLanguage)) return;
       setLangState(detectSystemLanguage());
     };
     window.addEventListener("languagechange", handleLanguageChange);
     return () => window.removeEventListener("languagechange", handleLanguageChange);
-  }, []);
+  }, [hasExplicitChoice, profileLanguage]);
 
   const setLang = useCallback((code) => {
     if (!SUPPORTED_LANGUAGES.includes(code)) return;
     setLangState(code);
+    setHasExplicitChoice(true);
     try {
       window.localStorage.setItem(STORAGE_KEY, code);
     } catch {

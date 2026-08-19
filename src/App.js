@@ -185,8 +185,8 @@ function Home() {
 
 function App() {
   return (
-    <I18nProvider>
-      <AppProvider>
+    <AppProvider>
+      <I18nProvider>
         <Routes>
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/redirecting" element={<Redirecting />} />
@@ -199,8 +199,8 @@ function App() {
             }
           />
         </Routes>
-      </AppProvider>
-    </I18nProvider>
+      </I18nProvider>
+    </AppProvider>
   );
 }
 
