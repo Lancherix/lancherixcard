@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { setToken } from "../utils/auth";
 import { useAppData } from "../context/AppContext";
 
-import symbol from "./assets/symbolBlue.png";
+import symbol from "../assets/symbolBlue.png";
 
 // LancherixAuth's LoginPage redirects here as:
 //   `${redirectBase}/auth/callback?token=${data.token}`
