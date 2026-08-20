@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { setToken } from "../utils/auth";
 import { useAppData } from "../context/AppContext";
 
+import symbol from "./assets/symbolBlue.png";
+
 // LancherixAuth's LoginPage redirects here as:
 //   `${redirectBase}/auth/callback?token=${data.token}`
 export default function AuthCallback() {
@@ -26,5 +28,9 @@ export default function AuthCallback() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
-  return <p>Signing you in...</p>;
+  return (
+      <div className="app-loading-screen">
+        <img src={symbol} alt="Lancherix" className="app-loading-logo" />
+      </div>
+    );
 }
