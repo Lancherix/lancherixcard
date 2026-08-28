@@ -155,7 +155,7 @@ function CategoryForm({ onClose, initialValues }) {
     if (!isValid) return;
 
     const generatedKey = name.trim() || icon;
-    const key = isEditing ? initialValues.key : generatedKey.toLowerCase().replace(/\s+/g, "_");
+    const key = isEditing ? initialValues.key : generatedKey.replace(/\s+/g, "_");
 
     const cat = { id: initialValues?.id, key, icon, color, limit: parsedLimit };
 
