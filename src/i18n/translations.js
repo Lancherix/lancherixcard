@@ -202,6 +202,10 @@ export const translations = {
       GBP: "British Pound",
       CAD: "Canadian Dollar",
     },
+    iconPicker: {
+      searchIconsPlaceholder: "Search icons...",
+      noIconsFound: "No icons found",
+    },
   },
 
   fr: {
@@ -399,6 +403,10 @@ export const translations = {
       EUR: "Euro",
       GBP: "Livre sterling",
       CAD: "Dollar canadien",
+    },
+    iconPicker: {
+      searchIconsPlaceholder: "Rechercher des icônes...",
+      noIconsFound: "Aucune icône trouvée",
     },
   },
 
@@ -598,6 +606,10 @@ export const translations = {
       GBP: "Libra esterlina",
       CAD: "Dólar canadiense",
     },
+    iconPicker: {
+      searchIconsPlaceholder: "Buscar íconos...",
+      noIconsFound: "No se encontraron íconos",
+    },
   },
   ru: {
     common: {
@@ -794,6 +806,10 @@ export const translations = {
       eyebrow: "Прежде чем начать",
       title: "Какой валютой вы пользуетесь?",
       subtitle: "Все суммы, графики и итоги на панели будут отображаться в этой валюте. Позже вы сможете это изменить.",
+    },
+    iconPicker: {
+      searchIconsPlaceholder: "Поиск значков...",
+      noIconsFound: "Значки не найдены",
     },
   },
 };

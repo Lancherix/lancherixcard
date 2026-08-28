@@ -6,6 +6,9 @@ import { createPortal } from "react-dom";
 import Icon from "./Icon";
 import "./DashboardWidgets.css";
 
+import IconPicker from "./IconPicker";
+import AnyIcon from "./AnyIcon";
+
 const goalIconChoices = ["laptop", "ticket", "airplane", "bicycle", "car", "console", "boombox", "musicPlayer", "camera", "trip"];
 const goalColorChoices = ["#ff9500", "#0071e3", "#5856d6", "#ff2d55", "#34c759", "#af52de", "#ff3b30", "#ffcc00"];
 
@@ -790,6 +793,12 @@ function GoalForm({ onClose, initialValues }) {
                   <Icon name={i} size={18} color={icon === i ? color : undefined} />
                 </button>
               ))}
+
+              <IconPicker
+                value={!goalIconChoices.includes(icon) ? icon : undefined}
+                onChange={setIcon}
+                triggerClassName={"dw-icon-choice" + (!goalIconChoices.includes(icon) ? " dw-icon-choice-active" : "")}
+              />
             </div>
           </div>
 
@@ -896,7 +905,7 @@ function GoalRing({ current, target, icon, color, status, size = 56, stroke = 6 
         />
       </svg>
       <div className="dw-goal-ring-center">
-        <Icon name={icon} size={20} color={status === "acquired" ? "#0969da" : (done ? "#1a7f37" : color)} />
+        <AnyIcon name={icon} size={20} color={status === "acquired" ? "#0969da" : (done ? "#1a7f37" : color)} />
       </div>
     </div>
   );
