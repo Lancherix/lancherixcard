@@ -181,7 +181,7 @@ function TransactionForm({ onClose, initialValues }) {
         <div className="new-project-header">
           <h4>
             {isEditing
-              ? t("common.editTransaction")
+              ? t("moneyTab.editTransaction")
               : t("common.newTransaction")}
           </h4>
         </div>
