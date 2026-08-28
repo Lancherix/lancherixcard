@@ -322,3 +322,9 @@
   font-size: 14px;
   color: var(--cal-text);
 }
+
+.bt-optional-hint {
+  font-weight: 400;
+  color: var(--cal-muted, #888);
+  font-size: 0.9em;
+}

@@ -5,6 +5,9 @@ import { useTranslation } from "../context/I18nContext";
 import Icon from "./Icon";
 import "./BudgetTab.css";
 
+import IconPicker from "./IconPicker";
+import AnyIcon from "./AnyIcon";
+
 const iconChoices = ["food", "transport", "school", "entertainment", "shopping", "other", "savings"];
 const colorChoices = ["#ff9500", "#0071e3", "#5856d6", "#ff2d55", "#34c759", "#af52de", "#ff3b30", "#ffcc00"];
 
@@ -138,8 +141,14 @@ function CategoryForm({ onClose, initialValues }) {
   const [color, setColor] = useState(initialValues?.color ?? colorChoices[0]);
   const [limit, setLimit] = useState(initialValues ? String(initialValues.limit) : "");
 
+  const isCustomIcon = !iconChoices.includes(icon);
+
   const parsedLimit = parseFloat(limit);
-  const isValid = limit.trim() !== "" && !isNaN(parsedLimit) && parsedLimit > 0;
+  const isValid =
+    limit.trim() !== "" &&
+    !isNaN(parsedLimit) &&
+    parsedLimit > 0 &&
+    (!isCustomIcon || name.trim() !== "");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -210,7 +219,10 @@ function CategoryForm({ onClose, initialValues }) {
 
         <div className="new-project-content">
           <div className="form-row form-row-a form-row-name">
-            <label>{t("common.name")}</label>
+            <label>
+              {t("common.name")}
+              {!isCustomIcon && <span className="bt-optional-hint"> ({t("common.optional")})</span>}
+            </label>
 
             <input
               type="text"
@@ -234,6 +246,12 @@ function CategoryForm({ onClose, initialValues }) {
                   <Icon name={i} size={18} color={icon === i ? color : undefined} />
                 </button>
               ))}
+
+              <IconPicker
+                value={isCustomIcon ? icon : undefined}
+                onChange={setIcon}
+                triggerClassName={"dw-icon-choice" + (isCustomIcon ? " dw-icon-choice-active" : "")}
+              />
             </div>
           </div>
 
@@ -377,7 +395,7 @@ export function BudgetCategoriesColumn() {
                 onClick={() => setModalState({ mode: "edit", item: cat })}
               >
                 <span className="bt-cat-icon" style={{ background: cat.color + "22" }}>
-                  <Icon name={cat.icon} size={16} color={cat.color} />
+                  <AnyIcon name={cat.icon} size={16} color={cat.color} />
                 </span>
 
                 <span className="bt-cat-info">
