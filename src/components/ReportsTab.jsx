@@ -2,6 +2,7 @@ import { useAppData } from "../context/AppContext";
 import { useTranslation } from "../context/I18nContext";
 import Icon from "./Icon";
 import "./ReportsTab.css";
+import AnyIcon from "./AnyIcon";
 
 /* ---------------- LEFT: trend + comparison ---------------- */
 
@@ -150,7 +151,7 @@ export function ReportsBreakdownColumn() {
             return (
               <div className="rp-breakdown-row" key={cat.id}>
                 <span className="rp-breakdown-icon" style={{ background: cat.color + "22" }}>
-                  <Icon name={cat.icon} size={16} color={cat.color} />
+                  <AnyIcon name={cat.icon} size={16} color={cat.color} />
                 </span>
                 <div className="rp-breakdown-info">
                   <div className="rp-breakdown-top">

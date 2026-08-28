@@ -5,6 +5,7 @@ import { getLocalDateString } from "../context/AppContext";
 import { useTranslation } from "../context/I18nContext";
 import Icon from "./Icon";
 import "./MoneyTab.css";
+import AnyIcon from "./AnyIcon";
 
 const frequencyKeys = ["Weekly", "Biweekly", "Monthly", "Yearly"];
 
@@ -380,7 +381,7 @@ function TxRow({ tx, onClick, categories, formatMoney }) {
   return (
     <button className="dw-tx-row" onClick={() => onClick(tx)}>
       <span className="dw-tx-icon" style={{ background: (category?.color ?? "#6e6e73") + "22" }}>
-        <Icon name={category?.icon ?? "other"} size={16} color={category?.color} />
+        <AnyIcon name={category?.icon ?? "other"} size={16} color={category?.color} />
       </span>
       <span className="dw-tx-info">
         <span className="dw-tx-name">{tx.name}</span>
@@ -401,7 +402,7 @@ function RecurringRow({ item, onClick, categories, formatMoney }) {
   return (
     <button className="mt-rec-row" onClick={() => onClick(item)}>
       <span className="dw-tx-icon" style={{ background: (category?.color ?? "#6e6e73") + "22" }}>
-        <Icon name={category?.icon ?? "other"} size={16} color={category?.color} />
+        <AnyIcon name={category?.icon ?? "other"} size={16} color={category?.color} />
       </span>
       <span className="mt-rec-info">
         <span className="mt-rec-name">{item.name}</span>

@@ -4,7 +4,6 @@ import { useAppData } from "../context/AppContext";
 import { useTranslation } from "../context/I18nContext";
 import Icon from "./Icon";
 import "./BudgetTab.css";
-
 import IconPicker from "./IconPicker";
 import AnyIcon from "./AnyIcon";
 

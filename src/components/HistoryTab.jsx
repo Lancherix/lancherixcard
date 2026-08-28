@@ -3,6 +3,7 @@ import { useAppData } from "../context/AppContext";
 import { useTranslation } from "../context/I18nContext";
 import Icon from "./Icon";
 import "./HistoryTab.css";
+import AnyIcon from "./AnyIcon";
 
 /* ---------------- row ---------------- */
 
@@ -18,11 +19,7 @@ function HistoryRow({ tx, categories, formatMoney }) {
           background: (category?.color ?? "#6e6e73") + "22",
         }}
       >
-        <Icon
-          name={category?.icon ?? "other"}
-          size={16}
-          color={category?.color}
-        />
+        <AnyIcon name={category?.icon ?? "other"} size={16} color={category?.color} />
       </span>
       <span className="ht-info">
         <span className="ht-name">{tx.name}</span>

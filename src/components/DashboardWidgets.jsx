@@ -5,7 +5,6 @@ import { useTranslation } from "../context/I18nContext";
 import { createPortal } from "react-dom";
 import Icon from "./Icon";
 import "./DashboardWidgets.css";
-
 import IconPicker from "./IconPicker";
 import AnyIcon from "./AnyIcon";
 
@@ -310,7 +309,7 @@ function TxRow({ tx, onClick, categories, formatMoney }) {
   return (
     <button className="dw-tx-row" onClick={() => onClick(tx)}>
       <span className="dw-tx-icon" style={{ background: (category?.color ?? "#6e6e73") + "22" }}>
-        <Icon name={category?.icon ?? "other"} size={16} color={category?.color} />
+        <AnyIcon name={category?.icon ?? "other"} size={16} color={category?.color} />
       </span>
       <span className="dw-tx-info">
         <span className="dw-tx-name">{tx.name}</span>
