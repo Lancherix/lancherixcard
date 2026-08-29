@@ -3,7 +3,7 @@ import AuthCallback from "./pages/AuthCallback";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CardAppLayout from "./components/CardAppLayout";
 import { redirectToLogin } from "./utils/auth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import cardImage from "./assets/card.png";
 import symbol from "./assets/symbolBlue.png";
 import "./App.css";
@@ -17,6 +17,22 @@ import HistoryTab from "./components/HistoryTab";
 import { ReportsTrendColumn, ReportsBreakdownColumn } from "./components/ReportsTab";
 import CurrencyOnboarding from "./components/CurrencyOnboarding";
 import { AccountColumn, CurrencyColumn } from "./components/SettingsTab";
+
+// Same breakpoint convention as the old app's App.js (window.innerWidth < 900),
+// tracked here since Home/CardAppLayout don't currently know about viewport size.
+function useIsMobile(breakpoint = 900) {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < breakpoint : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < breakpoint);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [breakpoint]);
+
+  return isMobile;
+}
 
 function Redirecting() {
   useEffect(() => {
@@ -32,6 +48,7 @@ function Redirecting() {
 function Home() {
   const { totalBalance, remainingBudget, weeklyActivity, addTransaction, currency, loading, error } = useAppData();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
 
   // Still fetching from the backend — `currency` is null here too, but that
   // doesn't mean "new user" yet, so check loading first or every user would
@@ -188,6 +205,7 @@ function Home() {
       availableBalance={totalBalance}
       remainingBudget={remainingBudget}
       weeklyActivity={weeklyActivity}
+      isMobile={isMobile}
     />
   );
 }
