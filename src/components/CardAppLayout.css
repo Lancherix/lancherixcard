@@ -391,3 +391,67 @@ body,
     flex-direction: column;
   }
 }
+
+/* ---------------- Mobile bottom tab bar ---------------- */
+
+@media (max-width: 640px) {
+  /* Hide the desktop tab row entirely on mobile; the bottom bar replaces it */
+  .cal-menu-buttons {
+    display: none;
+  }
+
+  /* Leave room at the bottom so content doesn't sit under the fixed bar */
+  .cal-shell-mobile .cal-frame {
+    padding-bottom: 64px;
+  }
+}
+
+.menu-mobile {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 64px;
+  background: var(--cal-surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid var(--cal-border);
+  box-shadow: var(--cal-shadow-sm);
+  z-index: 1000;
+}
+
+.menu-mobile-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: var(--cal-muted);
+  font-family: var(--cal-font-body);
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.menu-mobile-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+}
+
+.menu-mobile-item-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.menu-mobile-item--active {
+  color: var(--cal-accent);
+}

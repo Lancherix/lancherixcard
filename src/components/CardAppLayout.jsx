@@ -123,6 +123,7 @@ export default function CardAppLayout({
     { height: 4, amount: 0, label: "Fri" },
     { height: 4, amount: 0, label: "Sat" },
   ],
+  isMobile = false,
 }) {
   const year = new Date().getFullYear();
   const { t } = useTranslation();
@@ -154,8 +155,13 @@ export default function CardAppLayout({
     onMenuSelect?.(item);
   };
 
+  // Shared active-state check, reused by both the desktop button row and
+  // the mobile bottom bar so they never fall out of sync.
+  const isItemActive = (item) =>
+    item.modal ? modalItem?.key === item.key : selectedItem?.key === item.key;
+
   return (
-    <div className="cal-shell">
+    <div className={"cal-shell" + (isMobile ? " cal-shell-mobile" : "")}>
       <div className="cal-frame">
         <div className="cal-content">
           <div className="cal-margin cal-margin-left" aria-hidden="true" />
@@ -203,12 +209,13 @@ export default function CardAppLayout({
             </div>
           </div>
 
+          {/* Desktop tab row — hidden on mobile via .cal-shell-mobile CSS
+              rather than skipping the render, so nothing about selection
+              state changes based on viewport. */}
           <div className="cal-menu-buttons">
             {menuItems.length > 0
               ? menuItems.map((item, i) => {
-                const isActive = item.modal
-                  ? modalItem?.key === item.key
-                  : selectedItem?.key === item.key;
+                const isActive = isItemActive(item);
                 return (
                   <button
                     key={item.key ?? i}
@@ -244,6 +251,32 @@ export default function CardAppLayout({
           </span>
         </footer>
       </div>
+
+      {/* Mobile bottom tab bar — same menuItems, same handleSelect,
+          same active-state logic as the desktop row above. */}
+      {isMobile && (
+        <nav className="menu-mobile" aria-label={t("cardLayout.mobileNav") ?? "Navigation"}>
+          {menuItems.map((item, i) => {
+            const isActive = isItemActive(item);
+            return (
+              <button
+                key={item.key ?? i}
+                className={
+                  "menu-mobile-item" + (isActive ? " menu-mobile-item--active" : "")
+                }
+                onClick={() => handleSelect(item)}
+                aria-pressed={isActive}
+                aria-haspopup={item.modal ? "dialog" : undefined}
+              >
+                <span className="menu-mobile-item-icon">
+                  {item.icon ?? item.label?.[0] ?? "•"}
+                </span>
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+      )}
 
       {modalItem && (
         <Modal item={modalItem} onClose={() => setModalItem(null)} />
