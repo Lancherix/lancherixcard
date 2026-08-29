@@ -37,6 +37,10 @@ body,
   margin: 0;
 }
 
+body {
+  overflow-y: auto; /* the real scroll container on mobile now */
+}
+
 .cal-shell {
   height: 100vh;
   width: 100%;
@@ -396,36 +400,36 @@ body,
 
 @media (max-width: 640px) {
   .cal-shell-mobile {
-    height: 100vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 0 0 64px; /* bottom clears the fixed mobile nav bar */
+    height: auto;              /* was: 100vh */
+    min-height: 100vh;         /* still fills the screen if content is short */
+    overflow-y: visible;       /* was: auto — let the page scroll instead */
+    padding: 0 0 64px;         /* bottom still clears the fixed mobile nav bar */
   }
 
   .cal-shell-mobile .cal-frame {
-    height: auto;      /* grows with content instead of being capped to one screen */
+    height: auto;
     max-width: none;
     margin: 0;
-    display: block;    /* was: grid (content row + footer row) */
+    display: block;
   }
 
   .cal-shell-mobile .cal-content {
-    display: block;    /* was: 4-column grid (margin | card | actions | margin) */
+    display: block;
   }
 
   .cal-shell-mobile .cal-margin,
   .cal-shell-mobile .cal-menu-buttons {
-    display: none;     /* desktop-only grid spacers / top tab row */
+    display: none;
   }
 
   .cal-shell-mobile .cal-actions {
-    display: block;    /* was: flex, sized to a fixed grid row */
+    display: block;
   }
 
   .cal-shell-mobile .cal-panel-leaf {
     height: auto;
     min-height: 0;
-    overflow: visible; /* was: hidden — nothing needs to clip/scroll internally now */
+    overflow: visible;
     padding: 0;
     background: transparent;
     box-shadow: none;
