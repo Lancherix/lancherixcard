@@ -1,6 +1,6 @@
-/* Layout only — every class reused from DashboardWidgets.css /
-   CardAppLayout.css keeps its existing look. This file just arranges
-   things for a scrollable mobile page instead of a fixed side column. */
+/* Mobile Home tab: three stacked "widget" cards (card image, balance
+   tiles, transactions) on a grey page background — mirrors how desktop
+   keeps each dashboard widget visually separate. */
 
 .dwm-page {
   display: flex;
@@ -10,20 +10,51 @@
   box-sizing: border-box;
   min-height: 100%;
   overflow-y: auto;
+  background: var(--cal-bg); /* grey, so each white widget box actually pops */
 }
 
-.dwm-card-thumb {
+/* Shared "widget card" look: white bg, rounded corners, soft shadow —
+   same visual language as .cal-panel-leaf / .cal-permanent-tile. */
+.dwm-widget {
+  background: var(--cal-surface);
+  border-radius: var(--cal-radius);
+  box-shadow: var(--cal-shadow-md);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Widget 1: card image — edge-to-edge inside its own box, no extra padding */
+.dwm-card-widget {
   width: 100%;
-  max-width: 320px;
-  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.dwm-card-widget img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
+.dwm-card-widget .cal-card-thumb-label {
+  padding: 24px;
+  font-family: var(--cal-font-display);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--cal-muted);
+}
+
+/* Widget 2 group: tiles are already individually boxed, this is just
+   a transparent grouping wrapper — full width on mobile. */
 .dwm-permanent-panel {
-  /* was sized to fit the ~20vw desktop card column; full-width on mobile */
   width: 100%;
 }
 
-.dwm-transactions-wrap {
+/* Widget 3: transactions list, its own separate box */
+.dwm-transactions-widget {
+  padding: 12px;
   display: flex;
   flex-direction: column;
   min-height: 320px;
@@ -32,7 +63,7 @@
 /* dw widgets use "leaf-fill" to stretch inside a flex leaf slot
    (cal-panel-leaf) on desktop. There's no such fixed-height parent here,
    so let it size to its own content instead of collapsing to 0. */
-.dwm-transactions-wrap .leaf-fill {
+.dwm-transactions-widget .leaf-fill {
   flex: none;
   height: auto;
 }

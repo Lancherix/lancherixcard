@@ -29,6 +29,11 @@ const tileSubStyle = {
  * there's no room for a permanent side column, so this component folds
  * that same content into the top of the Home tab instead — scrollable,
  * and only shown when "dashboard" is the active tab.
+ *
+ * Three separate widget cards, stacked on a grey page background:
+ *   1. Card image
+ *   2. Balance / Budget / Weekly-activity tiles (each tile is its own box)
+ *   3. Transactions list
  */
 export default function DashboardWidgetsMobile({
   cardImage,
@@ -43,7 +48,8 @@ export default function DashboardWidgetsMobile({
 
   return (
     <div className="dwm-page">
-      <div className="cal-card-thumb dwm-card-thumb" role="img" aria-label={cardLabel}>
+      {/* Widget 1: card image */}
+      <div className="dwm-widget dwm-card-widget" role="img" aria-label={cardLabel}>
         {cardImage ? (
           <img src={cardImage} alt={cardLabel} />
         ) : (
@@ -51,6 +57,10 @@ export default function DashboardWidgetsMobile({
         )}
       </div>
 
+      {/* Widget 2: balance / budget / weekly-activity tiles.
+          Each tile already has its own white box + shadow (cal-permanent-tile),
+          so this wrapper stays transparent — it just groups them together
+          and keeps "Solde total" / "Budget restant" side by side. */}
       <div className="cal-permanent-panel dwm-permanent-panel">
         <div className="cal-permanent-row">
           <div className="cal-permanent-tile">
@@ -84,7 +94,8 @@ export default function DashboardWidgetsMobile({
         </div>
       </div>
 
-      <div className="dwm-transactions-wrap">
+      {/* Widget 3: transactions, its own separate box */}
+      <div className="dwm-widget dwm-transactions-widget">
         <TransactionsList />
       </div>
     </div>

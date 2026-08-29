@@ -475,5 +475,7 @@ body,
   align-items: stretch;
   justify-content: flex-start;
   padding: 0;
-  overflow: hidden; /* DashboardWidgetsMobile's .dwm-page handles its own scroll */
+  overflow: hidden;
+  background: transparent;
+  box-shadow: none; 
 }
