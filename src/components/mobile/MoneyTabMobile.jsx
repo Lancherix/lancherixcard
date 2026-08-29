@@ -12,10 +12,10 @@ export default function MoneyTabMobile() {
   return (
     <div className="mtm-page">
       <div className="mtm-widget">
-        <MoneyTransactionsColumn />
+        <MoneyRecurringColumn />
       </div>
       <div className="mtm-widget">
-        <MoneyRecurringColumn />
+        <MoneyTransactionsColumn />
       </div>
     </div>
   );
