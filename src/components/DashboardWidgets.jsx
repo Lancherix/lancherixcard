@@ -5,7 +5,7 @@ import { useTranslation } from "../context/I18nContext";
 import { createPortal } from "react-dom";
 import Icon from "./Icon";
 import "./DashboardWidgets.css";
-import "./ModalSystemMobile.css";
+import "./mobile/ModalSystemMobile.css";
 import IconPicker from "./IconPicker";
 import AnyIcon from "./AnyIcon";
 import useIsMobile from "../hooks/useIsMobile";
