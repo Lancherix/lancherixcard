@@ -29,3 +29,18 @@
   flex: none;
   height: auto;
 }
+
+/* Chart widget override: needs a real, explicit height (not min-height —
+   percentage-height children only resolve against a definite ancestor
+   height) so its internal bars' inline `height: X%` styles have
+   something to measure against. Without this, the bars silently
+   collapse to 0 height even though the underlying data is correct. */
+.rtm-widget-chart {
+  height: 240px;
+  min-height: 240px;
+}
+
+.rtm-widget-chart .leaf-fill {
+  flex: 1;
+  height: 100%;
+}
