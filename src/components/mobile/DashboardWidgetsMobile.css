@@ -1,24 +1,21 @@
 /* Mobile Home tab: three stacked "widget" cards (card image, balance
-   tiles, transactions) on a grey page background — mirrors how desktop
-   keeps each dashboard widget visually separate. */
+   tiles, transactions) on a grey page background. The page itself no
+   longer scrolls internally — .cal-shell-mobile (the whole screen) does
+   that now, so this is just a plain, naturally-tall flex column. */
 
 .dwm-page {
   display: flex;
   flex-direction: column;
-  align-items: center;         /* center the whole column of widgets */
-  gap: 8px;                    /* was 16px — tighter stacking */
+  align-items: center;   /* centers the column of widgets */
+  gap: 8px;
   width: 100%;
-  max-width: 480px;            /* keeps it centered/compact on wider phones */
-  margin: 0 auto;              /* center the page itself in its container */
-  padding: 6px 6px calc(64px + 8px); /* was 12px/16px — less space around widgets */
+  max-width: 480px;      /* keeps it centered/compact on wider phones */
+  margin: 0 auto;
+  padding: 6px;
   box-sizing: border-box;
-  min-height: 100%;
-  overflow-y: auto;
-  background: var(--cal-bg); /* grey, so each white widget box actually pops */
+  background: var(--cal-bg);
 }
 
-/* Shared "widget card" look: white bg, rounded corners, soft shadow —
-   same visual language as .cal-panel-leaf / .cal-permanent-tile. */
 .dwm-widget {
   width: 100%;
   background: var(--cal-surface);
@@ -26,10 +23,9 @@
   box-shadow: var(--cal-shadow-md);
   overflow: hidden;
   box-sizing: border-box;
-  flex-shrink: 0; /* never let the flex column crush this box's height */
+  flex-shrink: 0;
 }
 
-/* Widget 1: card image — edge-to-edge inside its own box, no extra padding */
 .dwm-card-widget {
   width: 100%;
   display: flex;
@@ -52,16 +48,10 @@
   color: var(--cal-muted);
 }
 
-/* Widget 2 group: tiles are already individually boxed, this is just a
-   transparent grouping wrapper — full width on mobile.
-   flex-shrink: 0 stops it from being crushed to near-0 height by the
-   parent flex column (see note above: overflow:auto on
-   .cal-permanent-panel makes its *automatic* min-height 0, so without
-   this it silently collapses instead of pushing .dwm-page to scroll). */
 .dwm-permanent-panel {
   width: 100%;
   flex-shrink: 0;
-  gap: 8px; /* was 10px via .cal-permanent-panel default — slightly tighter */
+  gap: 8px;
 }
 
 .dwm-permanent-panel.cal-permanent-panel {
@@ -69,35 +59,25 @@
   overflow: visible;
 }
 
-/* Force "Solde total" / "Budget restant" to stay side-by-side on mobile.
-   CardAppLayout.css flips .cal-permanent-row to a column under 640px for
-   the desktop side-panel's own narrow-window case — but nearly every
-   phone is under 640px wide, so without this override that same rule
-   also stacks the mobile tiles vertically. This selector is more
-   specific, so it wins regardless of viewport width. */
 .dwm-permanent-panel .cal-permanent-row {
   flex-direction: row;
   flex-shrink: 0;
-  gap: 8px; /* was 10px — matches the tighter vertical gap above */
+  gap: 8px;
 }
 
 .dwm-permanent-panel .cal-permanent-tile {
   flex-shrink: 0;
-  padding: 10px; /* was 12px via .cal-permanent-tile default — a touch tighter */
+  padding: 10px;
 }
 
-/* Widget 3: transactions, its own separate box */
 .dwm-transactions-widget {
-  padding: 10px; /* was 12px */
+  padding: 10px;
   display: flex;
   flex-direction: column;
   min-height: 320px;
   flex-shrink: 0;
 }
 
-/* dw widgets use "leaf-fill" to stretch inside a flex leaf slot
-   (cal-panel-leaf) on desktop. There's no such fixed-height parent here,
-   so let it size to its own content instead of collapsing to 0. */
 .dwm-transactions-widget .leaf-fill {
   flex: none;
   height: auto;

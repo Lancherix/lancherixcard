@@ -379,45 +379,62 @@ body,
 /* ---------------- Responsive ---------------- */
 
 @media (max-width: 640px) {
-  /* Card column no longer renders at all on mobile (it's folded into
-     DashboardWidgetsMobile inside the Home tab's own panel instead),
-     so the middle column collapses to a thin gutter instead of
-     reserving 90px of empty space. */
-  .cal-content {
-    grid-template-columns: 8px 1fr 8px;
-  }
-
-  .cal-actions {
-    grid-column: 2;
-  }
-
-  .cal-margin-right {
-    grid-column: 3;
-  }
-
-  .cal-menu-btn {
-    font-size: 11px;
-  }
-
   .cal-permanent-row {
     flex-direction: column;
   }
 }
 
-/* ---------------- Mobile bottom tab bar ---------------- */
+/* ---------------- Mobile: whole-shell scroll, no grid chrome ----------------
+   Desktop keeps its 4-column grid (margin | card | actions | margin) with a
+   fixed-height shell. On mobile there's no card column and no top tab row,
+   so instead of leaving that grid in place with empty/invisible tracks
+   (which is what was causing the extra top gap and the slight rightward
+   lean), we drop the grid entirely: everything becomes normal block flow,
+   and .cal-shell-mobile itself — sized to the full viewport — is the single
+   scroll container. This means the WHOLE screen scrolls together, rather
+   than a single nested div inside a squeezed grid cell. */
 
 @media (max-width: 640px) {
-  /* Hide the desktop tab row entirely on mobile; the bottom bar replaces it */
-  .cal-menu-buttons {
-    display: none;
+  .cal-shell-mobile {
+    height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 0 64px; /* bottom clears the fixed mobile nav bar */
   }
 
-  /* Leave room at the bottom so content doesn't sit under the fixed bar.
-     IMPORTANT: no `display: none` here — that was hiding .cal-actions
-     (and therefore every tab's real content, including the mobile
-     Home dashboard) on every mobile screen. */
   .cal-shell-mobile .cal-frame {
-    padding-bottom: 64px;
+    height: auto;      /* grows with content instead of being capped to one screen */
+    max-width: none;
+    margin: 0;
+    display: block;    /* was: grid (content row + footer row) */
+  }
+
+  .cal-shell-mobile .cal-content {
+    display: block;    /* was: 4-column grid (margin | card | actions | margin) */
+  }
+
+  .cal-shell-mobile .cal-margin,
+  .cal-shell-mobile .cal-menu-buttons {
+    display: none;     /* desktop-only grid spacers / top tab row */
+  }
+
+  .cal-shell-mobile .cal-actions {
+    display: block;    /* was: flex, sized to a fixed grid row */
+  }
+
+  .cal-shell-mobile .cal-panel-leaf {
+    height: auto;
+    min-height: 0;
+    overflow: visible; /* was: hidden — nothing needs to clip/scroll internally now */
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+
+  .cal-shell-mobile .cal-footer {
+    padding: 16px 0 24px;
   }
 }
 
@@ -469,13 +486,4 @@ body,
 
 .menu-mobile-item--active {
   color: var(--cal-accent);
-}
-
-.cal-shell-mobile .cal-panel-leaf {
-  align-items: stretch;
-  justify-content: flex-start;
-  padding: 0;
-  overflow: hidden;
-  background: transparent;
-  box-shadow: none; 
 }
