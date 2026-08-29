@@ -19,6 +19,10 @@ import CurrencyOnboarding from "./components/CurrencyOnboarding";
 import { AccountColumn, CurrencyColumn } from "./components/SettingsTab";
 
 import DashboardWidgetsMobile from "./components/mobile/DashboardWidgetsMobile";
+import MoneyTabMobile from "./components/mobile/MoneyTabMobile";
+import BudgetTabMobile from "./components/mobile/BudgetTabMobile";
+import ReportsTabMobile from "./components/mobile/ReportsTabMobile";
+import SettingsTabMobile from "./components/mobile/SettingsTabMobile";
 
 // Same breakpoint convention as the old app's App.js (window.innerWidth < 900),
 // tracked here since Home/CardAppLayout don't currently know about viewport size.
@@ -152,86 +156,91 @@ function Home() {
       key: "money",
       label: t("moneyTab.transactions"),
       icon: NavIcons.money,
-      panel: {
-        type: "split",
-        direction: "row",
-        children: [
-          { type: "leaf", content: <TransactionsList /> },
-          { type: "leaf", content: <MoneyRecurringColumn /> },
-        ],
-      },
+      panel: isMobile
+        ? { type: "leaf", content: <MoneyTabMobile /> }
+        : {
+          type: "split",
+          direction: "row",
+          children: [
+            { type: "leaf", content: <TransactionsList /> },
+            { type: "leaf", content: <MoneyRecurringColumn /> },
+          ],
+        },
     },
     {
       key: "budget",
       label: t("nav.budget"),
       icon: NavIcons.budget,
-      panel: {
-        type: "split",
-        direction: "row",
-        children: [
-          {
-            type: "split",
-            direction: "column",
-            children: [
-              { type: "leaf", content: <BudgetOverviewColumn /> },
-              { type: "leaf", content: <GoalsWidget /> },
-              { type: "empty", content: <Empty /> },
-            ],
-          },
-          { type: "leaf", content: <BudgetCategoriesColumn /> },
-        ],
-      },
+      panel: isMobile
+        ? { type: "leaf", content: <BudgetTabMobile /> }
+        : {
+          type: "split",
+          direction: "row",
+          children: [
+            {
+              type: "split",
+              direction: "column",
+              children: [
+                { type: "leaf", content: <BudgetOverviewColumn /> },
+                { type: "leaf", content: <GoalsWidget /> },
+                { type: "empty", content: <Empty /> },
+              ],
+            },
+            { type: "leaf", content: <BudgetCategoriesColumn /> },
+          ],
+        },
     },
     {
       key: "reports",
       label: t("nav.reports"),
       icon: NavIcons.reports,
-      panel: {
-        type: "split",
-        direction: "column",
-        children: [
-          {
-            type: "split",
-            direction: "row",
-            children: [
-              { type: "leaf", content: <ReportsTrendColumn /> },
-              { type: "leaf", content: <ReportsBreakdownColumn /> },
-            ],
-          },
-          {
-            type: "leaf",
-            content: <HistoryTab />,
-          },
-        ],
-      },
+      panel: isMobile
+        ? { type: "leaf", content: <ReportsTabMobile /> }
+        : {
+          type: "split",
+          direction: "column",
+          children: [
+            {
+              type: "split",
+              direction: "row",
+              children: [
+                { type: "leaf", content: <ReportsTrendColumn /> },
+                { type: "leaf", content: <ReportsBreakdownColumn /> },
+              ],
+            },
+            { type: "leaf", content: <HistoryTab /> },
+          ],
+        },
     },
     {
       key: "settings",
       label: t("nav.settings"),
       icon: NavIcons.settings,
       iconOnly: true,
-      panel: {
-        type: "split",
-        direction: "row",
-        children: [
-          {
-            type: "split",
-            direction: "column",
-            children: [
-              { type: "leaf", content: <AccountColumn /> },
-              { type: "empty", content: <Empty /> },
-            ],
-          },
-          {
-            type: "split",
-            direction: "column",
-            children: [
-              { type: "leaf", content: <CurrencyColumn /> },
-              { type: "empty", content: <Empty /> },
-            ],
-          },
-        ],
-      },
+      panel: isMobile
+        ? { type: "leaf", content: <SettingsTabMobile /> }
+        : {
+          type: "split",
+          direction: "row",
+          children: [
+            {
+              type: "split",
+              direction: "column",
+              children: [
+                { type: "leaf", content: <AccountColumn /> },
+                { type: "empty", content: <Empty /> },
+              ],
+            },
+            {
+              type: "split",
+              direction: "column",
+              children: [
+                { type: "leaf", content: <CurrencyColumn /> },
+                { type: "empty", content: <Empty /> },
+              ],
+            },
+          ],
+        },
     },
   ];
 

@@ -1,0 +1,34 @@
+.mtm-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 3vh;
+  box-sizing: border-box;
+  background: var(--cal-bg);
+}
+
+.mtm-widget {
+  width: 100%;
+  background: var(--cal-surface);
+  border-radius: var(--cal-radius);
+  box-shadow: var(--cal-shadow-md);
+  overflow: hidden;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+}
+
+/* Column components render a .leaf-fill root sized to fill a fixed-height
+   .cal-panel-leaf on desktop. No such fixed parent here, so let each
+   widget size to its own content instead of collapsing to 0. */
+.mtm-widget .leaf-fill {
+  flex: none;
+  height: auto;
+}

@@ -1,0 +1,31 @@
+.stm-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 3vh;
+  box-sizing: border-box;
+  background: var(--cal-bg);
+}
+
+.stm-widget {
+  width: 100%;
+  background: var(--cal-surface);
+  border-radius: var(--cal-radius);
+  box-shadow: var(--cal-shadow-md);
+  overflow: hidden;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  min-height: 180px;
+}
+
+.stm-widget .leaf-fill {
+  flex: none;
+  height: auto;
+}
