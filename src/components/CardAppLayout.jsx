@@ -158,6 +158,11 @@ export default function CardAppLayout({
         <div className="cal-content">
           <div className="cal-margin cal-margin-left" aria-hidden="true" />
 
+          {/* Desktop-only permanent side column: card image + balance/budget/
+              weekly-activity tiles, visible no matter which tab is active.
+              On mobile this same content is folded into DashboardWidgetsMobile
+              and shown ONLY on the Home tab — see the panel content itself,
+              not rendered here. */}
           {!isMobile && (
             <div className="cal-card-column">
               <div className="cal-card-thumb" role="img" aria-label={cardLabel}>
@@ -244,52 +249,11 @@ export default function CardAppLayout({
         </footer>
       </div>
 
-      {/* Mobile bottom tab bar: icon + text for every item, including settings */}
-      {isMobile && (
-        <div className="cal-card-column">
-          <div className="cal-card-thumb" role="img" aria-label={cardLabel}>
-            {cardImage ? (
-              <img src={cardImage} alt={cardLabel} />
-            ) : (
-              <span className="cal-card-thumb-label">{cardLabel}</span>
-            )}
-          </div>
-
-          <div className="cal-permanent-panel">
-            <div className="cal-permanent-row">
-              <div className="cal-permanent-tile">
-                <span className="cal-permanent-tile-label">{t("cardLayout.totalBalance")}</span>
-                <span className="cal-permanent-tile-value" style={tileValueStyle} title={formatMoney(totalBalance)}>
-                  {formatMoneyCompact(totalBalance)}
-                </span>
-                <span className="cal-permanent-tile-sub" style={tileSubStyle} title={formatMoney(availableBalance)}>
-                  {t("cardLayout.available", { amount: formatMoneyCompact(availableBalance) })}
-                </span>
-              </div>
-              <div className="cal-permanent-tile">
-                <span className="cal-permanent-tile-label">{t("cardLayout.remainingBudget")}</span>
-                <span className="cal-permanent-tile-value" style={tileValueStyle} title={formatMoney(remainingBudget)}>
-                  {formatMoneyCompact(remainingBudget)}
-                </span>
-              </div>
-            </div>
-
-            <div className="cal-permanent-tile cal-permanent-tile-wide">
-              <span className="cal-permanent-tile-label">{t("cardLayout.weeklyActivity")}</span>
-              <div className="cal-permanent-bars">
-                {weeklyActivity.map((day, i) => (
-                  <span
-                    key={i}
-                    style={{ height: `${day.height}%` }}
-                    title={`${day.label}: ${formatMoney(day.amount)}`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
+      {/* Mobile bottom tab bar: icon + text for every item, including settings.
+          NOTE: the duplicate card/balance/weekly-activity block that used to
+          live here (rendered on every mobile tab, outside the CSS grid) has
+          been removed. That content now only renders inside the Home tab's
+          panel via DashboardWidgetsMobile. */}
       {isMobile && (
         <nav className="menu-mobile" aria-label={t("cardLayout.mobileNav") ?? "Navigation"}>
           {menuItems.map((item, i) => {

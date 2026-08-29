@@ -379,8 +379,20 @@ body,
 /* ---------------- Responsive ---------------- */
 
 @media (max-width: 640px) {
+  /* Card column no longer renders at all on mobile (it's folded into
+     DashboardWidgetsMobile inside the Home tab's own panel instead),
+     so the middle column collapses to a thin gutter instead of
+     reserving 90px of empty space. */
   .cal-content {
-    grid-template-columns: 10px 90px 1fr 10px;
+    grid-template-columns: 8px 1fr 8px;
+  }
+
+  .cal-actions {
+    grid-column: 2;
+  }
+
+  .cal-margin-right {
+    grid-column: 3;
   }
 
   .cal-menu-btn {
@@ -400,10 +412,12 @@ body,
     display: none;
   }
 
-  /* Leave room at the bottom so content doesn't sit under the fixed bar */
+  /* Leave room at the bottom so content doesn't sit under the fixed bar.
+     IMPORTANT: no `display: none` here — that was hiding .cal-actions
+     (and therefore every tab's real content, including the mobile
+     Home dashboard) on every mobile screen. */
   .cal-shell-mobile .cal-frame {
     padding-bottom: 64px;
-    display: none;
   }
 }
 
