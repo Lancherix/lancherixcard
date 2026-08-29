@@ -4,11 +4,96 @@ import { useAppData } from "../context/AppContext";
 import { useTranslation } from "../context/I18nContext";
 import Icon from "./Icon";
 import "./BudgetTab.css";
+import "./mobile/ModalSystemMobile.css";
 import IconPicker from "./IconPicker";
 import AnyIcon from "./AnyIcon";
+import useIsMobile from "../hooks/useIsMobile";
 
 const iconChoices = ["food", "transport", "school", "entertainment", "shopping", "other", "savings"];
 const colorChoices = ["#ff9500", "#0071e3", "#5856d6", "#ff2d55", "#34c759", "#af52de", "#ff3b30", "#ffcc00"];
+
+/* ============================================================
+   MOBILE-AWARE MODAL HELPERS
+   Same helpers as DashboardWidgets.jsx (ModalShell, FormRow,
+   AmountField, plus the shared class-name pickers), duplicated
+   locally per that file's own convention so BudgetForm and
+   CategoryForm render correctly on both desktop and mobile.
+   ============================================================ */
+
+function ModalShell({ isMobile, title, onClose, confirm, footer, children }) {
+  const windowClass = isMobile
+    ? (confirm ? "mm-confirm-window" : "mm-window")
+    : (confirm ? "confirm-window" : "new-project-window");
+  const contentClass = isMobile
+    ? (confirm ? "mm-confirm-content" : "mm-content")
+    : "new-project-content";
+
+  return createPortal(
+    <div className={isMobile ? "mm-overlay" : "new-project-overlay"} onClick={isMobile ? onClose : undefined}>
+      <div className={windowClass} onClick={(e) => e.stopPropagation()}>
+        {isMobile && <div className="mm-handle"><span /></div>}
+        <div className={isMobile ? "mm-header" : "new-project-header"}>
+          <h4>{title}</h4>
+          {isMobile && (
+            <button type="button" className="mm-close-btn" onClick={onClose} aria-label="Close">✕</button>
+          )}
+        </div>
+        <div className={contentClass}>{children}</div>
+        <div className={isMobile ? "mm-footer" : "new-project-footer"}>{footer}</div>
+      </div>
+    </div>,
+    document.getElementById("modal-root")
+  );
+}
+
+function FormRow({ isMobile, label, children }) {
+  if (isMobile) {
+    return (
+      <div className="mm-field">
+        {label && <span className="mm-label">{label}</span>}
+        {children}
+      </div>
+    );
+  }
+  return (
+    <div className={label ? "form-row form-row-a form-row-name" : "form-row"}>
+      {label ? <label>{label}</label> : <span />}
+      {children}
+    </div>
+  );
+}
+
+function AmountField({ isMobile, currencySymbol, value, onChange, autoFocus }) {
+  return (
+    <div className={isMobile ? "mm-amount-wrap" : "dw-amount-wrap"}>
+      <span className={isMobile ? "mm-currency" : "dw-currency"}>{currencySymbol}</span>
+      <input
+        type="number"
+        inputMode="decimal"
+        step="0.01"
+        min="0"
+        placeholder="0.00"
+        value={value}
+        onChange={onChange}
+        className={isMobile ? "mm-amount-input" : "dw-amount-input"}
+        autoFocus={autoFocus}
+      />
+    </div>
+  );
+}
+
+const gridClass = (isMobile, kind) => (isMobile ? `mm-${kind}-grid` : `dw-${kind}-grid`);
+const choiceClass = (isMobile, kind, active) =>
+  (isMobile ? `mm-${kind}-choice` : `dw-${kind}-choice`) +
+  (active ? (isMobile ? ` mm-${kind}-choice-active` : ` dw-${kind}-choice-active`) : "");
+
+const primaryBtnClass = (isMobile) => (isMobile ? "mm-btn mm-btn-primary" : "primary-btn");
+const secondaryBtnClass = (isMobile) => (isMobile ? "mm-btn mm-btn-secondary" : "secondary-btn");
+const dangerBtnClass = (isMobile) => (isMobile ? "mm-btn mm-btn-danger" : "secondary-btn transaction-delete-btn");
+const dangerLeftBtnClass = (isMobile) => (isMobile ? "mm-btn mm-btn-danger" : "secondary-btn transaction-delete-btn dw-btn-left");
+// Delete is the action being confirmed on this screen, so on mobile it gets
+// the filled/primary treatment instead of the quiet text-link style.
+const confirmDeleteStyle = { background: "linear-gradient(#e5484d, #d1242f)", border: "1px solid #c4262f", color: "#fff" };
 
 /* ---------------- progress ring ---------------- */
 
@@ -59,11 +144,12 @@ function EmptyState({ icon, label, compact }) {
   );
 }
 
-/* ---------------- Budget form: self-contained, same markup as GoalForm/TransactionForm ---------------- */
+/* ---------------- Budget form: mobile-aware, same pattern as DashboardWidgets' BudgetForm ---------------- */
 
 function BudgetForm({ onClose, initialLimit }) {
   const { setBudget, currencySymbol } = useAppData();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const [limit, setLimit] = useState(String(initialLimit ?? ""));
   const parsed = parseFloat(limit);
   const isValid = limit.trim() !== "" && !isNaN(parsed) && parsed > 0;
@@ -75,63 +161,52 @@ function BudgetForm({ onClose, initialLimit }) {
     onClose();
   };
 
-  return createPortal(
-    <div className="new-project-overlay">
-      <div
-        className="new-project-window"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="new-project-header">
-          <h4>{t("budgetTab.editMonthlyBudget")}</h4>
-        </div>
-
-        <div className="new-project-content">
-          <div className="form-row form-row-a form-row-name">
-            <label>{t("icons.budget")}</label>
-
-            <div className="dw-amount-wrap">
-              <span className="dw-currency">{currencySymbol}</span>
-
-              <input
-                type="number"
-                inputMode="decimal"
-                step="0.01"
-                min="0"
-                placeholder="0.00"
-                value={limit}
-                onChange={(e) => setLimit(e.target.value)}
-                className="dw-amount-input"
-                autoFocus
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="new-project-footer">
-          <button type="button" className="secondary-btn" onClick={onClose}>
-            {t("common.cancel")}
-          </button>
-
-          <button
-            type="button"
-            className="primary-btn"
-            disabled={!isValid}
-            onClick={handleSubmit}
-          >
-            {t("common.save")}
-          </button>
-        </div>
-      </div>
-    </div>,
-    document.getElementById("modal-root")
+  return (
+    <ModalShell
+      isMobile={isMobile}
+      title={t("budgetTab.editMonthlyBudget")}
+      onClose={onClose}
+      footer={
+        isMobile ? (
+          <>
+            <button type="button" className={primaryBtnClass(isMobile)} disabled={!isValid} onClick={handleSubmit}>
+              {t("common.save")}
+            </button>
+            <button type="button" className={secondaryBtnClass(isMobile)} onClick={onClose}>
+              {t("common.cancel")}
+            </button>
+          </>
+        ) : (
+          <>
+            <button type="button" className={secondaryBtnClass(isMobile)} onClick={onClose}>
+              {t("common.cancel")}
+            </button>
+            <button type="button" className={primaryBtnClass(isMobile)} disabled={!isValid} onClick={handleSubmit}>
+              {t("common.save")}
+            </button>
+          </>
+        )
+      }
+    >
+      <FormRow isMobile={isMobile} label={t("icons.budget")}>
+        <AmountField
+          isMobile={isMobile}
+          currencySymbol={currencySymbol}
+          value={limit}
+          onChange={(e) => setLimit(e.target.value)}
+          autoFocus
+        />
+      </FormRow>
+    </ModalShell>
   );
 }
 
-/* ---------------- Category form: self-contained, same markup pattern as GoalForm ---------------- */
+/* ---------------- Category form: mobile-aware, same pattern as DashboardWidgets' GoalForm ---------------- */
 
 function CategoryForm({ onClose, initialValues }) {
   const { addCategory, updateCategory, deleteCategory, currencySymbol } = useAppData();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const isEditing = Boolean(initialValues);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
@@ -164,159 +239,150 @@ function CategoryForm({ onClose, initialValues }) {
     onClose();
   };
 
+  const handleDelete = () => {
+    if (!initialValues?.id) return;
+    deleteCategory(initialValues.id);
+    onClose();
+  };
+
   if (confirmingDelete) {
-    return createPortal(
-      <div className="new-project-overlay">
-        <div
-          className="confirm-window"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="new-project-header">
-            <h4>{t("common.delete")}</h4>
+    return (
+      <ModalShell
+        isMobile={isMobile}
+        confirm
+        title={t("common.delete")}
+        onClose={onClose}
+        footer={
+          isMobile ? (
+            <>
+              <button type="button" className={dangerBtnClass(isMobile)} style={confirmDeleteStyle} onClick={handleDelete}>
+                {t("common.delete")}
+              </button>
+              <button type="button" className={secondaryBtnClass(isMobile)} onClick={() => setConfirmingDelete(false)}>
+                {t("common.cancel")}
+              </button>
+            </>
+          ) : (
+            <>
+              <button type="button" className={secondaryBtnClass(isMobile)} onClick={() => setConfirmingDelete(false)}>
+                {t("common.cancel")}
+              </button>
+              <button type="button" className={dangerBtnClass(isMobile)} onClick={handleDelete}>
+                {t("common.delete")}
+              </button>
+            </>
+          )
+        }
+      >
+        {isMobile ? (
+          <p className="mm-confirm-text">{t("budgetTab.deleteCategoryConfirm")}</p>
+        ) : (
+          <div className="confirm-row">
+            <p className="dw-confirm-text">{t("budgetTab.deleteCategoryConfirm")}</p>
           </div>
-
-          <div className="new-project-content">
-            <div className="confirm-row">
-              <p className="dw-confirm-text">
-                {t("budgetTab.deleteCategoryConfirm")}
-              </p>
-            </div>
-          </div>
-
-          <div className="new-project-footer">
-            <button
-              type="button"
-              className="secondary-btn"
-              onClick={() => setConfirmingDelete(false)}
-            >
-              {t("common.cancel")}
-            </button>
-
-            <button
-              type="button"
-              className="secondary-btn transaction-delete-btn"
-              onClick={() => { deleteCategory(initialValues.id); onClose(); }}
-            >
-              {t("common.delete")}
-            </button>
-          </div>
-        </div>
-      </div>,
-      document.getElementById("modal-root")
+        )}
+      </ModalShell>
     );
   }
 
-  return createPortal(
-    <div className="new-project-overlay">
-      <div
-        className="new-project-window"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="new-project-header">
-          <h4>{isEditing ? t("budgetTab.editCategory") : t("budgetTab.addCategory")}</h4>
-        </div>
-
-        <div className="new-project-content">
-          <div className="form-row form-row-a form-row-name">
-            <label>
-              {t("common.name")}
-              {!isCustomIcon && <span className="bt-optional-hint"> ({t("common.optional")})</span>}
-            </label>
-
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={t("budgetTab.namePlaceholder")}
-            />
-          </div>
-
-          <div className="form-row form-row-a form-row-name">
-            <label>{t("common.icon")}</label>
-
-            <div className="dw-icon-grid">
-              {iconChoices.map((i) => (
-                <button
-                  type="button" key={i}
-                  className={"dw-icon-choice" + (icon === i ? " dw-icon-choice-active" : "")}
-                  onClick={() => setIcon(i)}
-                >
-                  <Icon name={i} size={18} color={icon === i ? color : undefined} />
-                </button>
-              ))}
-
-              <IconPicker
-                value={isCustomIcon ? icon : undefined}
-                onChange={setIcon}
-                triggerClassName={"dw-icon-choice" + (isCustomIcon ? " dw-icon-choice-active" : "")}
-              />
-            </div>
-          </div>
-
-          <div className="form-row form-row-a form-row-name">
-            <label>{t("common.color")}</label>
-
-            <div className="dw-color-grid">
-              {colorChoices.map((c) => (
-                <button
-                  type="button" key={c}
-                  className={"dw-color-choice" + (color === c ? " dw-color-choice-active" : "")}
-                  style={{ background: c }}
-                  onClick={() => setColor(c)}
-                  aria-label={c}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="form-row form-row-a form-row-name">
-            <label>{t("budgetTab.monthlyLimit")}</label>
-
-            <div className="dw-amount-wrap">
-              <span className="dw-currency">{currencySymbol}</span>
-
-              <input
-                type="number"
-                inputMode="decimal"
-                step="0.01"
-                min="0"
-                placeholder="0.00"
-                value={limit}
-                onChange={(e) => setLimit(e.target.value)}
-                className="dw-amount-input"
-                autoFocus
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="new-project-footer">
-          {isEditing && (
-            <button
-              type="button"
-              className="secondary-btn transaction-delete-btn dw-btn-left"
-              onClick={() => setConfirmingDelete(true)}
-            >
-              {t("common.delete")}
+  return (
+    <ModalShell
+      isMobile={isMobile}
+      title={isEditing ? t("budgetTab.editCategory") : t("budgetTab.addCategory")}
+      onClose={onClose}
+      footer={
+        isMobile ? (
+          <>
+            <button type="button" className={primaryBtnClass(isMobile)} disabled={!isValid} onClick={handleSubmit}>
+              {isEditing ? t("common.saveChanges") : t("common.add")}
             </button>
-          )}
+            <button type="button" className={secondaryBtnClass(isMobile)} onClick={onClose}>
+              {t("common.cancel")}
+            </button>
+            {isEditing && (
+              <button type="button" className={dangerBtnClass(isMobile)} onClick={() => setConfirmingDelete(true)}>
+                {t("common.delete")}
+              </button>
+            )}
+          </>
+        ) : (
+          <>
+            {isEditing && (
+              <button type="button" className={dangerLeftBtnClass(isMobile)} onClick={() => setConfirmingDelete(true)}>
+                {t("common.delete")}
+              </button>
+            )}
+            <button type="button" className={secondaryBtnClass(isMobile)} onClick={onClose}>
+              {t("common.cancel")}
+            </button>
+            <button type="button" className={primaryBtnClass(isMobile)} disabled={!isValid} onClick={handleSubmit}>
+              {isEditing ? t("common.saveChanges") : t("common.add")}
+            </button>
+          </>
+        )
+      }
+    >
+      <FormRow
+        isMobile={isMobile}
+        label={
+          <>
+            {t("common.name")}
+            {!isCustomIcon && <span className="bt-optional-hint"> ({t("common.optional")})</span>}
+          </>
+        }
+      >
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder={t("budgetTab.namePlaceholder")}
+        />
+      </FormRow>
 
-          <button type="button" className="secondary-btn" onClick={onClose}>
-            {t("common.cancel")}
-          </button>
+      <FormRow isMobile={isMobile} label={t("common.icon")}>
+        <div className={gridClass(isMobile, "icon")}>
+          {iconChoices.map((i) => (
+            <button
+              type="button" key={i}
+              className={choiceClass(isMobile, "icon", icon === i)}
+              onClick={() => setIcon(i)}
+            >
+              <Icon name={i} size={isMobile ? 20 : 18} color={icon === i ? color : undefined} />
+            </button>
+          ))}
 
-          <button
-            type="button"
-            className="primary-btn"
-            disabled={!isValid}
-            onClick={handleSubmit}
-          >
-            {isEditing ? t("common.saveChanges") : t("common.add")}
-          </button>
+          <IconPicker
+            value={isCustomIcon ? icon : undefined}
+            onChange={setIcon}
+            triggerClassName={choiceClass(isMobile, "icon", isCustomIcon)}
+          />
         </div>
-      </div>
-    </div>,
-    document.getElementById("modal-root")
+      </FormRow>
+
+      <FormRow isMobile={isMobile} label={t("common.color")}>
+        <div className={gridClass(isMobile, "color")}>
+          {colorChoices.map((c) => (
+            <button
+              type="button" key={c}
+              className={choiceClass(isMobile, "color", color === c)}
+              style={{ background: c }}
+              onClick={() => setColor(c)}
+              aria-label={c}
+            />
+          ))}
+        </div>
+      </FormRow>
+
+      <FormRow isMobile={isMobile} label={t("budgetTab.monthlyLimit")}>
+        <AmountField
+          isMobile={isMobile}
+          currencySymbol={currencySymbol}
+          value={limit}
+          onChange={(e) => setLimit(e.target.value)}
+          autoFocus
+        />
+      </FormRow>
+    </ModalShell>
   );
 }
 
