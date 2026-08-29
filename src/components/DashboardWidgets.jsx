@@ -5,42 +5,125 @@ import { useTranslation } from "../context/I18nContext";
 import { createPortal } from "react-dom";
 import Icon from "./Icon";
 import "./DashboardWidgets.css";
+import "./ModalSystemMobile.css";
 import IconPicker from "./IconPicker";
 import AnyIcon from "./AnyIcon";
+import useIsMobile from "../hooks/useIsMobile";
 
 const goalIconChoices = ["laptop", "ticket", "airplane", "bicycle", "car", "console", "boombox", "musicPlayer", "camera", "trip"];
 const goalColorChoices = ["#ff9500", "#0071e3", "#5856d6", "#ff2d55", "#34c759", "#af52de", "#ff3b30", "#ffcc00"];
 
-/* ---------------- shared bits ---------------- */
+/* ============================================================
+   MOBILE-AWARE MODAL HELPERS
+   Every modal below (TransactionForm, BudgetForm, GoalForm)
+   calls useIsMobile() once and passes the result down through
+   these helpers, which pick the desktop new-project-*dw-*
+   classes or the mobile mm-* classes accordingly. This keeps
+   each form a single source of truth instead of two parallel
+   components to maintain.
+   ============================================================ */
 
-function TypeToggle({ type, onChange }) {
-  const { t } = useTranslation();
+function ModalShell({ isMobile, title, onClose, confirm, footer, children }) {
+  const windowClass = isMobile
+    ? (confirm ? "mm-confirm-window" : "mm-window")
+    : (confirm ? "confirm-window" : "new-project-window");
+  const contentClass = isMobile
+    ? (confirm ? "mm-confirm-content" : "mm-content")
+    : "new-project-content";
+
+  return createPortal(
+    <div className={isMobile ? "mm-overlay" : "new-project-overlay"} onClick={isMobile ? onClose : undefined}>
+      <div className={windowClass} onClick={(e) => e.stopPropagation()}>
+        {isMobile && <div className="mm-handle"><span /></div>}
+        <div className={isMobile ? "mm-header" : "new-project-header"}>
+          <h4>{title}</h4>
+          {isMobile && (
+            <button type="button" className="mm-close-btn" onClick={onClose} aria-label="Close">✕</button>
+          )}
+        </div>
+        <div className={contentClass}>{children}</div>
+        <div className={isMobile ? "mm-footer" : "new-project-footer"}>{footer}</div>
+      </div>
+    </div>,
+    document.getElementById("modal-root")
+  );
+}
+
+function FormRow({ isMobile, label, children }) {
+  if (isMobile) {
+    return (
+      <div className="mm-field">
+        {label && <span className="mm-label">{label}</span>}
+        {children}
+      </div>
+    );
+  }
   return (
-    <div className="dw-type-toggle" role="tablist" aria-label="Type">
-      <button
-        type="button" role="tab" aria-selected={type === "expense"}
-        className={"dw-type-btn" + (type === "expense" ? " dw-type-btn-active dw-type-expense" : "")}
-        onClick={() => onChange("expense")}
-      >
-        {t("common.spent")}
-      </button>
-      <button
-        type="button" role="tab" aria-selected={type === "income"}
-        className={"dw-type-btn" + (type === "income" ? " dw-type-btn-active dw-type-income" : "")}
-        onClick={() => onChange("income")}
-      >
-        {t("common.acquired")}
-      </button>
+    <div className={label ? "form-row form-row-a form-row-name" : "form-row"}>
+      {label ? <label>{label}</label> : <span />}
+      {children}
     </div>
   );
 }
 
-/* ---------------- Empty-state row/tile, shared by Transactions, Goals, Report ----------------
-   EmptyRow: same shape as dw-tx-row / dw-report-cat-row. Renders a <button> when
-   onClick is passed (Transactions), a plain <div> when it isn't (Report's static
-   spending list, which has no direct "add" action).
-   EmptyGoalTile: same fixed-width shape as dw-goal-card, since goals are laid
-   out as tiles, not rows. */
+function AmountField({ isMobile, currencySymbol, value, onChange, autoFocus }) {
+  return (
+    <div className={isMobile ? "mm-amount-wrap" : "dw-amount-wrap"}>
+      <span className={isMobile ? "mm-currency" : "dw-currency"}>{currencySymbol}</span>
+      <input
+        type="number"
+        inputMode="decimal"
+        step="0.01"
+        min="0"
+        placeholder="0.00"
+        value={value}
+        onChange={onChange}
+        className={isMobile ? "mm-amount-input" : "dw-amount-input"}
+        autoFocus={autoFocus}
+      />
+    </div>
+  );
+}
+
+/* Generalized so TransactionForm's expense/income, GoalForm's
+   add/remove funds, and GoalForm's 3-way status toggle all share
+   one implementation instead of three copies of the same markup. */
+function TypeToggle({ isMobile, type, onChange, options }) {
+  const toggleClass = isMobile ? "mm-type-toggle" : "dw-type-toggle";
+  const btnClass = isMobile ? "mm-type-btn" : "dw-type-btn";
+  const activeClass = isMobile ? "mm-type-btn-active" : "dw-type-btn-active";
+  const variantClass = (v) => (isMobile ? `mm-type-${v}` : `dw-type-${v}`);
+
+  return (
+    <div className={toggleClass} role="tablist" aria-label="Type">
+      {options.map((opt) => (
+        <button
+          key={opt.value}
+          type="button"
+          role="tab"
+          aria-selected={type === opt.value}
+          className={btnClass + (type === opt.value ? ` ${activeClass} ${variantClass(opt.variant)}` : "")}
+          onClick={() => onChange(opt.value)}
+        >
+          {opt.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+const gridClass = (isMobile, kind) => (isMobile ? `mm-${kind}-grid` : `dw-${kind}-grid`);
+const choiceClass = (isMobile, kind, active) =>
+  (isMobile ? `mm-${kind}-choice` : `dw-${kind}-choice`) +
+  (active ? (isMobile ? ` mm-${kind}-choice-active` : ` dw-${kind}-choice-active`) : "");
+
+const primaryBtnClass = (isMobile) => (isMobile ? "mm-btn mm-btn-primary" : "primary-btn");
+const secondaryBtnClass = (isMobile) => (isMobile ? "mm-btn mm-btn-secondary" : "secondary-btn");
+const dangerBtnClass = (isMobile) => (isMobile ? "mm-btn mm-btn-danger" : "secondary-btn transaction-delete-btn");
+const dangerLeftBtnClass = (isMobile) => (isMobile ? "mm-btn mm-btn-danger" : "secondary-btn transaction-delete-btn dw-btn-left");
+// Delete is the action being confirmed on this screen, so on mobile it gets
+// the filled/primary treatment instead of the quiet text-link style.
+const confirmDeleteStyle = { background: "linear-gradient(#e5484d, #d1242f)", border: "1px solid #c4262f", color: "#fff" };
 
 /* ---------------- Empty state: icon above label, nothing else ---------------- */
 
@@ -65,6 +148,7 @@ function TransactionForm({ onClose, initialValues }) {
   } = useAppData();
 
   const { t, tCategory } = useTranslation();
+  const isMobile = useIsMobile();
 
   const isEditing = Boolean(initialValues);
 
@@ -131,172 +215,140 @@ function TransactionForm({ onClose, initialValues }) {
   };
 
   if (confirmingDelete) {
-    return createPortal(
-      <div className="new-project-overlay">
-        <div
-          className="confirm-window"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="new-project-header">
-            <h4>{t("common.delete")}</h4>
+    return (
+      <ModalShell
+        isMobile={isMobile}
+        confirm
+        title={t("common.delete")}
+        onClose={onClose}
+        footer={
+          isMobile ? (
+            <>
+              <button type="button" className={dangerBtnClass(isMobile)} style={confirmDeleteStyle} onClick={handleDelete}>
+                {t("common.delete")}
+              </button>
+              <button type="button" className={secondaryBtnClass(isMobile)} onClick={() => setConfirmingDelete(false)}>
+                {t("common.cancel")}
+              </button>
+            </>
+          ) : (
+            <>
+              <button type="button" className={secondaryBtnClass(isMobile)} onClick={() => setConfirmingDelete(false)}>
+                {t("common.cancel")}
+              </button>
+              <button type="button" className={dangerBtnClass(isMobile)} onClick={handleDelete}>
+                {t("common.delete")}
+              </button>
+            </>
+          )
+        }
+      >
+        {isMobile ? (
+          <p className="mm-confirm-text">{t("transactionModal.deleteConfirm")}</p>
+        ) : (
+          <div className="confirm-row">
+            <p className="dw-confirm-text">{t("transactionModal.deleteConfirm")}</p>
           </div>
-
-          <div className="new-project-content">
-            <div className="confirm-row">
-              <p className="dw-confirm-text">
-                {t("transactionModal.deleteConfirm")}
-              </p>
-            </div>
-          </div>
-
-          <div className="new-project-footer">
-            <button
-              type="button"
-              className="secondary-btn"
-              onClick={() => setConfirmingDelete(false)}
-            >
-              {t("common.cancel")}
-            </button>
-
-            <button
-              type="button"
-              className="secondary-btn transaction-delete-btn"
-              onClick={handleDelete}
-            >
-              {t("common.delete")}
-            </button>
-          </div>
-        </div>
-      </div>,
-      document.getElementById("modal-root")
+        )}
+      </ModalShell>
     );
   }
 
-  return createPortal(
-    <div className="new-project-overlay">
-      <div
-        className="new-project-window"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="new-project-header">
-          <h4>
-            {isEditing
-              ? t("moneyTab.editTransaction")
-              : t("common.newTransaction")}
-          </h4>
-        </div>
-
-        <div className="new-project-content">
-          <div className="form-row form-row-a form-row-name">
-            <label>{t("common.type")}</label>
-
-            <TypeToggle
-              type={type}
-              onChange={setType}
-            />
-          </div>
-
-          <div className="form-row form-row-a form-row-name">
-            <label>{t("common.name")}</label>
-
-            <input
-              type="text"
-              placeholder={t("moneyTab.namePlaceholder")}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-
-          <div className="form-row form-row-a form-row-name">
-            <label>{t("common.amount")}</label>
-
-            <div className="dw-amount-wrap">
-              <span className="dw-currency">
-                {currencySymbol}
-              </span>
-
-              <input
-                type="number"
-                inputMode="decimal"
-                step="0.01"
-                min="0"
-                placeholder="0.00"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="dw-amount-input"
-                autoFocus
-              />
-            </div>
-          </div>
-
-          <div className="form-row form-row-a form-row-name">
-            <label>{t("common.category")}</label>
-
-            {categories.length > 0 ? (
-              <select
-                value={categoryKey}
-                onChange={(e) => setCategoryKey(e.target.value)}
-              >
-                {categories.map((c) => (
-                  <option
-                    key={c.id}
-                    value={c.key}
-                  >
-                    {tCategory(c.key)}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <span className="dw-field-hint">
-                {t("budgetTab.noCategoriesHint")}
-              </span>
-            )}
-          </div>
-
-          <div className="form-row form-row-a form-row-name">
-            <label>{t("common.date")}</label>
-
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="new-project-footer">
-          {isEditing && (
-            <button
-              type="button"
-              className="secondary-btn transaction-delete-btn"
-              onClick={() => setConfirmingDelete(true)}
-            >
-              {t("common.delete")}
+  return (
+    <ModalShell
+      isMobile={isMobile}
+      title={isEditing ? t("moneyTab.editTransaction") : t("common.newTransaction")}
+      onClose={onClose}
+      footer={
+        isMobile ? (
+          <>
+            <button type="button" className={primaryBtnClass(isMobile)} disabled={!isValid} onClick={handleSubmit}>
+              {isEditing ? t("common.saveChanges") : t("common.save")}
             </button>
-          )}
+            <button type="button" className={secondaryBtnClass(isMobile)} onClick={onClose}>
+              {t("common.cancel")}
+            </button>
+            {isEditing && (
+              <button type="button" className={dangerBtnClass(isMobile)} onClick={() => setConfirmingDelete(true)}>
+                {t("common.delete")}
+              </button>
+            )}
+          </>
+        ) : (
+          <>
+            {isEditing && (
+              <button type="button" className={dangerBtnClass(isMobile)} onClick={() => setConfirmingDelete(true)}>
+                {t("common.delete")}
+              </button>
+            )}
+            <button type="button" className={secondaryBtnClass(isMobile)} onClick={onClose}>
+              {t("common.cancel")}
+            </button>
+            <button type="button" className={primaryBtnClass(isMobile)} disabled={!isValid} onClick={handleSubmit}>
+              {isEditing ? t("common.saveChanges") : t("common.save")}
+            </button>
+          </>
+        )
+      }
+    >
+      <FormRow isMobile={isMobile} label={t("common.type")}>
+        <TypeToggle
+          isMobile={isMobile}
+          type={type}
+          onChange={setType}
+          options={[
+            { value: "expense", label: t("common.spent"), variant: "expense" },
+            { value: "income", label: t("common.acquired"), variant: "income" },
+          ]}
+        />
+      </FormRow>
 
-          <button
-            type="button"
-            className="secondary-btn"
-            onClick={onClose}
-          >
-            {t("common.cancel")}
-          </button>
+      <FormRow isMobile={isMobile} label={t("common.name")}>
+        <input
+          type="text"
+          placeholder={t("moneyTab.namePlaceholder")}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </FormRow>
 
-          <button
-            type="button"
-            className="primary-btn"
-            disabled={!isValid}
-            onClick={handleSubmit}
+      <FormRow isMobile={isMobile} label={t("common.amount")}>
+        <AmountField
+          isMobile={isMobile}
+          currencySymbol={currencySymbol}
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          autoFocus
+        />
+      </FormRow>
+
+      <FormRow isMobile={isMobile} label={t("common.category")}>
+        {categories.length > 0 ? (
+          <select
+            value={categoryKey}
+            onChange={(e) => setCategoryKey(e.target.value)}
           >
-            {isEditing
-              ? t("common.saveChanges")
-              : t("common.save")}
-          </button>
-        </div>
-      </div>
-    </div>,
-    document.getElementById("modal-root")
+            {categories.map((c) => (
+              <option key={c.id} value={c.key}>
+                {tCategory(c.key)}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <span className={isMobile ? "mm-field-hint" : "dw-field-hint"}>
+            {t("budgetTab.noCategoriesHint")}
+          </span>
+        )}
+      </FormRow>
+
+      <FormRow isMobile={isMobile} label={t("common.date")}>
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+      </FormRow>
+    </ModalShell>
   );
 }
 
@@ -445,14 +497,12 @@ export function ReportWidget() {
   );
 }
 
-/* ---------------- RIGHT COLUMN, ROW 2: Budget, reads + writes context ----------------
-   Self-contained modal, matching TransactionForm's structure exactly:
-   new-project-overlay > new-project-window > header + content + footer,
-   rendered via the same portal target. No longer wrapped by ModalShell. */
+/* ---------------- RIGHT COLUMN, ROW 2: Budget, reads + writes context ---------------- */
 
 function BudgetForm({ onClose, initialLimit }) {
   const { setBudget, currencySymbol } = useAppData();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const [limit, setLimit] = useState(String(initialLimit ?? ""));
   const parsed = parseFloat(limit);
   const isValid = limit.trim() !== "" && !isNaN(parsed) && parsed > 0;
@@ -464,70 +514,52 @@ function BudgetForm({ onClose, initialLimit }) {
     onClose();
   };
 
-  return createPortal(
-    <div className="new-project-overlay">
-      <div
-        className="new-project-window"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="new-project-header">
-          <h4>{t("dashboard.monthlyBudget")}</h4>
-        </div>
-
-        <div className="new-project-content">
-          <div className="form-row form-row-a form-row-name">
-            <label>{t("dashboard.monthlyBudget")}</label>
-
-            <div className="dw-amount-wrap">
-              <span className="dw-currency">{currencySymbol}</span>
-
-              <input
-                type="number"
-                inputMode="decimal"
-                step="0.01"
-                min="0"
-                placeholder="0.00"
-                value={limit}
-                onChange={(e) => setLimit(e.target.value)}
-                className="dw-amount-input"
-                autoFocus
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="new-project-footer">
-          <button
-            type="button"
-            className="secondary-btn"
-            onClick={onClose}
-          >
-            {t("common.cancel")}
-          </button>
-
-          <button
-            type="button"
-            className="primary-btn"
-            disabled={!isValid}
-            onClick={handleSubmit}
-          >
-            {t("common.save")}
-          </button>
-        </div>
-      </div>
-    </div>,
-    document.getElementById("modal-root")
+  return (
+    <ModalShell
+      isMobile={isMobile}
+      title={t("dashboard.monthlyBudget")}
+      onClose={onClose}
+      footer={
+        isMobile ? (
+          <>
+            <button type="button" className={primaryBtnClass(isMobile)} disabled={!isValid} onClick={handleSubmit}>
+              {t("common.save")}
+            </button>
+            <button type="button" className={secondaryBtnClass(isMobile)} onClick={onClose}>
+              {t("common.cancel")}
+            </button>
+          </>
+        ) : (
+          <>
+            <button type="button" className={secondaryBtnClass(isMobile)} onClick={onClose}>
+              {t("common.cancel")}
+            </button>
+            <button type="button" className={primaryBtnClass(isMobile)} disabled={!isValid} onClick={handleSubmit}>
+              {t("common.save")}
+            </button>
+          </>
+        )
+      }
+    >
+      <FormRow isMobile={isMobile} label={t("dashboard.monthlyBudget")}>
+        <AmountField
+          isMobile={isMobile}
+          currencySymbol={currencySymbol}
+          value={limit}
+          onChange={(e) => setLimit(e.target.value)}
+          autoFocus
+        />
+      </FormRow>
+    </ModalShell>
   );
 }
 
-/* ---------------- RIGHT COLUMN, ROW 3: Goals, reads + writes context ----------------
-   Same self-contained pattern as TransactionForm: each internal view
-   (details / funds / confirmDelete) renders its own full overlay+window,
-   with header/content/footer laid out exactly like the New Project modal. */
+/* ---------------- RIGHT COLUMN, ROW 3: Goals, reads + writes context ---------------- */
 
 function GoalForm({ onClose, initialValues }) {
   const { addGoal, updateGoal, deleteGoal, contributeToGoal, withdrawFromGoal, currencySymbol, formatMoney } = useAppData();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const isEditing = Boolean(initialValues);
   const [view, setView] = useState("details");
 
@@ -582,301 +614,243 @@ function GoalForm({ onClose, initialValues }) {
   };
 
   if (view === "confirmDelete") {
-    return createPortal(
-      <div className="new-project-overlay">
-        <div
-          className="confirm-window"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="new-project-header">
-            <h4>{t("common.delete")}</h4>
+    return (
+      <ModalShell
+        isMobile={isMobile}
+        confirm
+        title={t("common.delete")}
+        onClose={onClose}
+        footer={
+          isMobile ? (
+            <>
+              <button
+                type="button"
+                className={dangerBtnClass(isMobile)}
+                style={confirmDeleteStyle}
+                onClick={() => { deleteGoal(initialValues.id); onClose(); }}
+              >
+                {t("common.delete")}
+              </button>
+              <button type="button" className={secondaryBtnClass(isMobile)} onClick={() => setView("details")}>
+                {t("common.cancel")}
+              </button>
+            </>
+          ) : (
+            <>
+              <button type="button" className={secondaryBtnClass(isMobile)} onClick={() => setView("details")}>
+                {t("common.cancel")}
+              </button>
+              <button
+                type="button"
+                className={dangerBtnClass(isMobile)}
+                onClick={() => { deleteGoal(initialValues.id); onClose(); }}
+              >
+                {t("common.delete")}
+              </button>
+            </>
+          )
+        }
+      >
+        {isMobile ? (
+          <p className="mm-confirm-text">{t("goalForm.deleteGoalConfirm")}</p>
+        ) : (
+          <div className="confirm-row">
+            <p className="dw-confirm-text">{t("goalForm.deleteGoalConfirm")}</p>
           </div>
-
-          <div className="new-project-content">
-            <div className="confirm-row">
-              <p className="dw-confirm-text">
-                {t("goalForm.deleteGoalConfirm")}
-              </p>
-            </div>
-          </div>
-
-          <div className="new-project-footer">
-            <button
-              type="button"
-              className="secondary-btn"
-              onClick={() => setView("details")}
-            >
-              {t("common.cancel")}
-            </button>
-
-            <button
-              type="button"
-              className="secondary-btn transaction-delete-btn"
-              onClick={() => { deleteGoal(initialValues.id); onClose(); }}
-            >
-              {t("common.delete")}
-            </button>
-          </div>
-        </div>
-      </div>,
-      document.getElementById("modal-root")
+        )}
+      </ModalShell>
     );
   }
 
   if (view === "funds") {
-    return createPortal(
-      <div className="new-project-overlay">
-        <div
-          className="new-project-window"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="new-project-header">
-            <h4>{t("goalForm.addRemove")}</h4>
-          </div>
+    return (
+      <ModalShell
+        isMobile={isMobile}
+        title={t("goalForm.addRemove")}
+        onClose={onClose}
+        footer={
+          isMobile ? (
+            <>
+              <button type="button" className={primaryBtnClass(isMobile)} disabled={!fundsValid} onClick={handleFundsSubmit}>
+                {fundsMode === "add" ? t("goalForm.addFunds") : t("goalForm.removeFunds")}
+              </button>
+              <button type="button" className={secondaryBtnClass(isMobile)} onClick={() => setView("details")}>
+                {t("common.back")}
+              </button>
+            </>
+          ) : (
+            <>
+              <button type="button" className={secondaryBtnClass(isMobile)} onClick={() => setView("details")}>
+                {t("common.back")}
+              </button>
+              <button type="button" className={primaryBtnClass(isMobile)} disabled={!fundsValid} onClick={handleFundsSubmit}>
+                {fundsMode === "add" ? t("goalForm.addFunds") : t("goalForm.removeFunds")}
+              </button>
+            </>
+          )
+        }
+      >
+        <FormRow isMobile={isMobile} label={t("common.type")}>
+          <TypeToggle
+            isMobile={isMobile}
+            type={fundsMode}
+            onChange={setFundsMode}
+            options={[
+              { value: "add", label: t("common.add"), variant: "income" },
+              { value: "remove", label: t("common.remove"), variant: "expense" },
+            ]}
+          />
+        </FormRow>
 
-          <div className="new-project-content">
-            <div className="form-row form-row-a form-row-name">
-              <label>{t("common.type")}</label>
+        <FormRow isMobile={isMobile}>
+          <p className="dw-goal-contribute-hint">
+            {fundsMode === "add" ? t("goalForm.addFundsHint") : t("goalForm.removeFundsHint")}
+          </p>
+        </FormRow>
 
-              <div className="dw-type-toggle" role="tablist" aria-label="Funds direction">
-                <button
-                  type="button" role="tab" aria-selected={fundsMode === "add"}
-                  className={"dw-type-btn" + (fundsMode === "add" ? " dw-type-btn-active dw-type-income" : "")}
-                  onClick={() => setFundsMode("add")}
-                >
-                  {t("common.add")}
-                </button>
-                <button
-                  type="button" role="tab" aria-selected={fundsMode === "remove"}
-                  className={"dw-type-btn" + (fundsMode === "remove" ? " dw-type-btn-active dw-type-expense" : "")}
-                  onClick={() => setFundsMode("remove")}
-                >
-                  {t("common.remove")}
-                </button>
-              </div>
-            </div>
+        <FormRow isMobile={isMobile} label={t("common.amount")}>
+          <AmountField
+            isMobile={isMobile}
+            currencySymbol={currencySymbol}
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            autoFocus
+          />
+        </FormRow>
 
-            <div className="form-row">
-              <span />
-              <p className="dw-goal-contribute-hint">
-                {fundsMode === "add" ? t("goalForm.addFundsHint") : t("goalForm.removeFundsHint")}
-              </p>
-            </div>
+        {overRemoving && (
+          <FormRow isMobile={isMobile}>
+            <span className="dw-goal-error">
+              {t("goalForm.cantRemoveMore", { amount: formatMoney(initialValues.current) })}
+            </span>
+          </FormRow>
+        )}
 
-            <div className="form-row form-row-a form-row-name">
-              <label>{t("common.amount")}</label>
-
-              <div className="dw-amount-wrap">
-                <span className="dw-currency">{currencySymbol}</span>
-
-                <input
-                  type="number"
-                  inputMode="decimal"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="dw-amount-input"
-                  autoFocus
-                />
-              </div>
-            </div>
-
-            {overRemoving && (
-              <div className="form-row">
-                <span />
-                <span className="dw-goal-error">
-                  {t("goalForm.cantRemoveMore", { amount: formatMoney(initialValues.current) })}
-                </span>
-              </div>
-            )}
-
-            <div className="form-row form-row-a form-row-name">
-              <label>{t("common.date")}</label>
-
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="new-project-footer">
-            <button
-              type="button"
-              className="secondary-btn"
-              onClick={() => setView("details")}
-            >
-              {t("common.back")}
-            </button>
-
-            <button
-              type="button"
-              className="primary-btn"
-              disabled={!fundsValid}
-              onClick={handleFundsSubmit}
-            >
-              {fundsMode === "add" ? t("goalForm.addFunds") : t("goalForm.removeFunds")}
-            </button>
-          </div>
-        </div>
-      </div>,
-      document.getElementById("modal-root")
+        <FormRow isMobile={isMobile} label={t("common.date")}>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+        </FormRow>
+      </ModalShell>
     );
   }
 
-  return createPortal(
-    <div className="new-project-overlay">
-      <div
-        className="new-project-window"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="new-project-header">
-          <h4>{isEditing ? t("goalForm.editGoal") : t("goalForm.newGoal")}</h4>
+  return (
+    <ModalShell
+      isMobile={isMobile}
+      title={isEditing ? t("goalForm.editGoal") : t("goalForm.newGoal")}
+      onClose={onClose}
+      footer={
+        isMobile ? (
+          <>
+            <button type="button" className={primaryBtnClass(isMobile)} disabled={!detailsValid} onClick={handleSaveDetails}>
+              {isEditing ? t("common.saveChanges") : t("goalForm.createGoal")}
+            </button>
+            <button type="button" className={secondaryBtnClass(isMobile)} onClick={onClose}>
+              {t("common.cancel")}
+            </button>
+            {isEditing && (
+              <button type="button" className={secondaryBtnClass(isMobile)} onClick={() => setView("funds")}>
+                {t("goalForm.addRemove")}
+              </button>
+            )}
+            {isEditing && (
+              <button type="button" className={dangerBtnClass(isMobile)} onClick={() => setView("confirmDelete")}>
+                {t("common.delete")}
+              </button>
+            )}
+          </>
+        ) : (
+          <>
+            {isEditing && (
+              <button type="button" className={dangerLeftBtnClass(isMobile)} onClick={() => setView("confirmDelete")}>
+                {t("common.delete")}
+              </button>
+            )}
+            <button type="button" className={secondaryBtnClass(isMobile)} onClick={onClose}>
+              {t("common.cancel")}
+            </button>
+            {isEditing && (
+              <button type="button" className={secondaryBtnClass(isMobile)} onClick={() => setView("funds")}>
+                {t("goalForm.addRemove")}
+              </button>
+            )}
+            <button type="button" className={primaryBtnClass(isMobile)} disabled={!detailsValid} onClick={handleSaveDetails}>
+              {isEditing ? t("common.saveChanges") : t("goalForm.createGoal")}
+            </button>
+          </>
+        )
+      }
+    >
+      {isEditing && (
+        <FormRow isMobile={isMobile} label={t("goalForm.status")}>
+          <TypeToggle
+            isMobile={isMobile}
+            type={status}
+            onChange={setStatus}
+            options={[
+              { value: "active", label: t("goalForm.statusActive"), variant: "income" },
+              { value: "completed", label: t("goalForm.statusCompleted"), variant: "income" },
+              { value: "acquired", label: t("goalForm.statusAcquired"), variant: "income" },
+            ]}
+          />
+        </FormRow>
+      )}
+
+      <FormRow isMobile={isMobile} label={t("common.name")}>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          autoFocus={!isEditing}
+        />
+      </FormRow>
+
+      <FormRow isMobile={isMobile} label={t("common.icon")}>
+        <div className={gridClass(isMobile, "icon")}>
+          {goalIconChoices.map((i) => (
+            <button
+              type="button" key={i}
+              className={choiceClass(isMobile, "icon", icon === i)}
+              onClick={() => setIcon(i)}
+            >
+              <Icon name={i} size={isMobile ? 20 : 18} color={icon === i ? color : undefined} />
+            </button>
+          ))}
+
+          <IconPicker
+            value={!goalIconChoices.includes(icon) ? icon : undefined}
+            onChange={setIcon}
+            triggerClassName={choiceClass(isMobile, "icon", !goalIconChoices.includes(icon))}
+          />
         </div>
+      </FormRow>
 
-        <div className="new-project-content">
-          {isEditing && (
-            <div className="form-row form-row-a form-row-name">
-              <label>{t("goalForm.status")}</label>
-
-              <div className="dw-type-toggle" role="tablist" aria-label="Goal status">
-                <button
-                  type="button" role="tab" aria-selected={status === "active"}
-                  className={"dw-type-btn" + (status === "active" ? " dw-type-btn-active dw-type-income" : "")}
-                  onClick={() => setStatus("active")}
-                >
-                  {t("goalForm.statusActive")}
-                </button>
-                <button
-                  type="button" role="tab" aria-selected={status === "completed"}
-                  className={"dw-type-btn" + (status === "completed" ? " dw-type-btn-active dw-type-income" : "")}
-                  onClick={() => setStatus("completed")}
-                >
-                  {t("goalForm.statusCompleted")}
-                </button>
-                <button
-                  type="button" role="tab" aria-selected={status === "acquired"}
-                  className={"dw-type-btn" + (status === "acquired" ? " dw-type-btn-active dw-type-income" : "")}
-                  onClick={() => setStatus("acquired")}
-                >
-                  {t("goalForm.statusAcquired")}
-                </button>
-              </div>
-            </div>
-          )}
-
-          <div className="form-row form-row-a form-row-name">
-            <label>{t("common.name")}</label>
-
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              autoFocus={!isEditing}
+      <FormRow isMobile={isMobile} label={t("common.color")}>
+        <div className={gridClass(isMobile, "color")}>
+          {goalColorChoices.map((c) => (
+            <button
+              type="button" key={c}
+              className={choiceClass(isMobile, "color", color === c)}
+              style={{ background: c }}
+              onClick={() => setColor(c)}
+              aria-label={c}
             />
-          </div>
-
-          <div className="form-row form-row-a form-row-name">
-            <label>{t("common.icon")}</label>
-
-            <div className="dw-icon-grid">
-              {goalIconChoices.map((i) => (
-                <button
-                  type="button" key={i}
-                  className={"dw-icon-choice" + (icon === i ? " dw-icon-choice-active" : "")}
-                  onClick={() => setIcon(i)}
-                >
-                  <Icon name={i} size={18} color={icon === i ? color : undefined} />
-                </button>
-              ))}
-
-              <IconPicker
-                value={!goalIconChoices.includes(icon) ? icon : undefined}
-                onChange={setIcon}
-                triggerClassName={"dw-icon-choice" + (!goalIconChoices.includes(icon) ? " dw-icon-choice-active" : "")}
-              />
-            </div>
-          </div>
-
-          <div className="form-row form-row-a form-row-name">
-            <label>{t("common.color")}</label>
-
-            <div className="dw-color-grid">
-              {goalColorChoices.map((c) => (
-                <button
-                  type="button" key={c}
-                  className={"dw-color-choice" + (color === c ? " dw-color-choice-active" : "")}
-                  style={{ background: c }}
-                  onClick={() => setColor(c)}
-                  aria-label={c}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="form-row form-row-a form-row-name">
-            <label>{t("common.target")}</label>
-
-            <div className="dw-amount-wrap">
-              <span className="dw-currency">{currencySymbol}</span>
-
-              <input
-                type="number"
-                inputMode="decimal"
-                step="0.01"
-                min="0"
-                value={target}
-                onChange={(e) => setTarget(e.target.value)}
-                className="dw-amount-input"
-              />
-            </div>
-          </div>
+          ))}
         </div>
+      </FormRow>
 
-        <div className="new-project-footer">
-          {isEditing && (
-            <button
-              type="button"
-              className="secondary-btn transaction-delete-btn dw-btn-left"
-              onClick={() => setView("confirmDelete")}
-            >
-              {t("common.delete")}
-            </button>
-          )}
-
-          <button
-            type="button"
-            className="secondary-btn"
-            onClick={onClose}
-          >
-            {t("common.cancel")}
-          </button>
-
-          {isEditing && (
-            <button
-              type="button"
-              className="secondary-btn"
-              onClick={() => setView("funds")}
-            >
-              {t("goalForm.addRemove")}
-            </button>
-          )}
-
-          <button
-            type="button"
-            className="primary-btn"
-            disabled={!detailsValid}
-            onClick={handleSaveDetails}
-          >
-            {isEditing ? t("common.saveChanges") : t("goalForm.createGoal")}
-          </button>
-        </div>
-      </div>
-    </div>,
-    document.getElementById("modal-root")
+      <FormRow isMobile={isMobile} label={t("common.target")}>
+        <AmountField
+          isMobile={isMobile}
+          currencySymbol={currencySymbol}
+          value={target}
+          onChange={(e) => setTarget(e.target.value)}
+        />
+      </FormRow>
+    </ModalShell>
   );
 }
 
