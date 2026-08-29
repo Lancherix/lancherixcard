@@ -11,7 +11,7 @@
   width: 100%;
   max-width: 480px;      /* keeps it centered/compact on wider phones */
   margin: 0 auto;
-  padding: 6px;
+  padding: 3vh;
   box-sizing: border-box;
   background: var(--cal-bg);
 }
