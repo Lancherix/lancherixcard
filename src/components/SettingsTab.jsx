@@ -6,22 +6,6 @@ import "./SettingsTab.css";
 
 const STUDIO_SETTINGS_URL = "https://studio.lancherix.com/settings";
 
-/* Reuses the same modal shell pattern as DashboardWidgets.js so the
-   currency picker looks/behaves like every other modal in the app. */
-function ModalShell({ title, onClose, children }) {
-  return (
-    <div className="cal-modal-backdrop" onClick={onClose}>
-      <div className="cal-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
-        <div className="cal-modal-header">
-          <span className="cal-modal-title">{title}</span>
-          <button className="cal-modal-close" onClick={onClose} aria-label="Close">✕</button>
-        </div>
-        <div className="cal-modal-body">{children}</div>
-      </div>
-    </div>
-  );
-}
-
 /* ---------------- LEAF 1: Account (personal info + language) ----------------
    Read-only: editing happens externally in Lancherix Studio. The
    "Modify" button just opens that page in a new tab.
@@ -220,9 +204,7 @@ export function CurrencyColumn() {
       </div>
 
       {modalOpen && (
-        <ModalShell title={t("settings.changeCurrency")} onClose={() => setModalOpen(false)}>
-          <ChangeCurrencyModal onClose={() => setModalOpen(false)} />
-        </ModalShell>
+        <ChangeCurrencyModal onClose={() => setModalOpen(false)} />
       )}
     </div>
   );
