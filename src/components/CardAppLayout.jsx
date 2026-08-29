@@ -212,6 +212,7 @@ export default function CardAppLayout({
           {/* Desktop tab row — hidden on mobile via .cal-shell-mobile CSS
               rather than skipping the render, so nothing about selection
               state changes based on viewport. */}
+          {/* Desktop tab row — now renders item.label (text), not item.icon */}
           <div className="cal-menu-buttons">
             {menuItems.length > 0
               ? menuItems.map((item, i) => {
@@ -226,10 +227,8 @@ export default function CardAppLayout({
                     onClick={() => handleSelect(item)}
                     aria-pressed={isActive}
                     aria-haspopup={item.modal ? "dialog" : undefined}
-                    aria-label={item.label}
-                    title={item.label}
                   >
-                    {item.icon ?? item.label?.[0] ?? "•"}
+                    {item.label}
                   </button>
                 );
               })
@@ -254,6 +253,7 @@ export default function CardAppLayout({
 
       {/* Mobile bottom tab bar — same menuItems, same handleSelect,
           same active-state logic as the desktop row above. */}
+      {/* Mobile bottom tab bar — icon + label, unchanged from before */}
       {isMobile && (
         <nav className="menu-mobile" aria-label={t("cardLayout.mobileNav") ?? "Navigation"}>
           {menuItems.map((item, i) => {
