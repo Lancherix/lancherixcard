@@ -403,6 +403,7 @@ body,
   /* Leave room at the bottom so content doesn't sit under the fixed bar */
   .cal-shell-mobile .cal-frame {
     padding-bottom: 64px;
+    display: none;
   }
 }
 
