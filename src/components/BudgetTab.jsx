@@ -9,8 +9,8 @@ import IconPicker from "./IconPicker";
 import AnyIcon from "./AnyIcon";
 import useIsMobile from "../hooks/useIsMobile";
 
-const iconChoices = ["food", "transport", "school", "entertainment", "shopping", "other", "savings"];
-const colorChoices = ["#ff9500", "#0071e3", "#5856d6", "#ff2d55", "#34c759", "#af52de", "#ff3b30", "#ffcc00"];
+const iconChoices = ["food", "transport", "school", "entertainment", "shopping", "savings", "other"];
+const colorChoices = ["#ff9500", "#0071e3", "#5856d6", "#ff2d55", "#34c759", "#ffcc00", "#af52de", "#ff3b30"];
 
 /* ============================================================
    MOBILE-AWARE MODAL HELPERS
