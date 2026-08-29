@@ -150,7 +150,6 @@ function TransactionForm({ onClose, initialValues }) {
               placeholder={t("moneyTab.namePlaceholder")}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              autoFocus
             />
           </div>
 
@@ -167,6 +166,7 @@ function TransactionForm({ onClose, initialValues }) {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 className="dw-amount-input"
+                autoFocus
               />
             </div>
           </div>

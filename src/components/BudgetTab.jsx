@@ -228,7 +228,6 @@ function CategoryForm({ onClose, initialValues }) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={t("budgetTab.namePlaceholder")}
-              autoFocus
             />
           </div>
 
@@ -285,6 +284,7 @@ function CategoryForm({ onClose, initialValues }) {
                 value={limit}
                 onChange={(e) => setLimit(e.target.value)}
                 className="dw-amount-input"
+                autoFocus
               />
             </div>
           </div>
