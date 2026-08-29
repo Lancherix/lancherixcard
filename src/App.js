@@ -113,7 +113,7 @@ function Home() {
   const menuItems = [
     {
       key: "dashboard",
-      label: t("nav.dashboard"),
+      label: t("icons.home"),
       icon: NavIcons.dashboard,
       panel: {
         type: "split",
