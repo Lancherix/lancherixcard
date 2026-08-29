@@ -15,106 +15,131 @@
    ============================================================ */
 
 .mm-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(6px);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  z-index: 9999;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 9999;
 }
 
 .mm-window {
-  background: rgba(242, 241, 243, 1);
-  color: #1d1d1f;
-  width: 100%;
-  max-height: 88vh;
-  border-radius: 16px 16px 0 0;
-  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.35);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  animation: mmSlideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+    background: rgba(242, 241, 243, 1);
+    color: #1d1d1f;
+    width: 100%;
+    max-height: 88vh;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: mmSlideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+    animation: mmAppear 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+    animation: mmOverlayAppear 0.2s ease-out;
+}
+
+@keyframes mmOverlayAppear {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes mmAppear {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.99);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 @keyframes mmSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Drag handle — purely visual affordance, no gesture logic needed */
 .mm-handle {
-  display: flex;
-  justify-content: center;
-  padding: 10px 0 2px;
-  flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 2px;
+    flex-shrink: 0;
 }
 
 .mm-handle span {
-  width: 36px;
-  height: 4px;
-  border-radius: 2px;
-  background: #c9c7cc;
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: #c9c7cc;
 }
 
 .mm-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  padding: 10px 44px 12px;
-  flex-shrink: 0;
-  border-bottom: 1px solid #d5d3d6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 10px 44px 12px;
+    flex-shrink: 0;
+    border-bottom: 1px solid #d5d3d6;
 }
 
 .mm-header h4 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  text-align: center;
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
 }
 
 .mm-close-btn {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: none;
-  background: #e4e2e6;
-  color: #6b6a6e;
-  font-size: 1rem;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: #e4e2e6;
+    color: #6b6a6e;
+    font-size: 1rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .mm-content {
-  padding: 4px 20px 16px;
-  font-size: 0.95rem;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  flex: 1;
+    padding: 4px 20px 16px;
+    font-size: 0.95rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
 }
 
 .mm-footer {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px 20px calc(14px + env(safe-area-inset-bottom));
-  border-top: 1px solid #e8e7e9;
-  background: rgba(242, 241, 243, 1);
-  flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 20px calc(14px + env(safe-area-inset-bottom));
+    border-top: 1px solid #e8e7e9;
+    background: rgba(242, 241, 243, 1);
+    flex-shrink: 0;
 }
 
 /* ---------------- Form fields ---------------- */
@@ -123,171 +148,171 @@
    for the input on a narrow screen. */
 
 .mm-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 12px 0;
-  border-bottom: 1px solid #e1e0e3;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e1e0e3;
 }
 
 .mm-field:last-of-type {
-  border-bottom: none;
+    border-bottom: none;
 }
 
 .mm-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #1d1d1f;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #1d1d1f;
 }
 
 .mm-field input,
 .mm-field select,
 .mm-field textarea {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 12px 12px;
-  border-radius: 8px;
-  border: 1px solid #d5d3d6;
-  background: #fff;
-  color: #1d1d1f;
-  font: inherit;
-  font-size: 1rem;
-  outline: none;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.04);
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 12px;
+    border-radius: 8px;
+    border: 1px solid #d5d3d6;
+    background: #fff;
+    color: #1d1d1f;
+    font: inherit;
+    font-size: 1rem;
+    outline: none;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 
 .mm-field select {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .mm-field input::placeholder,
 .mm-field textarea::placeholder {
-  color: #aaa;
+    color: #aaa;
 }
 
 .mm-field-hint {
-  color: #999;
-  font-size: 0.8rem;
-  font-style: italic;
+    color: #999;
+    font-size: 0.8rem;
+    font-style: italic;
 }
 
 /* ---------------- Amount input ---------------- */
 
 .mm-amount-wrap {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-  border: 1px solid #d5d3d6;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.04);
-  overflow: hidden;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #d5d3d6;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
 }
 
 .mm-currency {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  height: 100%;
-  padding: 0 12px;
-  color: #555;
-  font-size: 0.9rem;
-  border-right: 1px solid #dedcdf;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    height: 100%;
+    padding: 0 12px;
+    color: #555;
+    font-size: 0.9rem;
+    border-right: 1px solid #dedcdf;
 }
 
 .mm-amount-input {
-  flex: 1;
-  min-width: 0;
-  padding: 12px 12px;
-  border: none !important;
-  outline: none;
-  background: transparent;
-  color: #1d1d1f;
-  font: inherit;
-  font-size: 1.1rem;
-  font-weight: 600;
+    flex: 1;
+    min-width: 0;
+    padding: 12px 12px;
+    border: none !important;
+    outline: none;
+    background: transparent;
+    color: #1d1d1f;
+    font: inherit;
+    font-size: 1.1rem;
+    font-weight: 600;
 }
 
 .mm-amount-input::placeholder {
-  color: #aaa;
+    color: #aaa;
 }
 
 /* ---------------- Type / status toggle ---------------- */
 
 .mm-type-toggle {
-  display: flex;
-  align-items: stretch;
-  margin-top: 4px;
-  background: #e8e7ea;
-  border: 1px solid #d0cfd2;
-  border-radius: 9px;
-  overflow: hidden;
+    display: flex;
+    align-items: stretch;
+    margin-top: 4px;
+    background: #e8e7ea;
+    border: 1px solid #d0cfd2;
+    border-radius: 9px;
+    overflow: hidden;
 }
 
 .mm-type-btn {
-  flex: 1;
-  border: none;
-  border-radius: 0;
-  padding: 12px 8px;
-  background: transparent;
-  color: #555;
-  font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 500;
+    flex: 1;
+    border: none;
+    border-radius: 0;
+    padding: 12px 8px;
+    background: transparent;
+    color: #555;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
-.mm-type-btn + .mm-type-btn {
-  border-left: 1px solid #d0cfd2;
+.mm-type-btn+.mm-type-btn {
+    border-left: 1px solid #d0cfd2;
 }
 
 .mm-type-btn-active.mm-type-expense {
-  border-radius: 7px;
-  background: #fff;
-  color: #d1242f;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    border-radius: 7px;
+    background: #fff;
+    color: #d1242f;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .mm-type-btn-active.mm-type-income {
-  border-radius: 7px;
-  background: #fff;
-  color: #1a7f37;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    border-radius: 7px;
+    background: #fff;
+    color: #1a7f37;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 /* ---------------- Icon / color pickers ---------------- */
 
 .mm-icon-grid,
 .mm-color-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .mm-icon-choice {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  border: 2px solid transparent;
-  background: #e8e7ea;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background: #e8e7ea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .mm-icon-choice-active {
-  border-color: #1169d3;
+    border-color: #1169d3;
 }
 
 .mm-color-choice {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2px solid transparent;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid transparent;
 }
 
 .mm-color-choice-active {
-  border-color: #1d1d1f;
+    border-color: #1d1d1f;
 }
 
 /* ---------------- Buttons ---------------- */
@@ -297,60 +322,85 @@
    never have to fit on one line. */
 
 .mm-btn {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 14px;
-  border-radius: 10px;
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 500;
-  text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
 }
 
 .mm-btn-primary {
-  background: linear-gradient(#428cef, #1169d3);
-  color: #fff;
-  border: 1px solid #1164c9;
-  order: -1; /* primary action shown first on mobile */
+    background: linear-gradient(#428cef, #1169d3);
+    color: #fff;
+    border: 1px solid #1164c9;
+    order: -1;
+    /* primary action shown first on mobile */
 }
 
 .mm-btn-primary:disabled {
-  opacity: 0.45;
+    opacity: 0.45;
 }
 
 .mm-btn-secondary {
-  background: linear-gradient(#faf8fb, #e0dfe3);
-  color: #1d1d1f;
-  border: 1px solid #d5d4d8;
+    background: linear-gradient(#faf8fb, #e0dfe3);
+    color: #1d1d1f;
+    border: 1px solid #d5d4d8;
 }
 
 .mm-btn-danger {
-  background: transparent;
-  color: #d1242f;
-  border: 1px solid transparent;
-  font-weight: 400;
+    background: transparent;
+    color: #d1242f;
+    border: 1px solid transparent;
+    font-weight: 400;
 }
 
 /* ---------------- Delete confirmation ---------------- */
 
 .mm-confirm-window {
-  background: rgba(242, 241, 243, 1);
-  color: #1d1d1f;
-  width: 100%;
-  border-radius: 16px 16px 0 0;
-  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.35);
-  overflow: hidden;
-  animation: mmSlideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+    background: rgba(242, 241, 243, 1);
+    color: #1d1d1f;
+    width: 100%;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    animation: mmSlideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+    animation: mmAppear 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+    animation: mmOverlayAppear 0.2s ease-out;
+}
+
+@keyframes mmOverlayAppear {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes mmAppear {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.99);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .mm-confirm-content {
-  padding: 28px 24px 8px;
+    padding: 28px 24px 8px;
 }
 
 .mm-confirm-text {
-  margin: 0;
-  font-size: 1rem;
-  color: #1d1d1f;
-  font-weight: 400;
-  text-align: center;
+    margin: 0;
+    font-size: 1rem;
+    color: #1d1d1f;
+    font-weight: 400;
+    text-align: center;
 }
