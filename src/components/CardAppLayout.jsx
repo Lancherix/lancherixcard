@@ -83,12 +83,6 @@ function Modal({ item, onClose }) {
   );
 }
 
-// Inline safeguard for the two "headline" tile numbers (total balance,
-// remaining budget): these sit in a fixed-width tile, so a long COP-style
-// figure needs to shrink rather than push the layout around. Kept inline
-// here (rather than in CardAppLayout.css, which isn't in scope for this
-// change) — feel free to move this into a class if you'd rather keep it
-// alongside the rest of the tile's styling.
 const tileValueStyle = {
   whiteSpace: "nowrap",
   overflow: "hidden",
@@ -155,8 +149,6 @@ export default function CardAppLayout({
     onMenuSelect?.(item);
   };
 
-  // Shared active-state check, reused by both the desktop button row and
-  // the mobile bottom bar so they never fall out of sync.
   const isItemActive = (item) =>
     item.modal ? modalItem?.key === item.key : selectedItem?.key === item.key;
 
@@ -209,10 +201,7 @@ export default function CardAppLayout({
             </div>
           </div>
 
-          {/* Desktop tab row — hidden on mobile via .cal-shell-mobile CSS
-              rather than skipping the render, so nothing about selection
-              state changes based on viewport. */}
-          {/* Desktop tab row — now renders item.label (text), not item.icon */}
+          {/* Desktop tab row: text by default, icon-only when item.iconOnly is true (settings) */}
           <div className="cal-menu-buttons">
             {menuItems.length > 0
               ? menuItems.map((item, i) => {
@@ -227,8 +216,10 @@ export default function CardAppLayout({
                     onClick={() => handleSelect(item)}
                     aria-pressed={isActive}
                     aria-haspopup={item.modal ? "dialog" : undefined}
+                    aria-label={item.iconOnly ? item.label : undefined}
+                    title={item.iconOnly ? item.label : undefined}
                   >
-                    {item.label}
+                    {item.iconOnly ? item.icon : item.label}
                   </button>
                 );
               })
@@ -251,9 +242,7 @@ export default function CardAppLayout({
         </footer>
       </div>
 
-      {/* Mobile bottom tab bar — same menuItems, same handleSelect,
-          same active-state logic as the desktop row above. */}
-      {/* Mobile bottom tab bar — icon + label, unchanged from before */}
+      {/* Mobile bottom tab bar: icon + text for every item, including settings */}
       {isMobile && (
         <nav className="menu-mobile" aria-label={t("cardLayout.mobileNav") ?? "Navigation"}>
           {menuItems.map((item, i) => {

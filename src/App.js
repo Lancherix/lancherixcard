@@ -133,7 +133,7 @@ function Home() {
     },
     {
       key: "money",
-      label: t("nav.transactions"),
+      label: t("moneyTab.transactions"),
       icon: NavIcons.money,
       panel: {
         type: "split",
@@ -192,6 +192,7 @@ function Home() {
       key: "settings",
       label: t("nav.settings"),
       icon: NavIcons.settings,
+      iconOnly: true,
       panel: {
         type: "split",
         direction: "row",
