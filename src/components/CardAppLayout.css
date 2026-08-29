@@ -455,3 +455,10 @@ body,
 .menu-mobile-item--active {
   color: var(--cal-accent);
 }
+
+.cal-shell-mobile .cal-panel-leaf {
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 0;
+  overflow: hidden; /* DashboardWidgetsMobile's .dwm-page handles its own scroll */
+}

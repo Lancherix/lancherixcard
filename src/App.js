@@ -22,7 +22,7 @@ import DashboardWidgetsMobile from "./components/mobile/DashboardWidgetsMobile";
 
 // Same breakpoint convention as the old app's App.js (window.innerWidth < 900),
 // tracked here since Home/CardAppLayout don't currently know about viewport size.
-function useIsMobile(breakpoint = 900) {
+function useIsMobile(breakpoint = 640) {
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" ? window.innerWidth < breakpoint : false
   );
