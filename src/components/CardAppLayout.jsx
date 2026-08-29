@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "../context/I18nContext";
 import { useAppData } from "../context/AppContext";
 import "./CardAppLayout.css";
@@ -128,6 +128,16 @@ export default function CardAppLayout({
   );
   const [modalItem, setModalItem] = useState(null);
 
+  // Scroll container for the active tab's panel. Reset to the top whenever
+  // the selected tab changes, so switching tabs never leaves you mid-scroll
+  // on the new panel's content (e.g. after scrolling deep into a long
+  // transaction list on one tab, then tapping over to another).
+  const actionsRef = useRef(null);
+
+  useEffect(() => {
+    actionsRef.current?.scrollTo({ top: 0, left: 0 });
+  }, [selectedKey]);
+
   const selectedItem =
     menuItems.find((item) => item.key === selectedKey) ?? menuItems[0];
   const selectedIndex = menuItems.findIndex(
@@ -235,7 +245,7 @@ export default function CardAppLayout({
               ))}
           </div>
 
-          <main className="cal-actions">
+          <main className="cal-actions" ref={actionsRef}>
             <PanelRenderer panel={activePanel} />
           </main>
 
