@@ -158,7 +158,6 @@ export default function ChangeCurrencyModal({ onClose }) {
           placeholder={t("changeCurrency.ratePlaceholder")}
           value={rate}
           onChange={(e) => setRate(e.target.value)}
-          autoFocus
         />
       </FormRow>
 
