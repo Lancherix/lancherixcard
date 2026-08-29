@@ -18,6 +18,8 @@ import { ReportsTrendColumn, ReportsBreakdownColumn } from "./components/Reports
 import CurrencyOnboarding from "./components/CurrencyOnboarding";
 import { AccountColumn, CurrencyColumn } from "./components/SettingsTab";
 
+import DashboardWidgetsMobile from "./components/mobile/DashboardWidgetsMobile";
+
 // Same breakpoint convention as the old app's App.js (window.innerWidth < 900),
 // tracked here since Home/CardAppLayout don't currently know about viewport size.
 function useIsMobile(breakpoint = 900) {
@@ -115,22 +117,36 @@ function Home() {
       key: "dashboard",
       label: t("icons.home"),
       icon: NavIcons.dashboard,
-      panel: {
-        type: "split",
-        direction: "row",
-        children: [
-          { type: "leaf", content: <TransactionsList /> },
-          {
-            type: "split",
-            direction: "column",
-            children: [
-              { type: "leaf", content: <ReportWidget /> },
-              { type: "leaf", content: <BudgetOverviewColumn /> },
-              { type: "leaf", content: <GoalsWidget /> },
-            ],
-          },
-        ],
-      },
+      panel: isMobile
+        ? {
+          type: "leaf",
+          content: (
+            <DashboardWidgetsMobile
+              cardImage={cardImage}
+              cardLabel="Lancherix card"
+              totalBalance={totalBalance}
+              availableBalance={totalBalance}
+              remainingBudget={remainingBudget}
+              weeklyActivity={weeklyActivity}
+            />
+          ),
+        }
+        : {
+          type: "split",
+          direction: "row",
+          children: [
+            { type: "leaf", content: <TransactionsList /> },
+            {
+              type: "split",
+              direction: "column",
+              children: [
+                { type: "leaf", content: <ReportWidget /> },
+                { type: "leaf", content: <BudgetOverviewColumn /> },
+                { type: "leaf", content: <GoalsWidget /> },
+              ],
+            },
+          ],
+        },
     },
     {
       key: "money",

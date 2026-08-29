@@ -1,0 +1,38 @@
+/* Layout only — every class reused from DashboardWidgets.css /
+   CardAppLayout.css keeps its existing look. This file just arranges
+   things for a scrollable mobile page instead of a fixed side column. */
+
+.dwm-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 12px calc(64px + 16px); /* clears the fixed mobile tab bar */
+  box-sizing: border-box;
+  min-height: 100%;
+  overflow-y: auto;
+}
+
+.dwm-card-thumb {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.dwm-permanent-panel {
+  /* was sized to fit the ~20vw desktop card column; full-width on mobile */
+  width: 100%;
+}
+
+.dwm-transactions-wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+}
+
+/* dw widgets use "leaf-fill" to stretch inside a flex leaf slot
+   (cal-panel-leaf) on desktop. There's no such fixed-height parent here,
+   so let it size to its own content instead of collapsing to 0. */
+.dwm-transactions-wrap .leaf-fill {
+  flex: none;
+  height: auto;
+}

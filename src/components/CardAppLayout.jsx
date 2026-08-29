@@ -243,28 +243,49 @@ export default function CardAppLayout({
       </div>
 
       {/* Mobile bottom tab bar: icon + text for every item, including settings */}
-      {isMobile && (
-        <nav className="menu-mobile" aria-label={t("cardLayout.mobileNav") ?? "Navigation"}>
-          {menuItems.map((item, i) => {
-            const isActive = isItemActive(item);
-            return (
-              <button
-                key={item.key ?? i}
-                className={
-                  "menu-mobile-item" + (isActive ? " menu-mobile-item--active" : "")
-                }
-                onClick={() => handleSelect(item)}
-                aria-pressed={isActive}
-                aria-haspopup={item.modal ? "dialog" : undefined}
-              >
-                <span className="menu-mobile-item-icon">
-                  {item.icon ?? item.label?.[0] ?? "•"}
+      {!isMobile && (
+        <div className="cal-card-column">
+          <div className="cal-card-thumb" role="img" aria-label={cardLabel}>
+            {cardImage ? (
+              <img src={cardImage} alt={cardLabel} />
+            ) : (
+              <span className="cal-card-thumb-label">{cardLabel}</span>
+            )}
+          </div>
+
+          <div className="cal-permanent-panel">
+            <div className="cal-permanent-row">
+              <div className="cal-permanent-tile">
+                <span className="cal-permanent-tile-label">{t("cardLayout.totalBalance")}</span>
+                <span className="cal-permanent-tile-value" style={tileValueStyle} title={formatMoney(totalBalance)}>
+                  {formatMoneyCompact(totalBalance)}
                 </span>
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
-        </nav>
+                <span className="cal-permanent-tile-sub" style={tileSubStyle} title={formatMoney(availableBalance)}>
+                  {t("cardLayout.available", { amount: formatMoneyCompact(availableBalance) })}
+                </span>
+              </div>
+              <div className="cal-permanent-tile">
+                <span className="cal-permanent-tile-label">{t("cardLayout.remainingBudget")}</span>
+                <span className="cal-permanent-tile-value" style={tileValueStyle} title={formatMoney(remainingBudget)}>
+                  {formatMoneyCompact(remainingBudget)}
+                </span>
+              </div>
+            </div>
+
+            <div className="cal-permanent-tile cal-permanent-tile-wide">
+              <span className="cal-permanent-tile-label">{t("cardLayout.weeklyActivity")}</span>
+              <div className="cal-permanent-bars">
+                {weeklyActivity.map((day, i) => (
+                  <span
+                    key={i}
+                    style={{ height: `${day.height}%` }}
+                    title={`${day.label}: ${formatMoney(day.amount)}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {modalItem && (
