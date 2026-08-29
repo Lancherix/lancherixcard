@@ -245,7 +245,7 @@ export default function CardAppLayout({
       </div>
 
       {/* Mobile bottom tab bar: icon + text for every item, including settings */}
-      {!isMobile && (
+      {isMobile && (
         <div className="cal-card-column">
           <div className="cal-card-thumb" role="img" aria-label={cardLabel}>
             {cardImage ? (
