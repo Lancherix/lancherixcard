@@ -212,3 +212,8 @@
   flex-shrink: 0;
   text-align: right;
 }
+
+.rp-select {
+  outline: none;
+  margin-left: 1vh;
+}
