@@ -316,6 +316,37 @@ export function useAppData() {
     return spent - returned;
   };
 
+  // All months that have activity, plus the currently-viewed month even if
+  // it has no transactions yet (so a fresh month still shows up as an empty
+  // bar instead of disappearing from the chart). Sorted chronologically so
+  // the trend chart reads left-to-right, oldest to newest.
+  const monthKeysWithData = Array.from(
+    new Set([...state.transactions.map((t) => getMonthKey(t.date)), activeMonthKey])
+  ).sort();
+
+  const monthlyHistory = monthKeysWithData.map((mk) => {
+    const txs = state.transactions.filter((t) => getMonthKey(t.date) === mk);
+
+    const inc = txs
+      .filter((t) => t.type === "income" && t.categoryKey !== "savings")
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    const rawExp = txs
+      .filter((t) => t.type === "expense")
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    const savingsW = txs
+      .filter((t) => t.type === "income" && t.categoryKey === "savings")
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    return {
+      key: mk,
+      abbrev: monthAbbrevOf(mk),
+      income: inc,
+      expenses: rawExp - savingsW,
+    };
+  });
+
   const categoriesWithSpent = state.categories.map((c) => ({ ...c, spent: spentByCategoryKey(c.key) }));
 
   const today = new Date();
@@ -397,7 +428,9 @@ export function useAppData() {
     // spent) to a different calendar month without duplicating any state.
     viewMonthOffset: state.viewMonthOffset,
     isViewingCurrentMonth,
+    activeMonthKey,
     activeMonthAbbrev: monthAbbrevOf(activeMonthKey),
+    monthlyHistory,
     setViewMonth: (offset) => dispatch({ type: "SET_VIEW_MONTH", payload: offset }),
 
     addTransaction: async (tx) => {

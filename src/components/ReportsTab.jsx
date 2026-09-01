@@ -16,25 +16,24 @@ function EmptyState({ icon, label, compact }) {
 }
 
 export function ReportsTrendColumn() {
-  const { income, expenses, formatMoney, isViewingCurrentMonth, activeMonthAbbrev, setViewMonth } = useAppData();
+  const { monthlyHistory, formatMoney, isViewingCurrentMonth, activeMonthKey, setViewMonth } = useAppData();
   const { t } = useTranslation();
 
-  const monthlyData = [
-    {
-      key: activeMonthAbbrev,
-      label: t(`reportsTab.months.${activeMonthAbbrev}`),
-      income,
-      expenses,
-    },
-  ];
+  const monthlyData = monthlyHistory.map((m) => ({
+    key: m.key,
+    label: t(`reportsTab.months.${m.abbrev}`),
+    income: m.income,
+    expenses: m.expenses,
+  }));
 
   const maxVal = Math.max(
     ...monthlyData.map((m) => Math.max(m.income, m.expenses)),
     1
   );
 
-  const current = monthlyData[monthlyData.length - 1];
-  const previous = monthlyData[monthlyData.length - 2];
+  const currentIndex = monthlyData.findIndex((m) => m.key === activeMonthKey);
+  const current = monthlyData[currentIndex];
+  const previous = currentIndex > 0 ? monthlyData[currentIndex - 1] : undefined;
 
   const spentDelta = previous
     ? current.expenses - previous.expenses
