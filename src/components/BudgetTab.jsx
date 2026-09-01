@@ -442,26 +442,19 @@ export function BudgetOverviewColumn() {
 /* ---------------- RIGHT COLUMN: reads categories (with spent) from context ---------------- */
 
 export function BudgetCategoriesColumn() {
-  const { categories, formatMoney, formatMoneyCompact, isViewingCurrentMonth, activeMonthAbbrev } = useAppData();
+  const { categories, formatMoney, formatMoneyCompact } = useAppData();
   const { t, tCategory } = useTranslation();
-  const [modalState, setModalState] = useState(null);
+  const [modalState, setModalState] = useState(null); // null | { mode: "add" | "edit", item? }
+
   const closeModal = () => setModalState(null);
+
   const totalLimits = categories.reduce((sum, c) => sum + c.limit, 0);
 
   return (
     <div className="leaf-fill dw-txl-panel">
       <div className="dw-col-header">
-        <h3 className="dw-heading">
-          {t("budgetTab.categoriesHeading", { total: formatMoney(totalLimits) })}
-          {!isViewingCurrentMonth && (
-            <span className="bt-optional-hint"> · {t(`reportsTab.months.${activeMonthAbbrev}`)}</span>
-          )}
-        </h3>
-        {isViewingCurrentMonth && (
-          <button className="dw-add-btn" onClick={() => setModalState({ mode: "add" })}>
-            + {t("common.add")}
-          </button>
-        )}
+        <h3 className="dw-heading">{t("budgetTab.categoriesHeading", { total: formatMoney(totalLimits) })}</h3>
+        <button className="dw-add-btn" onClick={() => setModalState({ mode: "add" })}>+ {t("common.add")}</button>
       </div>
 
       <div className="dw-txl-list">
@@ -469,14 +462,37 @@ export function BudgetCategoriesColumn() {
           categories.map((cat) => {
             const pct = cat.limit > 0 ? Math.min((cat.spent / cat.limit) * 100, 100) : 0;
             const over = cat.spent > cat.limit;
+
             return (
               <button
                 key={cat.id}
                 className="bt-cat-row"
-                onClick={() => isViewingCurrentMonth && setModalState({ mode: "edit", item: cat })}
-                style={!isViewingCurrentMonth ? { cursor: "default" } : undefined}
+                onClick={() => setModalState({ mode: "edit", item: cat })}
               >
-                {/* row content unchanged */}
+                <span className="bt-cat-icon" style={{ background: cat.color + "22" }}>
+                  <AnyIcon name={cat.icon} size={16} color={cat.color} />
+                </span>
+
+                <span className="bt-cat-info">
+                  <span className="bt-cat-top">
+                    <span className="bt-cat-name">{tCategory(cat.key)}</span>
+
+                    <span
+                      className={"bt-cat-amounts" + (over ? " bt-cat-over" : "")}
+                      title={`${formatMoney(cat.spent)} / ${formatMoney(cat.limit)}`}
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      {formatMoneyCompact(cat.spent)} / {formatMoneyCompact(cat.limit)}
+                    </span>
+                  </span>
+
+                  <span className="bt-cat-bar-track">
+                    <span
+                      className="bt-cat-bar-fill"
+                      style={{ width: `${pct}%`, background: over ? "#d1242f" : cat.color }}
+                    />
+                  </span>
+                </span>
               </button>
             );
           })
@@ -486,7 +502,10 @@ export function BudgetCategoriesColumn() {
       </div>
 
       {modalState && (
-        <CategoryForm onClose={closeModal} initialValues={modalState.mode === "edit" ? modalState.item : null} />
+        <CategoryForm
+          onClose={closeModal}
+          initialValues={modalState.mode === "edit" ? modalState.item : null}
+        />
       )}
     </div>
   );
