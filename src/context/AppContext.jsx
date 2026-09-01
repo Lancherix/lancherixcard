@@ -75,6 +75,12 @@ function shiftMonthKey(monthKey, offset) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
 
+function monthKeyDiff(fromKey, toKey) {
+  const [fy, fm] = fromKey.split("-").map(Number);
+  const [ty, tm] = toKey.split("-").map(Number);
+  return (ty - fy) * 12 + (tm - fm);
+}
+
 const MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 function monthAbbrevOf(monthKey) {
@@ -316,7 +322,32 @@ export function useAppData() {
     return spent - returned;
   };
 
+  const currentYear = String(new Date().getFullYear());
+  const lastYear = String(Number(currentYear) - 1);
+
+  // Years offered in the picker: current year always (even before there's
+  // any data in it yet), last year only if it actually has transactions —
+  // no point surfacing an empty tab for a brand-new account.
+  const txYears = new Set(state.transactions.map((t) => t.date.slice(0, 4)));
+  const availableYears = [currentYear, lastYear].filter(
+    (y) => y === currentYear || txYears.has(y)
+  );
+
+  // Every month with at least one transaction, plus today's month (so it's
+  // always pickable even with zero activity so far), grouped by year.
+  const monthKeysEverywhere = Array.from(
+    new Set([...state.transactions.map((t) => getMonthKey(t.date)), todayMonthKey])
+  ).sort();
+
+  const availableMonthsByYear = availableYears.reduce((acc, y) => {
+    acc[y] = monthKeysEverywhere
+      .filter((mk) => mk.slice(0, 4) === y)
+      .map((mk) => ({ key: mk, num: Number(mk.slice(5, 7)), abbrev: monthAbbrevOf(mk) }));
+    return acc;
+  }, {});
+
   const activeYear = activeMonthKey.slice(0, 4);
+  const activeMonthNum = Number(activeMonthKey.slice(5, 7));
 
   const monthKeysWithData = Array.from(
     new Set([...state.transactions.map((t) => getMonthKey(t.date)), activeMonthKey])
@@ -429,9 +460,19 @@ export function useAppData() {
     viewMonthOffset: state.viewMonthOffset,
     isViewingCurrentMonth,
     activeMonthKey,
+    activeYear,
+    activeMonthNum,
     activeMonthAbbrev: monthAbbrevOf(activeMonthKey),
     monthlyHistory,
+    availableYears,
+    availableMonthsByYear,
     setViewMonth: (offset) => dispatch({ type: "SET_VIEW_MONTH", payload: offset }),
+    // Explicit (year, month) selection — translates to the same
+    // viewMonthOffset the reducer already understands.
+    setViewDate: (year, month) => {
+      const targetKey = `${year}-${String(month).padStart(2, "0")}`;
+      dispatch({ type: "SET_VIEW_MONTH", payload: monthKeyDiff(todayMonthKey, targetKey) });
+    },
 
     addTransaction: async (tx) => {
       const data = await requestJson("/transactions", { method: "POST", body: JSON.stringify(tx) });

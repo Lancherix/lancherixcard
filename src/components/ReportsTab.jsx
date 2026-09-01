@@ -16,7 +16,16 @@ function EmptyState({ icon, label, compact }) {
 }
 
 export function ReportsTrendColumn() {
-  const { monthlyHistory, formatMoney, isViewingCurrentMonth, activeMonthKey, setViewMonth } = useAppData();
+  const {
+    monthlyHistory,
+    formatMoney,
+    activeMonthKey,
+    activeYear,
+    activeMonthNum,
+    availableYears,
+    availableMonthsByYear,
+    setViewDate,
+  } = useAppData();
   const { t } = useTranslation();
 
   const monthlyData = monthlyHistory.map((m) => ({
@@ -35,29 +44,48 @@ export function ReportsTrendColumn() {
   const current = monthlyData[currentIndex];
   const previous = currentIndex > 0 ? monthlyData[currentIndex - 1] : undefined;
 
-  const spentDelta = previous
-    ? current.expenses - previous.expenses
-    : 0;
-
+  const spentDelta = previous ? current.expenses - previous.expenses : 0;
   const spentDeltaPct =
-    previous && previous.expenses > 0
-      ? (spentDelta / previous.expenses) * 100
-      : 0;
-
+    previous && previous.expenses > 0 ? (spentDelta / previous.expenses) * 100 : 0;
   const spentUp = spentDelta > 0;
+
+  const handleYearChange = (year) => {
+    const months = availableMonthsByYear[year] || [];
+    // Keep the same month if that year has it; otherwise fall back to the
+    // latest month that year actually has data for.
+    const stillAvailable = months.some((m) => m.num === activeMonthNum);
+    const targetMonth = stillAvailable ? activeMonthNum : months[months.length - 1]?.num ?? 1;
+    setViewDate(year, targetMonth);
+  };
 
   return (
     <div className="leaf-fill rp-trend-panel">
       <div className="dw-col-header">
-        <h3 className="rp-heading">
-          {t("reportsTab.incomeVsExpenses")}
-        </h3>
-        <button
-          className="dw-add-btn dw-add-btn-neutral"
-          onClick={() => setViewMonth(isViewingCurrentMonth ? -1 : 0)}
-        >
-          {isViewingCurrentMonth ? t("reportsTab.lastMonth") : t("reportsTab.backToThisMonth")}
-        </button>
+        <h3 className="rp-heading">{t("reportsTab.incomeVsExpenses")}</h3>
+
+        <div className="rp-date-picker">
+          <select
+            className="rp-select"
+            value={activeYear}
+            onChange={(e) => handleYearChange(e.target.value)}
+          >
+            {availableYears.map((y) => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+
+          <select
+            className="rp-select"
+            value={activeMonthNum}
+            onChange={(e) => setViewDate(activeYear, Number(e.target.value))}
+          >
+            {(availableMonthsByYear[activeYear] || []).map((m) => (
+              <option key={m.key} value={m.num}>
+                {t(`reportsTab.months.${m.abbrev}`)}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
       <div className="rp-chart">
         {monthlyData.map((m) => (
