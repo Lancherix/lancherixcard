@@ -16,15 +16,13 @@ function EmptyState({ icon, label, compact }) {
 }
 
 export function ReportsTrendColumn() {
-  const { income, expenses, formatMoney } = useAppData();
+  const { income, expenses, formatMoney, isViewingCurrentMonth, activeMonthAbbrev, setViewMonth } = useAppData();
   const { t } = useTranslation();
 
-  // Only show real data from the current month.
-  // Historical months will appear once real transaction history exists.
   const monthlyData = [
     {
-      key: "08",
-      label: t("reportsTab.months.Aug"),
+      key: activeMonthAbbrev,
+      label: t(`reportsTab.months.${activeMonthAbbrev}`),
       income,
       expenses,
     },
@@ -51,10 +49,17 @@ export function ReportsTrendColumn() {
 
   return (
     <div className="leaf-fill rp-trend-panel">
-      <h3 className="rp-heading">
-        {t("reportsTab.incomeVsExpenses")}
-      </h3>
-
+      <div className="dw-col-header">
+        <h3 className="rp-heading">
+          {t("reportsTab.incomeVsExpenses")}
+        </h3>
+        <button
+          className="dw-add-btn dw-add-btn-neutral"
+          onClick={() => setViewMonth(isViewingCurrentMonth ? -1 : 0)}
+        >
+          {isViewingCurrentMonth ? t("reportsTab.lastMonth") : t("reportsTab.backToThisMonth")}
+        </button>
+      </div>
       <div className="rp-chart">
         {monthlyData.map((m) => (
           <div className="rp-chart-col" key={m.key}>

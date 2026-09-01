@@ -59,6 +59,29 @@ export function getLocalDateString(date = new Date()) {
   return `${year}-${month}-${day}`;
 }
 
+// ---------------- month helpers ----------------
+// Transactions carry a "YYYY-MM-DD" `date` (via getLocalDateString above).
+// Slicing that down to "YYYY-MM" gives a stable month key we can filter on,
+// so income/expenses/category spend are always scoped to a single calendar
+// month instead of accumulating forever.
+
+export function getMonthKey(dateStr) {
+  return dateStr ? dateStr.slice(0, 7) : null; // "YYYY-MM"
+}
+
+function shiftMonthKey(monthKey, offset) {
+  const [y, m] = monthKey.split("-").map(Number);
+  const d = new Date(y, m - 1 + offset, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+const MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function monthAbbrevOf(monthKey) {
+  const m = Number(monthKey.split("-")[1]);
+  return MONTH_ABBR[m - 1];
+}
+
 const initialState = {
   profile: null,
   transactions: [],
@@ -69,6 +92,10 @@ const initialState = {
   },
   goals: [],
   currency: null,
+  // 0 = current calendar month, -1 = last month, etc. Purely a UI view
+  // toggle — never sent to the backend, never affects stored data, just
+  // which month's transactions get summed into income/expenses/spent below.
+  viewMonthOffset: 0,
   // true until the first GET /state resolves (or we determine there's no
   // token at all) — lets the UI tell "still loading" apart from "brand new
   // user with no currency yet", which both otherwise look like `!currency`.
@@ -152,6 +179,9 @@ function reducer(state, action) {
 
     case "SET_CURRENCY":
       return { ...state, currency: action.payload };
+
+    case "SET_VIEW_MONTH":
+      return { ...state, viewMonthOffset: action.payload };
 
     case "ADD_GOAL":
       return { ...state, goals: [...state.goals, action.payload] };
@@ -248,25 +278,39 @@ export function useAppData() {
   if (!ctx) throw new Error("useAppData must be used inside <AppProvider>");
   const { state, dispatch, refreshState } = ctx;
 
-  const income = state.transactions
+  const todayMonthKey = getMonthKey(getLocalDateString());
+  const activeMonthKey = shiftMonthKey(todayMonthKey, state.viewMonthOffset);
+  const isViewingCurrentMonth = state.viewMonthOffset === 0;
+
+  // Only the active month's (this month, or whichever month is being
+  // viewed) transactions count toward income/expenses/category spend. This
+  // is what makes a new calendar month start clean automatically — nothing
+  // is deleted or reset, last month's transactions just fall outside this
+  // filter once the calendar rolls over. Category definitions (icon, color,
+  // limit) live on state.categories and are completely unaffected by this.
+  const activeMonthTransactions = state.transactions.filter(
+    (t) => getMonthKey(t.date) === activeMonthKey
+  );
+
+  const income = activeMonthTransactions
     .filter((t) => t.type === "income" && t.categoryKey !== "savings")
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const rawExpenses = state.transactions
+  const rawExpenses = activeMonthTransactions
     .filter((t) => t.type === "expense")
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const savingsWithdrawals = state.transactions
+  const savingsWithdrawals = activeMonthTransactions
     .filter((t) => t.type === "income" && t.categoryKey === "savings")
     .reduce((sum, t) => sum + t.amount, 0);
 
   const expenses = rawExpenses - savingsWithdrawals;
 
   const spentByCategoryKey = (categoryKey) => {
-    const spent = state.transactions
+    const spent = activeMonthTransactions
       .filter((t) => t.type === "expense" && t.categoryKey === categoryKey)
       .reduce((sum, t) => sum + t.amount, 0);
-    const returned = state.transactions
+    const returned = activeMonthTransactions
       .filter((t) => t.type === "income" && t.categoryKey === categoryKey)
       .reduce((sum, t) => sum + t.amount, 0);
     return spent - returned;
@@ -277,6 +321,8 @@ export function useAppData() {
   const today = new Date();
   // Uses the shared getLocalDateString helper (see above) so these keys are
   // computed the same way transaction dates are now generated — both local.
+  // This is a rolling real "last 7 days" window for dashboard activity and
+  // is intentionally NOT affected by viewMonthOffset.
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(today);
     d.setDate(d.getDate() - (6 - i));
@@ -345,6 +391,14 @@ export function useAppData() {
     expenses,
     totalBalance: income - expenses,
     remainingBudget: state.budget.monthlyLimit - expenses,
+
+    // Month view toggle — 0 is "this month". Reports/Budget tabs use this
+    // to switch every derived value above (income, expenses, categories'
+    // spent) to a different calendar month without duplicating any state.
+    viewMonthOffset: state.viewMonthOffset,
+    isViewingCurrentMonth,
+    activeMonthAbbrev: monthAbbrevOf(activeMonthKey),
+    setViewMonth: (offset) => dispatch({ type: "SET_VIEW_MONTH", payload: offset }),
 
     addTransaction: async (tx) => {
       const data = await requestJson("/transactions", { method: "POST", body: JSON.stringify(tx) });
