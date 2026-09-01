@@ -316,13 +316,13 @@ export function useAppData() {
     return spent - returned;
   };
 
-  // All months that have activity, plus the currently-viewed month even if
-  // it has no transactions yet (so a fresh month still shows up as an empty
-  // bar instead of disappearing from the chart). Sorted chronologically so
-  // the trend chart reads left-to-right, oldest to newest.
+  const activeYear = activeMonthKey.slice(0, 4);
+
   const monthKeysWithData = Array.from(
     new Set([...state.transactions.map((t) => getMonthKey(t.date)), activeMonthKey])
-  ).sort();
+  )
+    .filter((mk) => mk.slice(0, 4) === activeYear)
+    .sort();
 
   const monthlyHistory = monthKeysWithData.map((mk) => {
     const txs = state.transactions.filter((t) => getMonthKey(t.date) === mk);
