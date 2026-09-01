@@ -65,7 +65,7 @@ export function ReportsTrendColumn() {
 
         <div className="rp-date-picker">
           <select
-            className="rp-select"
+            className="rp-select dw-add-btn dw-add-btn-neutral"
             value={activeYear}
             onChange={(e) => handleYearChange(e.target.value)}
           >
@@ -75,7 +75,7 @@ export function ReportsTrendColumn() {
           </select>
 
           <select
-            className="rp-select"
+            className="rp-select dw-add-btn dw-add-btn-neutral"
             value={activeMonthNum}
             onChange={(e) => setViewDate(activeYear, Number(e.target.value))}
           >
