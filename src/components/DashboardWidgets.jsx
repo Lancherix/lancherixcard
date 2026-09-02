@@ -416,24 +416,30 @@ export function TransactionsList() {
 /* ---------------- RIGHT COLUMN, ROW 1: Report, derived from context ---------------- */
 
 export function ReportWidget() {
-  const { income, expenses, categories, formatMoney, formatMoneyCompact } = useAppData();
+  const {
+    monthlyHistory,
+    categories,
+    formatMoney,
+    formatMoneyCompact,
+    activeMonthKey,
+  } = useAppData();
   const { t, tCategory } = useTranslation();
 
-  const trend = [
-    {
-      key: "08",
-      label: t("reportsTab.months.Aug"),
-      income,
-      expenses,
-    },
-  ];
+  const trend = monthlyHistory.map((m) => ({
+    key: m.key,
+    label: t(`reportsTab.months.${m.abbrev}`),
+    income: m.income,
+    expenses: m.expenses,
+  }));
 
   const spendingCategories = [...categories]
     .filter((c) => c.spent > 0)
     .sort((a, b) => b.spent - a.spent);
 
-  const current = trend[trend.length - 1];
-  const previous = trend[trend.length - 2];
+  const currentIndex = trend.findIndex((m) => m.key === activeMonthKey);
+  const current = trend[currentIndex];
+  const previous = currentIndex > 0 ? trend[currentIndex - 1] : undefined;
+
   const delta = previous ? current.expenses - previous.expenses : 0;
   const deltaPct = previous && previous.expenses > 0 ? (delta / previous.expenses) * 100 : 0;
   const up = delta > 0;
