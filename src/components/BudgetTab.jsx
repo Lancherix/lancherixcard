@@ -144,7 +144,9 @@ function EmptyState({ icon, label, compact }) {
   );
 }
 
-/* ---------------- Budget form: mobile-aware, same pattern as DashboardWidgets' BudgetForm ---------------- */
+/* ---------------- Budget form: only ever edits the CURRENT month's
+   overall budget — see BudgetOverviewColumn, which only renders the
+   trigger button while isViewingCurrentMonth is true. ---------------- */
 
 function BudgetForm({ onClose, initialLimit }) {
   const { setBudget, currencySymbol } = useAppData();
@@ -201,7 +203,9 @@ function BudgetForm({ onClose, initialLimit }) {
   );
 }
 
-/* ---------------- Category form: mobile-aware, same pattern as DashboardWidgets' GoalForm ---------------- */
+/* ---------------- Category form: `limit` here always targets the CURRENT
+   month (see updateCategory/addCategory in AppContext.js). Only rendered
+   from BudgetCategoriesColumn while isViewingCurrentMonth is true. ---------------- */
 
 function CategoryForm({ onClose, initialValues }) {
   const { addCategory, updateCategory, deleteCategory, currencySymbol } = useAppData();
@@ -386,26 +390,61 @@ function CategoryForm({ onClose, initialValues }) {
   );
 }
 
-/* ---------------- LEFT COLUMN: reads budget + expenses from context ---------------- */
+/* ---------------- LEFT COLUMN: overall budget for the active month, with
+   the same year/month history picker as ReportsTrendColumn so past months
+   are browsable "just like in reports". ---------------- */
 
 export function BudgetOverviewColumn() {
-  const { budget, expenses, formatMoney, isViewingCurrentMonth, setViewMonth } = useAppData();
+  const {
+    budget, expenses, formatMoney,
+    isViewingCurrentMonth, setViewMonth,
+    activeYear, activeMonthNum,
+    availableYears, availableMonthsByYear, setViewDate,
+  } = useAppData();
   const { t } = useTranslation();
   const [editingBudget, setEditingBudget] = useState(false);
   const remaining = Math.max(budget - expenses, 0);
   const statValueStyle = { whiteSpace: "nowrap", fontSize: "clamp(12px, 3vw, 16px)" };
 
+  const handleYearChange = (year) => {
+    const months = availableMonthsByYear[year] || [];
+    const stillAvailable = months.some((m) => m.num === activeMonthNum);
+    const targetMonth = stillAvailable ? activeMonthNum : months[months.length - 1]?.num ?? 1;
+    setViewDate(year, targetMonth);
+  };
+
   return (
     <div className="leaf-fill dw-txl-panel">
       <div className="dw-col-header">
         <h3 className="dw-heading">{t("icons.budget")}</h3>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button
-            className="dw-add-btn dw-add-btn-neutral"
-            onClick={() => setViewMonth(isViewingCurrentMonth ? -1 : 0)}
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <select
+            className="rp-select dw-add-btn dw-add-btn-neutral"
+            value={activeYear}
+            onChange={(e) => handleYearChange(e.target.value)}
           >
-            {isViewingCurrentMonth ? t("reportsTab.lastMonth") : t("reportsTab.backToThisMonth")}
-          </button>
+            {availableYears.map((y) => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+
+          <select
+            className="rp-select dw-add-btn dw-add-btn-neutral"
+            value={activeMonthNum}
+            onChange={(e) => setViewDate(activeYear, Number(e.target.value))}
+          >
+            {(availableMonthsByYear[activeYear] || []).map((m) => (
+              <option key={m.key} value={m.num}>
+                {t(`reportsTab.months.${m.abbrev}`)}
+              </option>
+            ))}
+          </select>
+
+          {!isViewingCurrentMonth && (
+            <button className="dw-add-btn dw-add-btn-neutral" onClick={() => setViewMonth(0)}>
+              {t("reportsTab.backToThisMonth")}
+            </button>
+          )}
           {isViewingCurrentMonth && (
             <button className="dw-add-btn dw-add-btn-neutral" onClick={() => setEditingBudget(true)}>
               {t("common.edit")}
@@ -439,10 +478,13 @@ export function BudgetOverviewColumn() {
   );
 }
 
-/* ---------------- RIGHT COLUMN: reads categories (with spent) from context ---------------- */
+/* ---------------- RIGHT COLUMN: categories for the active month. Rows show
+   that month's resolved spend/limit; adding or editing a limit is only
+   available while viewing the current month — past months are read-only
+   history, exactly like BudgetOverviewColumn's Edit button. ---------------- */
 
 export function BudgetCategoriesColumn() {
-  const { categories, formatMoney, formatMoneyCompact } = useAppData();
+  const { categories, formatMoney, formatMoneyCompact, isViewingCurrentMonth } = useAppData();
   const { t, tCategory } = useTranslation();
   const [modalState, setModalState] = useState(null); // null | { mode: "add" | "edit", item? }
 
@@ -454,7 +496,9 @@ export function BudgetCategoriesColumn() {
     <div className="leaf-fill dw-txl-panel">
       <div className="dw-col-header">
         <h3 className="dw-heading">{t("budgetTab.categoriesHeading", { total: formatMoney(totalLimits) })}</h3>
-        <button className="dw-add-btn" onClick={() => setModalState({ mode: "add" })}>+ {t("common.add")}</button>
+        {isViewingCurrentMonth && (
+          <button className="dw-add-btn" onClick={() => setModalState({ mode: "add" })}>+ {t("common.add")}</button>
+        )}
       </div>
 
       <div className="dw-txl-list">
@@ -462,12 +506,13 @@ export function BudgetCategoriesColumn() {
           categories.map((cat) => {
             const pct = cat.limit > 0 ? Math.min((cat.spent / cat.limit) * 100, 100) : 0;
             const over = cat.spent > cat.limit;
+            const RowTag = isViewingCurrentMonth ? "button" : "div";
 
             return (
-              <button
+              <RowTag
                 key={cat.id}
                 className="bt-cat-row"
-                onClick={() => setModalState({ mode: "edit", item: cat })}
+                onClick={isViewingCurrentMonth ? () => setModalState({ mode: "edit", item: cat }) : undefined}
               >
                 <span className="bt-cat-icon" style={{ background: cat.color + "22" }}>
                   <AnyIcon name={cat.icon} size={16} color={cat.color} />
@@ -493,7 +538,7 @@ export function BudgetCategoriesColumn() {
                     />
                   </span>
                 </span>
-              </button>
+              </RowTag>
             );
           })
         ) : (

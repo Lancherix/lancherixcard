@@ -48,10 +48,10 @@ export function formatMoney(amount, currency, opts = {}) {
 
 // Local-date helper — use this everywhere a "today" or "YYYY-MM-DD" default
 // is needed (transaction dates, recurring nextDate, goal contribution
-// dates, etc). `new Date().toISOString().slice(0, 10)` looks equivalent but
-// is NOT: toISOString() is UTC, so anyone west of UTC (most of the
-// Americas) can get tomorrow's date stamped on a transaction made tonight,
-// which then silently fails to match today's bucket in `last7Days` below.
+// dates, budget writes, etc). `new Date().toISOString().slice(0, 10)` looks
+// equivalent but is NOT: toISOString() is UTC, so anyone west of UTC (most
+// of the Americas) can get tomorrow's date stamped on something made
+// tonight, which then silently lands in the wrong month bucket below.
 export function getLocalDateString(date = new Date()) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -62,8 +62,8 @@ export function getLocalDateString(date = new Date()) {
 // ---------------- month helpers ----------------
 // Transactions carry a "YYYY-MM-DD" `date` (via getLocalDateString above).
 // Slicing that down to "YYYY-MM" gives a stable month key we can filter on,
-// so income/expenses/category spend are always scoped to a single calendar
-// month instead of accumulating forever.
+// so income/expenses/category spend/budget are always scoped to a single
+// calendar month instead of accumulating forever.
 
 export function getMonthKey(dateStr) {
   return dateStr ? dateStr.slice(0, 7) : null; // "YYYY-MM"
@@ -93,14 +93,19 @@ const initialState = {
   transactions: [],
   recurring: [],
   categories: [],
-  budget: {
-    monthlyLimit: 0,
-  },
+  // Overall monthly budget, keyed "YYYY-MM". A month with no entry has an
+  // implicit limit of 0 — this is what makes a new calendar month start
+  // clean automatically (see spentByCategoryKey / activeMonthTransactions
+  // below for the same pattern applied to income/expenses), while every
+  // month that ever had a value keeps it, visible as history in the
+  // Budget tab.
+  budgetHistory: {},
   goals: [],
   currency: null,
   // 0 = current calendar month, -1 = last month, etc. Purely a UI view
-  // toggle — never sent to the backend, never affects stored data, just
-  // which month's transactions get summed into income/expenses/spent below.
+  // toggle — never sent to the backend as-is, never affects stored data,
+  // just which month's transactions/budget get read into income/expenses/
+  // spent/budget below.
   viewMonthOffset: 0,
   // true until the first GET /state resolves (or we determine there's no
   // token at all) — lets the UI tell "still loading" apart from "brand new
@@ -125,7 +130,8 @@ function withIds(docs) {
 /* ---------------- reducer ----------------
    Purely a local cache now — every mutation is triggered by an action
    creator in useAppData that hits the backend first and dispatches only
-   once the server confirms it, using the server's own id. */
+   once the server confirms it, using the server's own id / server's own
+   updated history maps. */
 
 function reducer(state, action) {
   switch (action.type) {
@@ -142,7 +148,7 @@ function reducer(state, action) {
         recurring: withIds(action.payload.recurring),
         categories: withIds(action.payload.categories),
         goals: withIds(action.payload.goals),
-        budget: action.payload.budget ?? { monthlyLimit: 0 },
+        budgetHistory: action.payload.budgetHistory ?? {},
         currency: action.payload.currency ?? null,
         loading: false,
         error: null,
@@ -173,6 +179,9 @@ function reducer(state, action) {
     case "ADD_CATEGORY":
       return { ...state, categories: [...state.categories, action.payload] };
     case "UPDATE_CATEGORY":
+      // action.payload.limits is the server's full, authoritative map for
+      // this category (all months) — spread replaces it wholesale, it's
+      // never merged piecemeal on the client.
       return {
         ...state,
         categories: state.categories.map((c) => (c.id === action.payload.id ? { ...c, ...action.payload } : c)),
@@ -180,8 +189,10 @@ function reducer(state, action) {
     case "DELETE_CATEGORY":
       return { ...state, categories: state.categories.filter((c) => c.id !== action.payload) };
 
-    case "SET_BUDGET":
-      return { ...state, budget: { ...state.budget, monthlyLimit: action.payload } };
+    // Payload is the server's full, authoritative monthlyLimits map — same
+    // "replace wholesale" rule as category limits above.
+    case "SET_BUDGET_HISTORY":
+      return { ...state, budgetHistory: action.payload };
 
     case "SET_CURRENCY":
       return { ...state, currency: action.payload };
@@ -227,7 +238,9 @@ export function AppProvider({ children }) {
   // Re-fetches everything from the backend and replaces local state.
   // Called on mount if a token already exists (page refresh), and again
   // right after login (see AuthCallback), since AppProvider itself doesn't
-  // remount when AuthCallback navigates to "/".
+  // remount when AuthCallback navigates to "/". Also the point where the
+  // backend prunes data older than the 2-year retention window and posts
+  // any due recurring transactions, both keyed off "today" below.
   const refreshState = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
 
@@ -292,8 +305,10 @@ export function useAppData() {
   // viewed) transactions count toward income/expenses/category spend. This
   // is what makes a new calendar month start clean automatically — nothing
   // is deleted or reset, last month's transactions just fall outside this
-  // filter once the calendar rolls over. Category definitions (icon, color,
-  // limit) live on state.categories and are completely unaffected by this.
+  // filter once the calendar rolls over. Category definitions (icon, color)
+  // live on state.categories and are completely unaffected by this;
+  // category *limits* use the same "no entry = 0" idea, just via a map
+  // lookup instead of a filter (see categoriesWithSpent below).
   const activeMonthTransactions = state.transactions.filter(
     (t) => getMonthKey(t.date) === activeMonthKey
   );
@@ -312,6 +327,10 @@ export function useAppData() {
 
   const expenses = rawExpenses - savingsWithdrawals;
 
+  // The active month's overall budget — 0 if that month never had one set
+  // (a brand-new month, or a month before the user started using budgets).
+  const budget = state.budgetHistory[activeMonthKey] ?? 0;
+
   const spentByCategoryKey = (categoryKey) => {
     const spent = activeMonthTransactions
       .filter((t) => t.type === "expense" && t.categoryKey === categoryKey)
@@ -327,7 +346,8 @@ export function useAppData() {
 
   // Years offered in the picker: current year always (even before there's
   // any data in it yet), last year only if it actually has transactions —
-  // no point surfacing an empty tab for a brand-new account.
+  // no point surfacing an empty tab for a brand-new account. Note this
+  // naturally tracks the 2-year retention window server-side prunes to.
   const txYears = new Set(state.transactions.map((t) => t.date.slice(0, 4)));
   const availableYears = [currentYear, lastYear].filter(
     (y) => y === currentYear || txYears.has(y)
@@ -375,10 +395,21 @@ export function useAppData() {
       abbrev: monthAbbrevOf(mk),
       income: inc,
       expenses: rawExp - savingsW,
+      // Budget that month had set, for parity with income/expenses above —
+      // 0 if that month never had one.
+      budget: state.budgetHistory[mk] ?? 0,
     };
   });
 
-  const categoriesWithSpent = state.categories.map((c) => ({ ...c, spent: spentByCategoryKey(c.key) }));
+  // Resolve each category's spend AND its limit for the active month. The
+  // limit lookup is the same "no entry = 0" pattern as `budget` above:
+  // a category viewed in a month before it had a limit set (or before it
+  // existed) just reads as 0, which is exactly the historical truth.
+  const categoriesWithSpent = state.categories.map((c) => ({
+    ...c,
+    spent: spentByCategoryKey(c.key),
+    limit: c.limits?.[activeMonthKey] ?? 0,
+  }));
 
   const today = new Date();
   // Uses the shared getLocalDateString helper (see above) so these keys are
@@ -433,7 +464,6 @@ export function useAppData() {
     transactions: state.transactions,
     recurring: state.recurring,
     categories: categoriesWithSpent,
-    budget: state.budget.monthlyLimit,
     goals: goalsWithCurrent,
     weeklyActivity,
 
@@ -452,11 +482,16 @@ export function useAppData() {
     income,
     expenses,
     totalBalance: income - expenses,
-    remainingBudget: state.budget.monthlyLimit - expenses,
+    // Both scoped to whichever month is active (see activeMonthKey below) —
+    // browsing "last month" shows last month's budget/remaining, not this
+    // month's.
+    budget,
+    remainingBudget: budget - expenses,
 
     // Month view toggle — 0 is "this month". Reports/Budget tabs use this
-    // to switch every derived value above (income, expenses, categories'
-    // spent) to a different calendar month without duplicating any state.
+    // to switch every derived value above (income, expenses, budget,
+    // categories' spent/limit) to a different calendar month without
+    // duplicating any state.
     viewMonthOffset: state.viewMonthOffset,
     isViewingCurrentMonth,
     activeMonthKey,
@@ -502,13 +537,25 @@ export function useAppData() {
       dispatch({ type: "DELETE_RECURRING", payload: id });
     },
 
+    // `c.limit`, if present, is the limit for the CURRENT calendar month —
+    // the backend always writes new categories' limits against "today",
+    // never the month currently being browsed.
     addCategory: async (c) => {
-      const data = await requestJson("/categories", { method: "POST", body: JSON.stringify(c) });
+      const data = await requestJson("/categories", {
+        method: "POST",
+        body: JSON.stringify({ ...c, today: getLocalDateString() }),
+      });
       dispatch({ type: "ADD_CATEGORY", payload: withId(data) });
     },
+    // Same rule: a `limit` in `c` updates only the CURRENT month's entry.
+    // Callers should only allow editing limit while isViewingCurrentMonth
+    // is true (see BudgetTab.jsx) — past months' limits are read-only.
     updateCategory: async (c) => {
-      const { id, ...rest } = c;
-      const data = await requestJson(`/categories/${id}`, { method: "PATCH", body: JSON.stringify(rest) });
+      const { id, current, ...rest } = c; // `current` (if present) is derived, never sent
+      const data = await requestJson(`/categories/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ ...rest, today: getLocalDateString() }),
+      });
       dispatch({ type: "UPDATE_CATEGORY", payload: withId(data) });
     },
     deleteCategory: async (id) => {
@@ -516,12 +563,15 @@ export function useAppData() {
       dispatch({ type: "DELETE_CATEGORY", payload: id });
     },
 
+    // Writes the CURRENT month's overall budget (not whatever month is
+    // being browsed) — callers should only expose this while
+    // isViewingCurrentMonth is true.
     setBudget: async (limit) => {
       const data = await requestJson("/settings/budget", {
         method: "PATCH",
-        body: JSON.stringify({ monthlyLimit: limit }),
+        body: JSON.stringify({ monthlyLimit: limit, today: getLocalDateString() }),
       });
-      dispatch({ type: "SET_BUDGET", payload: data.monthlyLimit });
+      dispatch({ type: "SET_BUDGET_HISTORY", payload: data.monthlyLimits });
     },
 
     // First-time currency pick — no conversion needed yet.
@@ -535,8 +585,9 @@ export function useAppData() {
 
     // Existing user switching currency later: rate = how many units of the
     // new currency equal 1 unit of the current currency. The backend
-    // rescales every stored amount server-side, so we just re-hydrate
-    // afterward rather than re-deriving the math on the client.
+    // rescales every stored amount server-side — including every month in
+    // every budget-history map — so we just re-hydrate afterward rather
+    // than re-deriving the math on the client.
     changeCurrency: async (code, rate) => {
       await requestJson("/settings/currency/change", {
         method: "POST",
