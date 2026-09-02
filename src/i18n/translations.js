@@ -157,6 +157,7 @@ export const translations = {
         Jan: "Jan", Feb: "Feb", Mar: "Mar", Apr: "Apr", May: "May", Jun: "Jun",
         Jul: "Jul", Aug: "Aug", Sep: "Sep", Oct: "Oct", Nov: "Nov", Dec: "Dec",
       },
+      backToThisMonth: "Current Month",
     },
     savingsGoalsTab: {
       heading: "Savings Goals",
@@ -359,6 +360,7 @@ export const translations = {
         Jan: "Jan", Feb: "Fév", Mar: "Mar", Apr: "Avr", May: "Mai", Jun: "Juin",
         Jul: "Juil", Aug: "Août", Sep: "Sep", Oct: "Oct", Nov: "Nov", Dec: "Déc",
       },
+      backToThisMonth: "Mois actuel",
     },
     savingsGoalsTab: {
       heading: "Objectifs d'épargne",
@@ -561,6 +563,7 @@ export const translations = {
         Jan: "Ene", Feb: "Feb", Mar: "Mar", Apr: "Abr", May: "May", Jun: "Jun",
         Jul: "Jul", Aug: "Ago", Sep: "Sep", Oct: "Oct", Nov: "Nov", Dec: "Dic",
       },
+      backToThisMonth: "Mes actual",
     },
     savingsGoalsTab: {
       heading: "Metas de ahorro",
@@ -762,6 +765,7 @@ export const translations = {
         Jan: "Янв", Feb: "Фев", Mar: "Мар", Apr: "Апр", May: "Май", Jun: "Июн",
         Jul: "Июл", Aug: "Авг", Sep: "Сен", Oct: "Окт", Nov: "Ноя", Dec: "Дек",
       },
+      backToThisMonth: "Текущий месяц",
     },
     savingsGoalsTab: {
       heading: "Цели накоплений",
