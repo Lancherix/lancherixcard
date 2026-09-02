@@ -466,12 +466,6 @@ export function ReportWidget() {
       <div className="dw-col-header">
         <h3 className="dw-heading">{t("dashboard.report")}</h3>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-          {previous && (
-            <span className={"dw-report-delta" + (up ? " dw-report-delta-up" : " dw-report-delta-down")}>
-              {up ? "▲" : "▼"} {Math.abs(deltaPct).toFixed(0)}%
-            </span>
-          )}
-
           <select
             className="rp-select dw-add-btn dw-add-btn-neutral"
             value={activeYear}
