@@ -422,8 +422,22 @@ export function ReportWidget() {
     formatMoney,
     formatMoneyCompact,
     activeMonthKey,
+    isViewingCurrentMonth,
+    setViewMonth,
+    activeYear,
+    activeMonthNum,
+    availableYears,
+    availableMonthsByYear,
+    setViewDate,
   } = useAppData();
   const { t, tCategory } = useTranslation();
+
+  const handleYearChange = (year) => {
+    const months = availableMonthsByYear[year] || [];
+    const stillAvailable = months.some((m) => m.num === activeMonthNum);
+    const targetMonth = stillAvailable ? activeMonthNum : months[months.length - 1]?.num ?? 1;
+    setViewDate(year, targetMonth);
+  };
 
   const trend = monthlyHistory.map((m) => ({
     key: m.key,
@@ -451,11 +465,41 @@ export function ReportWidget() {
     <div className="leaf-fill dw-report-panel">
       <div className="dw-col-header">
         <h3 className="dw-heading">{t("dashboard.report")}</h3>
-        {previous && (
-          <span className={"dw-report-delta" + (up ? " dw-report-delta-up" : " dw-report-delta-down")}>
-            {up ? "▲" : "▼"} {Math.abs(deltaPct).toFixed(0)}%
-          </span>
-        )}
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+          {previous && (
+            <span className={"dw-report-delta" + (up ? " dw-report-delta-up" : " dw-report-delta-down")}>
+              {up ? "▲" : "▼"} {Math.abs(deltaPct).toFixed(0)}%
+            </span>
+          )}
+
+          <select
+            className="rp-select dw-add-btn dw-add-btn-neutral"
+            value={activeYear}
+            onChange={(e) => handleYearChange(e.target.value)}
+          >
+            {availableYears.map((y) => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+
+          <select
+            className="rp-select dw-add-btn dw-add-btn-neutral"
+            value={activeMonthNum}
+            onChange={(e) => setViewDate(activeYear, Number(e.target.value))}
+          >
+            {(availableMonthsByYear[activeYear] || []).map((m) => (
+              <option key={m.key} value={m.num}>
+                {t(`reportsTab.months.${m.abbrev}`)}
+              </option>
+            ))}
+          </select>
+
+          {!isViewingCurrentMonth && (
+            <button className="dw-add-btn dw-add-btn-neutral" onClick={() => setViewMonth(0)}>
+              {t("reportsTab.backToThisMonth")}
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="dw-report-body">
